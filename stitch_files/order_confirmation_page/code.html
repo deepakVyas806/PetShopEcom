@@ -1,0 +1,365 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Order Success | artPetShop</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary": "#ffffff",
+                    "surface-container-low": "#f0f3ff",
+                    "on-surface": "#151c27",
+                    "tertiary-fixed-dim": "#ccbeff",
+                    "secondary": "#635b6e",
+                    "on-secondary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "on-surface-variant": "#4a4455",
+                    "inverse-surface": "#2a313d",
+                    "on-tertiary": "#ffffff",
+                    "secondary-fixed": "#e9def5",
+                    "secondary-fixed-dim": "#cdc2d9",
+                    "on-background": "#151c27",
+                    "tertiary-fixed": "#e7deff",
+                    "outline-variant": "#ccc3d8",
+                    "inverse-on-surface": "#ebf1ff",
+                    "surface-container-high": "#e2e8f8",
+                    "outline": "#7b7487",
+                    "tertiary": "#524584",
+                    "on-tertiary-fixed": "#1e0e4e",
+                    "on-secondary-fixed": "#1e1929",
+                    "secondary-container": "#e9def5",
+                    "surface-tint": "#732ee4",
+                    "surface": "#f9f9ff",
+                    "on-primary-container": "#ede0ff",
+                    "on-secondary-container": "#696174",
+                    "on-tertiary-container": "#eae1ff",
+                    "on-error-container": "#93000a",
+                    "surface-variant": "#dce2f3",
+                    "surface-container-highest": "#dce2f3",
+                    "on-tertiary-fixed-variant": "#4a3d7c",
+                    "error-container": "#ffdad6",
+                    "primary": "#630ed4",
+                    "surface-dim": "#d3daea",
+                    "background": "#f9f9ff",
+                    "primary-fixed": "#eaddff",
+                    "inverse-primary": "#d2bbff",
+                    "surface-container": "#e7eefe",
+                    "surface-bright": "#f9f9ff",
+                    "surface-container-lowest": "#ffffff",
+                    "on-primary-fixed": "#25005a",
+                    "on-secondary-fixed-variant": "#4a4456",
+                    "on-primary-fixed-variant": "#5a00c6",
+                    "tertiary-container": "#6a5d9e",
+                    "on-error": "#ffffff",
+                    "primary-fixed-dim": "#d2bbff",
+                    "primary-container": "#7c3aed"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-lg": "32px",
+                    "margin-desktop": "40px",
+                    "margin-mobile": "16px",
+                    "base": "4px",
+                    "container-max": "1280px",
+                    "stack-md": "16px",
+                    "gutter": "24px",
+                    "stack-sm": "8px"
+            },
+            "fontFamily": {
+                    "headline-sm": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "body-base": ["Inter"],
+                    "display-lg-mobile": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "label-md": ["Inter"],
+                    "display-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "body-base": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "display-lg-mobile": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: #7c3aed;
+            top: -10px;
+            z-index: 100;
+            border-radius: 2px;
+        }
+        @keyframes fall {
+            to { transform: translateY(100vh) rotate(360deg); }
+        }
+        .success-check {
+            stroke-dasharray: 100;
+            stroke-dashoffset: 100;
+            animation: dash 0.8s ease-in-out forwards;
+        }
+        @keyframes dash {
+            to { stroke-dashoffset: 0; }
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid #F3E8FF;
+        }
+    </style>
+</head>
+<body class="bg-background font-body-base text-on-background min-h-screen">
+<header class="bg-surface/80 dark:bg-surface-container/80 backdrop-blur-xl border-b border-outline-variant/30 sticky top-0 z-50 h-16 w-full shadow-sm">
+<nav class="flex justify-between items-center h-full px-margin-desktop max-w-container-max mx-auto w-full">
+<div class="font-headline-md text-headline-md font-bold text-primary tracking-tight">artPetShop</div>
+<div class="flex items-center gap-gutter">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-all" data-icon="search">search</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-all" data-icon="shopping_cart">shopping_cart</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-all" data-icon="person">person</button>
+</div>
+</nav>
+</header>
+<main class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-stack-lg">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<section class="lg:col-span-12 text-center py-stack-lg">
+<div class="relative inline-block mb-stack-md">
+<div class="w-24 h-24 bg-primary-container/20 rounded-full flex items-center justify-center mx-auto scale-110 animate-pulse">
+<svg class="w-16 h-16 text-primary" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" viewBox="0 0 24 24">
+<polyline class="success-check" points="20 6 9 17 4 12"></polyline>
+</svg>
+</div>
+</div>
+<h1 class="font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mb-2">Order Confirmed!</h1>
+<p class="text-on-surface-variant font-body-base max-w-lg mx-auto">Thank you for your purchase. We've sent a confirmation email to <span class="font-semibold text-primary">alex.p@example.com</span>.</p>
+<div class="mt-stack-md inline-flex items-center gap-2 bg-surface-container-high px-4 py-2 rounded-full border border-outline-variant">
+<span class="text-label-sm text-on-surface-variant">Order ID:</span>
+<span class="font-bold text-on-surface">#APS-829103-24</span>
+<button class="material-symbols-outlined text-label-sm hover:text-primary cursor-pointer" data-icon="content_copy">content_copy</button>
+</div>
+</section>
+<section class="lg:col-span-8">
+<div class="glass-card rounded-xl p-stack-lg shadow-sm mb-gutter overflow-hidden">
+<h2 class="font-headline-sm text-headline-sm mb-stack-lg flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="local_shipping">local_shipping</span>
+                        Delivery Timeline
+                    </h2>
+<div class="relative">
+<div class="absolute top-5 left-5 w-[calc(100%-40px)] h-0.5 bg-surface-variant z-0">
+<div class="h-full bg-primary w-1/4"></div>
+</div>
+<div class="relative z-10 flex justify-between items-start">
+<div class="flex flex-col items-center gap-stack-sm w-1/4">
+<div class="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center ring-4 ring-background">
+<span class="material-symbols-outlined text-body-base" data-icon="check" data-weight="fill">check</span>
+</div>
+<div class="text-center">
+<p class="font-label-md text-on-surface">Ordered</p>
+<p class="text-label-sm text-on-surface-variant">Oct 24, 10:30 AM</p>
+</div>
+</div>
+<div class="flex flex-col items-center gap-stack-sm w-1/4">
+<div class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center ring-4 ring-background">
+<span class="material-symbols-outlined text-body-base" data-icon="package_2">package_2</span>
+</div>
+<div class="text-center">
+<p class="font-label-md text-on-surface">Packed</p>
+<p class="text-label-sm text-on-surface-variant italic">Estimated: Today</p>
+</div>
+</div>
+<div class="flex flex-col items-center gap-stack-sm w-1/4">
+<div class="w-10 h-10 rounded-full bg-surface-variant text-outline flex items-center justify-center ring-4 ring-background">
+<span class="material-symbols-outlined text-body-base" data-icon="shipped">local_shipping</span>
+</div>
+<div class="text-center">
+<p class="font-label-md text-on-surface-variant">Shipped</p>
+<p class="text-label-sm text-on-surface-variant">Pending</p>
+</div>
+</div>
+<div class="flex flex-col items-center gap-stack-sm w-1/4">
+<div class="w-10 h-10 rounded-full bg-surface-variant text-outline flex items-center justify-center ring-4 ring-background">
+<span class="material-symbols-outlined text-body-base" data-icon="home_pin">home_pin</span>
+</div>
+<div class="text-center">
+<p class="font-label-md text-on-surface-variant">Delivered</p>
+<p class="text-label-sm text-on-surface-variant">Est. Oct 27</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="glass-card rounded-xl p-stack-lg shadow-sm">
+<h2 class="font-headline-sm text-headline-sm mb-stack-md">Order Items</h2>
+<div class="space-y-stack-md">
+<div class="flex gap-stack-md items-center group">
+<div class="w-20 h-20 bg-surface-variant rounded-lg overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" data-alt="Close-up of a premium, grain-free dog food package with natural ingredients pictured, set against a warm, sun-drenched minimalist wooden table background. The color palette is rich and earthy with soft lavender lighting accents, emphasizing a healthy and luxury pet lifestyle aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8r3ZnAngundf5V-zgQqqd1irpxgMW0-14GSIPmGcxhmNqZs9S_ztbUIKPmuku8mZS3RqRfve8L7ycYlsRjUjkeAPSDFUeR4MxBd8U8V-QO2Tjp57Qed7xvoPVhyIMJmeBA2wKSqT775yD4rc8yCb2nuzFPfPSYvqdFpVugCUHfuW_GU28g6Sj3TkiwwDJgDz3TXGMH6TtrpO_WCYU96vZdQlklWQTWdk7FkaiwBfn60WocYhKIvH-F-nV8dVt7PjvQx2lxN3-e_ZJ">
+</div>
+<div class="flex-grow">
+<p class="font-body-base font-semibold text-on-surface">Royal Canine - Organic Blend</p>
+<p class="text-label-sm text-on-surface-variant">Quantity: 2</p>
+</div>
+<p class="font-body-base font-bold text-primary">$45.98</p>
+</div>
+<div class="flex gap-stack-md items-center group">
+<div class="w-20 h-20 bg-surface-variant rounded-lg overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" data-alt="A stylish, modern ceramic pet bowl in a deep purple glaze, sitting on a pristine white marble surface. Soft ambient light illuminates the scene, highlighting the smooth texture and premium finish of the bowl. The background is a clean, minimalist kitchen setting with a gentle lavender glow from a nearby window." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDigXcJnMpMCqeN6DXerNHw6G9RK-XcJSfst0vbpPwi9hV42msOKT9Yfxpl80onq7mfaT_D6gY4dIkwG0af5M4fomEBYKFzRjGCGMHBOzng-9E85cRYvoIUGbMCbUBE24H_-oVc3CmadzGRSnBF4FJbBtZBeVYYLnEJAWDwv7izsAqzsckdVLEPMZ8UR5M_z49xoKTEEjQWBx8gZv9et4gYXK0hXhy9p20jWbi9XuibdcHW0QU7yBuyy875RT5IbBeiwIV0fxhTkPim">
+</div>
+<div class="flex-grow">
+<p class="font-body-base font-semibold text-on-surface">Ceramic Minimalist Bowl</p>
+<p class="text-label-sm text-on-surface-variant">Color: Lavender | Quantity: 1</p>
+</div>
+<p class="font-body-base font-bold text-primary">$24.00</p>
+</div>
+</div>
+</div>
+</section>
+<aside class="lg:col-span-4 space-y-gutter">
+<div class="glass-card rounded-xl p-stack-lg shadow-sm">
+<h3 class="font-headline-sm text-headline-sm mb-stack-md">Order Summary</h3>
+<div class="space-y-3">
+<div class="flex justify-between text-body-sm text-on-surface-variant">
+<span>Subtotal</span>
+<span>$69.98</span>
+</div>
+<div class="flex justify-between text-body-sm text-on-surface-variant">
+<span>Shipping</span>
+<span class="text-primary font-medium">FREE</span>
+</div>
+<div class="flex justify-between text-body-sm text-on-surface-variant">
+<span>Taxes</span>
+<span>$5.60</span>
+</div>
+<div class="border-t border-outline-variant/30 pt-3 flex justify-between font-bold text-headline-sm">
+<span class="text-on-surface">Total Paid</span>
+<span class="text-primary">$75.58</span>
+</div>
+</div>
+<div class="mt-stack-lg space-y-stack-sm">
+<button class="w-full py-3 bg-gradient-to-r from-primary to-primary-container text-on-primary rounded-full font-bold shadow-md hover:shadow-lg transition-all duration-200 active:scale-[0.98]">
+                            Track My Order
+                        </button>
+<button class="w-full py-3 bg-secondary-container text-on-secondary-container rounded-full font-bold flex items-center justify-center gap-2 hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined text-body-base" data-icon="download">download</span>
+                            Download Invoice
+                        </button>
+<a class="block text-center w-full py-3 text-primary font-semibold hover:bg-primary/5 rounded-full transition-all" href="#">
+                            Continue Shopping
+                        </a>
+</div>
+</div>
+<div class="glass-card rounded-xl p-stack-lg shadow-sm">
+<h3 class="font-headline-sm text-headline-sm mb-stack-md">Delivery Address</h3>
+<div class="flex gap-stack-md">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="location_on">location_on</span>
+<div class="text-body-sm text-on-surface-variant">
+<p class="font-bold text-on-surface">Alex Parker</p>
+<p>4256 Westview Terrace</p>
+<p>San Francisco, CA 94107</p>
+<p>Phone: +1 (555) 098-1234</p>
+</div>
+</div>
+</div>
+<div class="bg-primary/5 rounded-xl p-stack-md border border-primary/10 flex items-center gap-stack-md">
+<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="support_agent">support_agent</span>
+</div>
+<div>
+<p class="font-label-md text-on-surface">Need help?</p>
+<p class="text-label-sm text-primary underline cursor-pointer">Chat with our Pet Experts</p>
+</div>
+</div>
+</aside>
+</div>
+</main>
+<footer class="bg-surface-container-lowest border-t border-outline-variant py-stack-lg mt-stack-lg">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter px-margin-desktop max-w-container-max mx-auto w-full">
+<div class="space-y-4">
+<div class="font-headline-sm text-primary">artPetShop</div>
+<p class="text-body-sm text-on-surface-variant">Premium care for your beloved companions. Dedicated to quality and pet happiness since 2024.</p>
+</div>
+<div>
+<h4 class="font-label-md text-on-surface mb-stack-sm">Shopping</h4>
+<ul class="space-y-2">
+<li><a class="text-body-sm text-on-surface-variant hover:text-primary transition-transform hover:translate-x-1 inline-block" href="#">Orders</a></li>
+<li><a class="text-body-sm text-on-surface-variant hover:text-primary transition-transform hover:translate-x-1 inline-block" href="#">Secure Payment</a></li>
+<li><a class="text-body-sm text-on-surface-variant hover:text-primary transition-transform hover:translate-x-1 inline-block" href="#">Appointments</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-label-md text-on-surface mb-stack-sm">Company</h4>
+<ul class="space-y-2">
+<li><a class="text-body-sm text-on-surface-variant hover:text-primary transition-transform hover:translate-x-1 inline-block" href="#">Account</a></li>
+<li><a class="text-body-sm text-on-surface-variant hover:text-primary transition-transform hover:translate-x-1 inline-block" href="#">Support</a></li>
+<li><a class="text-body-sm text-on-surface-variant hover:text-primary transition-transform hover:translate-x-1 inline-block" href="#">Newsletter</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-label-md text-on-surface mb-stack-sm">Connect</h4>
+<div class="flex gap-4">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary" data-icon="share">share</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary" data-icon="mail">mail</span>
+</div>
+</div>
+</div>
+<div class="px-margin-desktop max-w-container-max mx-auto mt-stack-lg pt-stack-sm border-t border-outline-variant/30">
+<p class="text-body-sm text-on-surface-variant">© 2024 artPetShop. All rights reserved.</p>
+</div>
+</footer>
+<script>
+        // Micro-interaction: Confetti effect on load
+        function createConfetti() {
+            const colors = ['#7c3aed', '#d2bbff', '#630ed4', '#eaddff'];
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animation = `fall ${Math.random() * 3 + 2}s linear forwards`;
+                confetti.style.opacity = Math.random();
+                confetti.style.transform = `scale(${Math.random()})`;
+                document.body.appendChild(confetti);
+                
+                setTimeout(() => {
+                    confetti.remove();
+                }, 5000);
+            }
+        }
+
+        window.addEventListener('load', () => {
+            createConfetti();
+        });
+
+        // Simple button active states and copy to clipboard
+        document.querySelector('[data-icon="content_copy"]').addEventListener('click', function() {
+            const id = "#APS-829103-24";
+            navigator.clipboard.writeText(id).then(() => {
+                this.textContent = 'check';
+                this.classList.add('text-green-500');
+                setTimeout(() => {
+                    this.textContent = 'content_copy';
+                    this.classList.remove('text-green-500');
+                }, 2000);
+            });
+        });
+    </script>
+</body></html>

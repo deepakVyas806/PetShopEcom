@@ -2,10 +2,8 @@ import type { Metadata } from "next";
 import { Inter, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { siteConfig } from "@/config/site";
-import ModifiedHeader from "@/components/layout/ModifiedHeader";
-import Footer from "@/components/layout/Footer";
-import MobileFooter from "@/components/layout/MobileFooter";
 import { StoreProvider } from "@/context/StoreContext";
+import AppChrome from "@/components/layout/AppChrome";
 
 
 const inter = Inter({
@@ -66,16 +64,11 @@ export default function RootLayout({
 
       <body className="min-h-full flex flex-col font-sans selection:bg-brand-primary selection:text-white bg-brand-background text-brand-foreground pb-20 md:pb-0">
         <StoreProvider>
-          <ModifiedHeader />
-          <main className="flex-grow pt-0">
+          <AppChrome>
             {children}
-          </main>
-          <Footer />
-
-          <MobileFooter />
+          </AppChrome>
         </StoreProvider>
       </body>
     </html>
   );
 }
-

@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { Globe, Camera, Video, Send, ShieldAlert } from "lucide-react";
 import { useStore } from "@/context/StoreContext";
+import BrandLogo from "@/components/common/BrandLogo";
 
 export default function Footer() {
   const { userRole } = useStore();
@@ -22,7 +23,7 @@ export default function Footer() {
         
         {/* Column 1: Info and Socials */}
         <div className="space-y-4">
-          <div className="font-headline-sm text-headline-sm text-primary font-bold">artPetShop</div>
+          <BrandLogo />
           <p className="text-on-surface-variant font-body-sm text-body-sm leading-relaxed">
             Redefining pet care through artful design and uncompromising quality. Because they deserve the best.
           </p>
@@ -147,7 +148,7 @@ export default function Footer() {
       {/* Copyright bottom bar */}
       <div className="px-4 md:px-10 py-4 border-t border-outline-variant/20 text-center max-w-[1280px] mx-auto">
         <p className="text-on-surface-variant font-body-sm text-body-sm opacity-60">
-          © {new Date().getFullYear()} artPetShop. All rights reserved.
+          &copy; {new Date().getFullYear()} artPetShop. All rights reserved.
         </p>
       </div>
 

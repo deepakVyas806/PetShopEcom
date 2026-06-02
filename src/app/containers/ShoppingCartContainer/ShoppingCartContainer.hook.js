@@ -1,14 +1,15 @@
 import { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import { useStore } from "@/context/StoreContext";
 
 export default function useShoppingCart() {
-  const { cart, updateQuantity, removeFromCart, placeOrder } = useStore();
+  const { cart, updateQuantity, removeFromCart } = useStore();
+  const router = useRouter();
 
   // Promo code states
   const [promoInput, setPromoInput] = useState("");
   const [appliedCode, setAppliedCode] = useState("");
   const [promoError, setPromoError] = useState("");
-  const [checkoutSuccess, setCheckoutSuccess] = useState(false);
 
   // Cart counts
   const cartCount = useMemo(() => {
@@ -82,17 +83,7 @@ export default function useShoppingCart() {
   // Place order/Checkout action
   const handleProceedToCheckout = () => {
     if (cart.length === 0) return;
-    
-    // Simulate placing order using StoreContext
-    placeOrder({
-      address: "120 Logistics Hub, Andheri East, Mumbai, Maharashtra, India",
-      paymentMethod: "Credit Card (Mock Payment)"
-    });
-
-    setCheckoutSuccess(true);
-    setTimeout(() => {
-      setCheckoutSuccess(false);
-    }, 4000);
+    router.push("/checkout");
   };
 
   return {
@@ -113,6 +104,6 @@ export default function useShoppingCart() {
     handleUpdateQuantity,
     handleRemoveItem: removeFromCart,
     handleProceedToCheckout,
-    checkoutSuccess
+    checkoutSuccess: false
   };
 }
