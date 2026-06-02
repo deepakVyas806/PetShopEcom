@@ -1,0 +1,413 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Your Cart | artPetShop</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary": "#ffffff",
+                    "surface-container-low": "#f0f3ff",
+                    "on-surface": "#151c27",
+                    "tertiary-fixed-dim": "#ccbeff",
+                    "secondary": "#635b6e",
+                    "on-secondary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "on-surface-variant": "#4a4455",
+                    "inverse-surface": "#2a313d",
+                    "on-tertiary": "#ffffff",
+                    "secondary-fixed": "#e9def5",
+                    "secondary-fixed-dim": "#cdc2d9",
+                    "on-background": "#151c27",
+                    "tertiary-fixed": "#e7deff",
+                    "outline-variant": "#ccc3d8",
+                    "inverse-on-surface": "#ebf1ff",
+                    "surface-container-high": "#e2e8f8",
+                    "outline": "#7b7487",
+                    "tertiary": "#524584",
+                    "on-tertiary-fixed": "#1e0e4e",
+                    "on-secondary-fixed": "#1e1929",
+                    "secondary-container": "#e9def5",
+                    "surface-tint": "#732ee4",
+                    "surface": "#f9f9ff",
+                    "on-primary-container": "#ede0ff",
+                    "on-secondary-container": "#696174",
+                    "on-tertiary-container": "#eae1ff",
+                    "on-error-container": "#93000a",
+                    "surface-variant": "#dce2f3",
+                    "surface-container-highest": "#dce2f3",
+                    "on-tertiary-fixed-variant": "#4a3d7c",
+                    "error-container": "#ffdad6",
+                    "primary": "#630ed4",
+                    "surface-dim": "#d3daea",
+                    "background": "#f9f9ff",
+                    "primary-fixed": "#eaddff",
+                    "inverse-primary": "#d2bbff",
+                    "surface-container": "#e7eefe",
+                    "surface-bright": "#f9f9ff",
+                    "surface-container-lowest": "#ffffff",
+                    "on-primary-fixed": "#25005a",
+                    "on-secondary-fixed-variant": "#4a4456",
+                    "on-primary-fixed-variant": "#5a00c6",
+                    "tertiary-container": "#6a5d9e",
+                    "on-error": "#ffffff",
+                    "primary-fixed-dim": "#d2bbff",
+                    "primary-container": "#7c3aed"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-lg": "32px",
+                    "margin-desktop": "40px",
+                    "margin-mobile": "16px",
+                    "base": "4px",
+                    "container-max": "1280px",
+                    "stack-md": "16px",
+                    "gutter": "24px",
+                    "stack-sm": "8px"
+            },
+            "fontFamily": {
+                    "headline-sm": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "body-base": ["Inter"],
+                    "display-lg-mobile": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "label-md": ["Inter"],
+                    "display-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "body-base": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "display-lg-mobile": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-effect {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface">
+<!-- Top Navigation Bar -->
+<header class="bg-surface/80 dark:bg-surface-container/80 backdrop-blur-xl border-b border-outline-variant/30 dark:border-outline/20 shadow-sm docked full-width top-0 sticky z-50">
+<div class="flex justify-between items-center h-16 px-margin-desktop max-w-container-max mx-auto w-full">
+<div class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed tracking-tight">artPetShop</div>
+<nav class="hidden md:flex items-center gap-stack-lg">
+<a class="font-body-base text-body-base text-on-surface-variant dark:text-on-surface-variant hover:text-primary hover:bg-primary/5 transition-all duration-200" href="#">Dogs</a>
+<a class="font-body-base text-body-base text-on-surface-variant dark:text-on-surface-variant hover:text-primary hover:bg-primary/5 transition-all duration-200" href="#">Cats</a>
+<a class="font-body-base text-body-base text-on-surface-variant dark:text-on-surface-variant hover:text-primary hover:bg-primary/5 transition-all duration-200" href="#">Birds</a>
+<a class="font-body-base text-body-base text-on-surface-variant dark:text-on-surface-variant hover:text-primary hover:bg-primary/5 transition-all duration-200" href="#">Fish</a>
+<a class="font-body-base text-body-base text-on-surface-variant dark:text-on-surface-variant hover:text-primary hover:bg-primary/5 transition-all duration-200" href="#">Small Pets</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">favorite</button>
+<div class="relative">
+<button class="material-symbols-outlined text-primary dark:text-primary-fixed font-bold border-b-2 border-primary pb-1">shopping_cart</button>
+<span class="absolute -top-1 -right-1 bg-primary text-on-primary text-[10px] w-4 h-4 flex items-center justify-center rounded-full">3</span>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">notifications</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">person</button>
+</div>
+</div>
+</header>
+<main class="max-w-container-max mx-auto px-margin-desktop py-stack-lg min-h-[calc(100vh-128px)]">
+<h1 class="font-display-lg text-display-lg mb-stack-lg text-on-surface">Your Shopping Cart</h1>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+<!-- Left Column: Cart Items -->
+<div class="lg:col-span-8 space-y-stack-md" id="cart-items-container">
+<!-- Product Card 1 -->
+<div class="bg-surface-container-lowest border border-[#F3E8FF] rounded-xl p-stack-md flex flex-col sm:flex-row gap-gutter hover:shadow-[0_10px_25px_-5px_rgba(124,58,237,0.1)] transition-all duration-300 group">
+<div class="w-full sm:w-32 h-32 rounded-lg overflow-hidden bg-surface-container flex-shrink-0">
+<img alt="Premium Leather Dog Collar" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A close-up professional photograph of a premium handcrafted leather dog collar in a rich chestnut brown. The collar is displayed on a minimalist soft lavender background with elegant studio lighting that highlights the fine stitching and polished brass hardware. The atmosphere is high-end and sophisticated, consistent with a luxury pet boutique aesthetic. Soft shadows give the product a tactile, premium quality." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWhzaIjrLT8Wq2YMKGQJwmCTPoGR67NXCOxti4qo7dIhePmk-9r_E6pub02GJ5Psk9ytQY5zmW37sy4AnB8IfTQCytPJmbh1A7Jyy3eel5uiPNvDortKBQkCZAdeq0CrK6Zk-nU_NUoFCZ_yuyPHZaScrM6UC0k5rgldGVeU5Ht7a1l2xK_82NWadOyOcwsiPjI1rgNx4E8CRKddtrajYJHiJPhoxM15NQGbEhW4-WsLjlmmEwc87YgvqsnBqjbKYHwncFT4eTmaio">
+</div>
+<div class="flex-grow flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Signature Leather Dog Collar</h3>
+<span class="font-headline-sm text-headline-sm text-primary">$45.00</span>
+</div>
+<p class="text-on-surface-variant font-body-sm text-body-sm mt-1">Size: Large | Color: Chestnut Brown</p>
+<div class="flex items-center mt-2 text-[#10B981] font-label-md text-label-md">
+<span class="material-symbols-outlined text-sm mr-1">check_circle</span>
+                                In Stock
+                            </div>
+</div>
+<div class="flex flex-wrap items-center justify-between mt-4 gap-4">
+<div class="flex items-center bg-surface-container-low rounded-full px-2 py-1 border border-outline-variant/30">
+<button class="w-8 h-8 flex items-center justify-center text-primary hover:bg-primary/10 rounded-full transition-colors active:scale-90">-</button>
+<span class="w-8 text-center font-label-md">1</span>
+<button class="w-8 h-8 flex items-center justify-center text-primary hover:bg-primary/10 rounded-full transition-colors active:scale-90">+</button>
+</div>
+<div class="flex gap-stack-md">
+<button class="flex items-center text-primary hover:underline font-label-md text-label-md transition-all">
+<span class="material-symbols-outlined text-base mr-1">bookmark</span>
+                                    Save for later
+                                </button>
+<button class="flex items-center text-error hover:opacity-80 font-label-md text-label-md transition-all">
+<span class="material-symbols-outlined text-base mr-1">delete</span>
+                                    Remove
+                                </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Product Card 2 -->
+<div class="bg-surface-container-lowest border border-[#F3E8FF] rounded-xl p-stack-md flex flex-col sm:flex-row gap-gutter hover:shadow-[0_10px_25px_-5px_rgba(124,58,237,0.1)] transition-all duration-300 group">
+<div class="w-full sm:w-32 h-32 rounded-lg overflow-hidden bg-surface-container flex-shrink-0">
+<img alt="Orthopedic Pet Bed" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A luxurious, thick orthopedic pet bed made from soft charcoal grey velvet fabric, arranged in a clean, bright modern living room setting. The lighting is airy and natural, flooding in from a side window to create soft highlights on the fabric's texture. The color palette is minimal with whites and greys, accented by a single plush toy. The mood is peaceful and cozy, emphasizing comfort and premium quality for pets." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBNGD03C2g3Jnw2RvhQWv80qUeyXWMOU-qYpCv86aC7NBHoiSpDDzBY4GcaHpt9-CuwLo4vCV2lS3wQOLoBcAxKYNXTjxvcuo576sR5MZK8NYANfHOrnzY9xCB3zl6zKnMszb4Iad2vxfzifGkDSozVCk947wqcYKJ2W69QbU529DtPYdri66F-RIjqftXPvOxdDipkc-KVv6_aGy-HZAX8BHMb6vVRJd8q15UmVtluPbabIXaxGEIe2CW-wo9ZUCLrIBKki_3QPCMX">
+</div>
+<div class="flex-grow flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Cloud-Nine Orthopedic Bed</h3>
+<span class="font-headline-sm text-headline-sm text-primary">$120.00</span>
+</div>
+<p class="text-on-surface-variant font-body-sm text-body-sm mt-1">Size: Medium | Color: Charcoal Grey</p>
+<div class="flex items-center mt-2 text-[#10B981] font-label-md text-label-md">
+<span class="material-symbols-outlined text-sm mr-1">check_circle</span>
+                                In Stock
+                            </div>
+</div>
+<div class="flex flex-wrap items-center justify-between mt-4 gap-4">
+<div class="flex items-center bg-surface-container-low rounded-full px-2 py-1 border border-outline-variant/30">
+<button class="w-8 h-8 flex items-center justify-center text-primary hover:bg-primary/10 rounded-full transition-colors active:scale-90">-</button>
+<span class="w-8 text-center font-label-md">1</span>
+<button class="w-8 h-8 flex items-center justify-center text-primary hover:bg-primary/10 rounded-full transition-colors active:scale-90">+</button>
+</div>
+<div class="flex gap-stack-md">
+<button class="flex items-center text-primary hover:underline font-label-md text-label-md transition-all">
+<span class="material-symbols-outlined text-base mr-1">bookmark</span>
+                                    Save for later
+                                </button>
+<button class="flex items-center text-error hover:opacity-80 font-label-md text-label-md transition-all">
+<span class="material-symbols-outlined text-base mr-1">delete</span>
+                                    Remove
+                                </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Product Card 3 -->
+<div class="bg-surface-container-lowest border border-[#F3E8FF] rounded-xl p-stack-md flex flex-col sm:flex-row gap-gutter hover:shadow-[0_10px_25px_-5px_rgba(124,58,237,0.1)] transition-all duration-300 group">
+<div class="w-full sm:w-32 h-32 rounded-lg overflow-hidden bg-surface-container flex-shrink-0">
+<img alt="Organic Pet Treats" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A beautifully designed bag of organic salmon and sweet potato pet treats, featuring elegant typography and soft pastel purple branding elements. The bag is placed on a clean marble countertop with soft, diffused daylight. A few heart-shaped treats are scattered artistically next to the bag. The overall aesthetic is clean, natural, and premium, suggesting health-conscious pet ownership." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQQ47_q8oAb397BlXL6eC7jfZwtVkNkDCXuSXdAuEUoHjPWNSYW3Mlq4UIPG71DCvP2E2ZBZEJ4lnn6Dx4gxH1lA0je20N57xsleQxNHrC0tretTK6B3ruUQFsC3lrEVFPwGX73M0BJZjIUp6VFi8EHs8oPXQFA3og5O-AlgXGbtt5S3nmNmLT0PwHmGc8k9PFkI8Ak7w-rRBGzE-yLLzmj8FxdM0XpUC2tJRiFnUPzouxtfzC2eP2VVxfKPAbo70FzUrDgoBqrhHv">
+</div>
+<div class="flex-grow flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Artisan Organic Salmon Treats</h3>
+<span class="font-headline-sm text-headline-sm text-primary">$18.00</span>
+</div>
+<p class="text-on-surface-variant font-body-sm text-body-sm mt-1">Flavor: Salmon &amp; Sweet Potato | 250g</p>
+<div class="flex items-center mt-2 text-[#F59E0B] font-label-md text-label-md">
+<span class="material-symbols-outlined text-sm mr-1">schedule</span>
+                                Low Stock - Only 2 left
+                            </div>
+</div>
+<div class="flex flex-wrap items-center justify-between mt-4 gap-4">
+<div class="flex items-center bg-surface-container-low rounded-full px-2 py-1 border border-outline-variant/30">
+<button class="w-8 h-8 flex items-center justify-center text-primary hover:bg-primary/10 rounded-full transition-colors active:scale-90">-</button>
+<span class="w-8 text-center font-label-md">1</span>
+<button class="w-8 h-8 flex items-center justify-center text-primary hover:bg-primary/10 rounded-full transition-colors active:scale-90">+</button>
+</div>
+<div class="flex gap-stack-md">
+<button class="flex items-center text-primary hover:underline font-label-md text-label-md transition-all">
+<span class="material-symbols-outlined text-base mr-1">bookmark</span>
+                                    Save for later
+                                </button>
+<button class="flex items-center text-error hover:opacity-80 font-label-md text-label-md transition-all">
+<span class="material-symbols-outlined text-base mr-1">delete</span>
+                                    Remove
+                                </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Order Summary -->
+<aside class="lg:col-span-4 sticky top-24">
+<div class="bg-surface-container-lowest border border-[#F3E8FF] rounded-2xl p-stack-lg shadow-sm">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-stack-md">Order Summary</h2>
+<div class="space-y-4 mb-stack-lg">
+<div class="flex justify-between font-body-base text-body-base text-on-surface-variant">
+<span>Subtotal (3 items)</span>
+<span>$183.00</span>
+</div>
+<div class="flex justify-between font-body-base text-body-base text-on-surface-variant">
+<span>Shipping</span>
+<span class="text-[#10B981]">FREE</span>
+</div>
+<div class="flex justify-between font-body-base text-body-base text-on-surface-variant">
+<span>Tax</span>
+<span>$15.55</span>
+</div>
+<div class="flex justify-between font-body-base text-body-base text-[#10B981]">
+<span>Discount (NEWPET10)</span>
+<span>-$18.30</span>
+</div>
+<div class="pt-4 border-t border-outline-variant/30 flex justify-between">
+<span class="font-headline-md text-headline-md text-on-surface">Total</span>
+<span class="font-headline-md text-headline-md text-primary">$180.25</span>
+</div>
+</div>
+<div class="mb-stack-lg">
+<label class="block font-label-md text-label-md text-on-surface-variant mb-2">Promo Code</label>
+<div class="flex gap-2">
+<input class="flex-grow bg-[#F9FAFB] border border-outline-variant rounded-lg px-4 py-2 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" placeholder="Enter code" type="text">
+<button class="bg-secondary-container text-on-secondary-container px-4 py-2 rounded-lg font-label-md hover:bg-secondary-container/80 transition-colors">Apply</button>
+</div>
+</div>
+<button class="w-full py-4 rounded-xl bg-gradient-to-r from-[#630ed4] to-[#7c3aed] text-on-primary font-headline-sm shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all duration-200">
+                        Proceed to Checkout
+                    </button>
+<div class="mt-6 flex flex-col gap-4">
+<div class="flex items-center gap-3 text-on-surface-variant">
+<span class="material-symbols-outlined text-primary">local_shipping</span>
+<span class="font-body-sm text-body-sm">Fast, tracked delivery on all orders</span>
+</div>
+<div class="flex items-center gap-3 text-on-surface-variant">
+<span class="material-symbols-outlined text-primary">verified_user</span>
+<span class="font-body-sm text-body-sm">Secure encrypted checkout</span>
+</div>
+</div>
+</div>
+<!-- Ad/Teaser below summary -->
+<div class="mt-6 bg-tertiary-fixed border border-tertiary-fixed-dim rounded-2xl p-stack-md flex items-center gap-4">
+<span class="material-symbols-outlined text-tertiary-fixed-variant text-4xl">loyalty</span>
+<div>
+<p class="font-label-md text-label-md text-on-tertiary-fixed font-bold">Earn 180 points</p>
+<p class="font-body-sm text-body-sm text-on-tertiary-fixed-variant">Join artPet Rewards to save on future orders!</p>
+</div>
+</div>
+</aside>
+</div>
+<!-- Empty State (Hidden by default) -->
+<div class="hidden flex-col items-center justify-center py-stack-lg text-center" id="empty-cart-state">
+<div class="w-64 h-64 mb-stack-lg relative">
+<div class="absolute inset-0 bg-primary/5 rounded-full blur-3xl"></div>
+<div class="relative z-10 w-full h-full flex items-center justify-center">
+<!-- Visual representation of empty state using Material Symbols and Shapes -->
+<div class="relative">
+<span class="material-symbols-outlined text-[120px] text-primary/20">shopping_basket</span>
+<span class="material-symbols-outlined absolute -bottom-4 -right-4 text-[60px] text-primary animate-bounce">pets</span>
+</div>
+</div>
+</div>
+<h2 class="font-display-lg text-display-lg-mobile text-on-surface mb-4">Your cart is empty</h2>
+<p class="text-on-surface-variant font-body-base text-body-base max-w-md mx-auto mb-stack-lg">
+                It looks like you haven't added any premium pet supplies yet. Let's find something special for your furry friend!
+            </p>
+<button class="px-8 py-3 bg-primary text-on-primary rounded-full font-headline-sm hover:shadow-lg transition-all active:scale-95">
+                Start Shopping
+            </button>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest dark:bg-inverse-surface border-t border-outline-variant full-width">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter px-margin-desktop py-stack-lg max-w-container-max mx-auto">
+<div>
+<div class="font-headline-sm text-headline-sm text-primary mb-4">artPetShop</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">Premium products for the pets that make our lives beautiful.</p>
+</div>
+<div class="flex flex-col gap-2">
+<h4 class="font-label-md text-label-md text-on-surface font-bold mb-2">Shop</h4>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary hover:translate-x-1 transition-transform duration-200" href="#">Orders</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary hover:translate-x-1 transition-transform duration-200" href="#">Appointments</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary hover:translate-x-1 transition-transform duration-200" href="#">Account</a>
+</div>
+<div class="flex flex-col gap-2">
+<h4 class="font-label-md text-label-md text-on-surface font-bold mb-2">Support</h4>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary hover:translate-x-1 transition-transform duration-200" href="#">Help Center</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary hover:translate-x-1 transition-transform duration-200" href="#">Returns</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary hover:translate-x-1 transition-transform duration-200" href="#">Secure Payment</a>
+</div>
+<div class="flex flex-col gap-2">
+<h4 class="font-label-md text-label-md text-on-surface font-bold mb-2">Newsletter</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">Get the latest pet care tips and deals.</p>
+<div class="flex">
+<input class="bg-surface border border-outline-variant rounded-l-lg px-4 py-2 w-full outline-none focus:border-primary" placeholder="Email address" type="email">
+<button class="bg-primary text-on-primary px-4 py-2 rounded-r-lg">Join</button>
+</div>
+</div>
+</div>
+<div class="max-w-container-max mx-auto px-margin-desktop py-4 border-t border-outline-variant/30 text-center font-body-sm text-body-sm text-on-surface-variant">
+            © 2024 artPetShop. All rights reserved.
+        </div>
+</footer>
+<!-- Mobile Bottom Navigation (Only visible on mobile) -->
+<div class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-2 pb-safe bg-surface/90 dark:bg-surface-container/90 backdrop-blur-md border-t border-outline-variant/20 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-sm text-[10px]">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">category</span>
+<span class="font-label-sm text-[10px]">Categories</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed bg-primary-container/30 rounded-full px-4 py-1 active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">shopping_basket</span>
+<span class="font-label-sm text-[10px]">Cart</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="font-label-sm text-[10px]">Orders</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-sm text-[10px]">Profile</span>
+</a>
+</div>
+<script>
+        // Simple interactive demo logic
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const text = e.target.innerText.trim();
+                
+                // Demo for "Remove" action
+                if (text === 'deleteRemove') {
+                    const card = e.target.closest('.bg-surface-container-lowest');
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateX(20px)';
+                    setTimeout(() => {
+                        card.remove();
+                        checkEmptyCart();
+                    }, 300);
+                }
+            });
+        });
+
+        function checkEmptyCart() {
+            const items = document.querySelectorAll('#cart-items-container > div');
+            if (items.length === 0) {
+                document.getElementById('cart-items-container').classList.add('hidden');
+                document.querySelector('aside').classList.add('hidden');
+                document.getElementById('empty-cart-state').classList.remove('hidden');
+                document.getElementById('empty-cart-state').classList.add('flex');
+            }
+        }
+    </script>
+</body></html>

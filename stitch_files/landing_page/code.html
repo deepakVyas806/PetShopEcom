@@ -1,0 +1,401 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>artPetShop | Premium Pet Care &amp; Supplies</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "on-primary": "#ffffff",
+                "surface-container-low": "#f0f3ff",
+                "on-surface": "#151c27",
+                "tertiary-fixed-dim": "#ccbeff",
+                "secondary": "#635b6e",
+                "on-secondary": "#ffffff",
+                "error": "#ba1a1a",
+                "on-surface-variant": "#4a4455",
+                "inverse-surface": "#2a313d",
+                "on-tertiary": "#ffffff",
+                "secondary-fixed": "#e9def5",
+                "secondary-fixed-dim": "#cdc2d9",
+                "on-background": "#151c27",
+                "tertiary-fixed": "#e7deff",
+                "outline-variant": "#ccc3d8",
+                "inverse-on-surface": "#ebf1ff",
+                "surface-container-high": "#e2e8f8",
+                "outline": "#7b7487",
+                "tertiary": "#524584",
+                "on-tertiary-fixed": "#1e0e4e",
+                "on-secondary-fixed": "#1e1929",
+                "secondary-container": "#e9def5",
+                "surface-tint": "#732ee4",
+                "surface": "#f9f9ff",
+                "on-primary-container": "#ede0ff",
+                "on-secondary-container": "#696174",
+                "on-tertiary-container": "#eae1ff",
+                "on-error-container": "#93000a",
+                "surface-variant": "#dce2f3",
+                "surface-container-highest": "#dce2f3",
+                "on-tertiary-fixed-variant": "#4a3d7c",
+                "error-container": "#ffdad6",
+                "primary": "#630ed4",
+                "surface-dim": "#d3daea",
+                "background": "#f9f9ff",
+                "primary-fixed": "#eaddff",
+                "inverse-primary": "#d2bbff",
+                "surface-container": "#e7eefe",
+                "surface-bright": "#f9f9ff",
+                "surface-container-lowest": "#ffffff",
+                "on-primary-fixed": "#25005a",
+                "on-secondary-fixed-variant": "#4a4456",
+                "on-primary-fixed-variant": "#5a00c6",
+                "tertiary-container": "#6a5d9e",
+                "on-error": "#ffffff",
+                "primary-fixed-dim": "#d2bbff",
+                "primary-container": "#7c3aed"
+            },
+            "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+            },
+            "spacing": {
+                "stack-lg": "32px",
+                "margin-desktop": "40px",
+                "margin-mobile": "16px",
+                "base": "4px",
+                "container-max": "1280px",
+                "stack-md": "16px",
+                "gutter": "24px",
+                "stack-sm": "8px"
+            },
+            "fontFamily": {
+                "headline-sm": ["Inter"],
+                "headline-md": ["Inter"],
+                "body-base": ["Inter"],
+                "display-lg-mobile": ["Inter"],
+                "label-sm": ["Inter"],
+                "body-sm": ["Inter"],
+                "label-md": ["Inter"],
+                "display-lg": ["Inter"]
+            },
+            "fontSize": {
+                "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                "body-base": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                "display-lg-mobile": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(243, 232, 255, 1);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .custom-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-base">
+<!-- TopNavBar -->
+<header class="bg-surface/80 dark:bg-surface-container/80 backdrop-blur-xl border-b border-outline-variant/30 dark:border-outline/20 shadow-sm docked full-width top-0 sticky z-50">
+<div class="flex justify-between items-center h-16 px-margin-desktop max-w-container-max mx-auto w-full z-50">
+<div class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed tracking-tight">artPetShop</div>
+<nav class="hidden md:flex items-center space-x-8">
+<a class="text-primary dark:text-primary-fixed font-bold border-b-2 border-primary pb-1 font-body-base text-body-base" href="#">Dogs</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary transition-all duration-200 font-body-base text-body-base" href="#">Cats</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary transition-all duration-200 font-body-base text-body-base" href="#">Birds</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary transition-all duration-200 font-body-base text-body-base" href="#">Fish</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary transition-all duration-200 font-body-base text-body-base" href="#">Small Pets</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary active:scale-95 transition-all">favorite</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary active:scale-95 transition-all">shopping_cart</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary active:scale-95 transition-all">notifications</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary active:scale-95 transition-all">person</button>
+</div>
+</div>
+</header>
+<main class="w-full">
+<!-- Hero Section -->
+<section class="relative h-[600px] overflow-hidden">
+<div class="flex transition-transform duration-700 h-full" id="hero-carousel">
+<div class="min-w-full relative h-full">
+<img class="absolute inset-0 w-full h-full object-cover" data-alt="A high-end, professionally photographed scene of a happy golden retriever sitting in a bright, modern minimalist living room with floor-to-ceiling windows. The lighting is soft and natural, emphasizing a premium lifestyle feel. The color palette features warm whites, soft lavenders, and rich wood tones. The mood is serene and luxurious, embodying high-quality pet care." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBcMLlXcu8SrlbiwnkM8pqYLwiBhQshPT4bfQphoU5Tla8cLgAKLMzbl3GXifcuCBlZ9IfQFnpxiBWc_tphc1--W_B5oFJPQd8Bb1xaQee7KJYjCoTxHXWLLq0AxLKubnKofa_uUbUJgrk6RkOQl4pIJWoI4t83MvYp0J75JDXmHAZLfNXvcGY2HZnJm7QeguizdMzDg-A6GxcFWN-gP0Cy71JN7pZS3amuRzO9EA6rg4_dsLjeVYGQ5r41PRF24xIXNz7ycSpQBTc5">
+<div class="absolute inset-0 bg-gradient-to-r from-on-surface/40 to-transparent flex items-center px-margin-desktop">
+<div class="max-w-xl text-white">
+<h1 class="font-display-lg text-display-lg mb-4">Elevated Care for Every Companion</h1>
+<p class="font-body-base text-body-base mb-8 opacity-90">Discover our curated selection of premium nutrition and artisanal accessories designed for the modern pet owner.</p>
+<button class="bg-gradient-to-r from-primary to-primary-container text-white px-8 py-3 rounded-full font-label-md text-label-md hover:shadow-lg transition-all active:scale-95">Shop Collections</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Category Grid (Shop by Pet) -->
+<section class="max-w-container-max mx-auto px-margin-desktop py-stack-lg">
+<h2 class="font-headline-md text-headline-md mb-stack-md text-on-surface">Shop by Pet</h2>
+<div class="grid grid-cols-2 md:grid-cols-5 gap-gutter">
+<!-- Dog -->
+<div class="group cursor-pointer">
+<div class="aspect-square rounded-xl overflow-hidden bg-surface-container border border-outline-variant/30 mb-3 relative">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="A studio portrait of a stylish French Bulldog wearing a designer leather collar. The background is a clean, minimalist lavender gradient. High-fashion pet photography style with soft, diffused professional lighting. The dog looks alert and healthy, representing premium quality." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhzSHTfxd_ce2WW2sI8D--QvAPX3wqmfBERa-ENUssC7a5oj64YsOVt1EsGke9EwNoi-UoFfhJT5CxDIvlkYPnBG2hPxDOAnyJZNvqw4J9r2moSsZK7EK_pViPdB-SVPMnOh4uS-3lGRohFE2k6euILgcMkYlKhMoVHg34d03WpLJ78wj7KTBpfp6D25SDSaaZ-nPBFbBPNYK-1J_GdUotyDZnkLV1jckJY6VgAScSwk_IQD4ZZQGz6DUmKLqF-MF76xn6U4_7koYH">
+<div class="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+</div>
+<p class="font-label-md text-label-md text-center group-hover:text-primary transition-colors">Dogs</p>
+</div>
+<!-- Cat -->
+<div class="group cursor-pointer">
+<div class="aspect-square rounded-xl overflow-hidden bg-surface-container border border-outline-variant/30 mb-3 relative">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="A sleek, majestic Siamese cat lounging on a velvet lilac cushion in a minimalist white-walled room. The composition is clean and symmetric, focusing on the cat's striking blue eyes. Soft, ambient lighting creates a peaceful, high-end atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-2dr4axG5LdAQme_h1Sueo6Mzok2bfUdtLCbJGsvGKPALuz50CtPMMZ3gQZWtUED5_VznzI6hOWp7Ff8ttNWOtV5ht9MDpXIljoQ2JMWvvfkT_o8apC4bwaqHm6JgNs9LZBTc5llKNPU_vrLzUYI1R0JrhUcPRuuzE6X0FTn8LQdhMh1cLx8k8DV8rCJj9FqnpSPqgc2ed5GcjYOJayjcXUqG6RRc-mX4iMKSjqyiGQoq_gvqxCT3vgTO18Z8T129b2QWRIQMlWUc">
+<div class="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+</div>
+<p class="font-label-md text-label-md text-center group-hover:text-primary transition-colors">Cats</p>
+</div>
+<!-- Bird -->
+<div class="group cursor-pointer">
+<div class="aspect-square rounded-xl overflow-hidden bg-surface-container border border-outline-variant/30 mb-3 relative">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="A colorful tropical parrot perched on a sleek, modern brass ring. The background is a soft-focus indoor garden with deep green plants and lavender accents. The image has a crisp, detailed aesthetic with bright, natural lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBNk_H_qETyoPl4kXFckjk8ocHSQKKWX1TQ7-YoZO3x-yXNJ2DTdJq4_9-JcjMf5B-FZT55W2KUV8k0RlBhqvFpYJFqsQZ2_XXsYgfb4QubspcpY7rAmf2FADYduwo2CtDH5oW9KdFv_teEWRCr3whDtgFa0n2RR39yrEc1Jtb00rEzsOUPYXrYbjtTFTT2vAr1x7le5J10u-PyVStFfP0e6Z-BOSV7tFRsxc7o9q1BM2DMbQJfNlV4Nbyr9bjbmoUohgAAgg7EEumZ">
+<div class="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+</div>
+<p class="font-label-md text-label-md text-center group-hover:text-primary transition-colors">Birds</p>
+</div>
+<!-- Fish -->
+<div class="group cursor-pointer">
+<div class="aspect-square rounded-xl overflow-hidden bg-surface-container border border-outline-variant/30 mb-3 relative">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="A high-definition close-up of a vibrant Beta fish swimming in a minimalist glass aquarium with soft purple lighting. The water is crystal clear, and the fish's fins are trailing like silk. The overall look is tranquil and sophisticated." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVJ6sCFW8hn29kwdU0TLsD_R6o3Ei_Sz5Uc3I28CKwxOHXqd_eb-Z5Gh4PGQxnHPaKeOfO9MSPd_FsPK7UyjVJFzziI5CddU9MQTo7eILIf5ZMFIMGTJIYqV5CA5iuW4t-4giBbRbdt-3UYRUPiE35TRu5g8dKX3VyKEfBGPAGVAbto9feqTYugtPdmSt39a5i20aSE___K2XODwyW1_DtE-GTSfPYuRmtEh9U9M6Ga0DSd0DU5N_nJIN1wIJykgdQoKXhOqWKXmzT">
+<div class="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+</div>
+<p class="font-label-md text-label-md text-center group-hover:text-primary transition-colors">Fish</p>
+</div>
+<!-- Small Pets -->
+<div class="group cursor-pointer">
+<div class="aspect-square rounded-xl overflow-hidden bg-surface-container border border-outline-variant/30 mb-3 relative">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="A cute hamster peeking out of a white ceramic bowl filled with natural hay. The setting is clean and bright, with a minimalist aesthetic and a pop of soft violet in the background. High-quality macro photography style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAD3LbEBvB903zjSUXfw4kM9Z1UaaUXgTuSxRhPLASfj1ItCElirDtlTT7zu1BgZlZnYByyRNeaFfLiK3Q9j8W3B2hJe9DhS7wyfrHPP2atdQqIJRH79gCJc-z5b3r9QlG12QWfMYeZErI0rOVfa5M4Q89iZz1e8EMxSSoYc4zoHCk8CgBV10pYaTZyHTsdoRY1MHyy-eGNAwpGEuy72Jd-uddJ8DvvrGjyWBW-cKYBBgI0bwcgmSQBPTMa9CoETFCE2mVEpLjELB5l">
+<div class="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+</div>
+<p class="font-label-md text-label-md text-center group-hover:text-primary transition-colors">Small Pets</p>
+</div>
+</div>
+</section>
+<!-- Best Sellers Slider -->
+<section class="bg-surface-container-low py-stack-lg">
+<div class="max-w-container-max mx-auto px-margin-desktop">
+<div class="flex justify-between items-center mb-stack-md">
+<h2 class="font-headline-md text-headline-md text-on-surface">Best Sellers</h2>
+<a class="text-primary font-label-md text-label-md flex items-center gap-1 hover:underline" href="#">View All <span class="material-symbols-outlined text-sm">arrow_forward</span></a>
+</div>
+<div class="flex gap-gutter overflow-x-auto pb-6 custom-scrollbar">
+<!-- Product Card -->
+<div class="min-w-[280px] glass-card rounded-xl p-4 group hover:shadow-xl transition-all duration-300">
+<div class="aspect-square rounded-lg overflow-hidden mb-4 relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform" data-alt="A premium bag of high-quality organic dog food with elegant, minimalist packaging in white and rich purple. The bag is placed on a clean white surface with natural morning light casting soft shadows. The visual style is pharmaceutical yet warm." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD70Kuyk3R9WwQXyzo70SUTPGtcqUQxpXBcXJ374A6ronVEN-vdBKwBP0A-9xNW_sdGWQGzIgIywkrhwo3H-yPRX_ZCDgmlFmQtSP19NRggmZccEiOg62KFnnOJLPsPS75ytdvf_u5Zx0k9DNKa2F7yh1KSBN8rTdUWec2AMIH1LO3xj8wOyrmUPmO9F3tdE6i57zbWNiRrhOYqH1ObQsyl-acULNVEbk9vpKTLDbDKqaHzOegQLqrjTb8h6LIkRqwqNqEQd-Lk-qHM">
+<span class="absolute top-2 left-2 bg-primary text-white text-[10px] font-bold px-2 py-1 rounded-full">POPULAR</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-1">Organic Peak Nutrition</h3>
+<p class="text-on-surface-variant font-body-sm text-body-sm mb-3">Grain-free holistic formula</p>
+<div class="flex justify-between items-center">
+<span class="font-headline-sm text-headline-sm text-primary">$49.99</span>
+<button class="bg-secondary-container text-on-secondary-container p-2 rounded-lg hover:bg-primary hover:text-white transition-colors">
+<span class="material-symbols-outlined">add_shopping_cart</span>
+</button>
+</div>
+</div>
+<!-- Product Card 2 -->
+<div class="min-w-[280px] glass-card rounded-xl p-4 group hover:shadow-xl transition-all duration-300">
+<div class="aspect-square rounded-lg overflow-hidden mb-4 relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform" data-alt="A designer pet carrier in a soft lilac and cream color scheme, featuring high-quality leather handles and mesh windows. The product is presented in a high-end retail boutique setting with bright, diffuse lighting and a focus on craftsmanship." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjzAKqRLPz3ra9DhOyNaODCoVF4uC3Jjctr4Y3Por5WqmNjgWX5gWeX81CTamiP_6xC4Izl2qOq507F_TwWSW0PLzS_QM4LQ903WXszoOJ7ETxM5Q9b8-TDdHl94ArAkGMLWxhbGva_ozf7JiwSmpKovzGLGW5mUBs9vj0rSgv7M8X02ULVYnUvn159ndbem-J_acfFvEaw44Mt-V_4YLB3nvBk6nvYgWng6rJ6wmLFt5ZaaK-tb4kOtiPNSJ_codMK4DXREGJlKKr">
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-1">Traveler Luxe Carrier</h3>
+<p class="text-on-surface-variant font-body-sm text-body-sm mb-3">Vegan leather, breathable mesh</p>
+<div class="flex justify-between items-center">
+<span class="font-headline-sm text-headline-sm text-primary">$129.00</span>
+<button class="bg-secondary-container text-on-secondary-container p-2 rounded-lg hover:bg-primary hover:text-white transition-colors">
+<span class="material-symbols-outlined">add_shopping_cart</span>
+</button>
+</div>
+</div>
+<!-- Product Card 3 -->
+<div class="min-w-[280px] glass-card rounded-xl p-4 group hover:shadow-xl transition-all duration-300">
+<div class="aspect-square rounded-lg overflow-hidden mb-4 relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform" data-alt="A sleek, modern smart collar for dogs with a metallic finish and a discreet LED indicator. The collar is shown on a wooden stand in a tech-forward minimalist studio. The lighting highlights the texture of the materials." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCf6oPbKOadpfy_JcybTehdbDijIECYyi_Ircy3hA2rp45yni0pXkJXp8nDtlOd9bZ_BSrz_VtY1bmxVMG-2ebIFhIxVsprRo5fD0rLqlwVAwfuby7JM279HeF6fJmtwEqmuYcfGTlm8iXxle7r17QCUFQAk1ljM22UScXHaLhxBgBKw7RJ_gGb74A_zz7bz0IpiPVlEulyeFRBDYqc0OTjKt5dw4dYavMJtetig1w-fZmQy7vFK3dINPN20VFY3-EatC6X3G0jwvk-">
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-1">Guardian Smart Collar</h3>
+<p class="text-on-surface-variant font-body-sm text-body-sm mb-3">GPS Tracking &amp; Health Stats</p>
+<div class="flex justify-between items-center">
+<span class="font-headline-sm text-headline-sm text-primary">$89.00</span>
+<button class="bg-secondary-container text-on-secondary-container p-2 rounded-lg hover:bg-primary hover:text-white transition-colors">
+<span class="material-symbols-outlined">add_shopping_cart</span>
+</button>
+</div>
+</div>
+<!-- Product Card 4 -->
+<div class="min-w-[280px] glass-card rounded-xl p-4 group hover:shadow-xl transition-all duration-300">
+<div class="aspect-square rounded-lg overflow-hidden mb-4 relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform" data-alt="A collection of handmade ceramic pet bowls in various shades of lavender and white. They are arranged artfully on a marble countertop with soft, bright lighting coming from a nearby window. Minimalist and elegant design." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAiWV3Gaum1af5SRf2ID9IhHSNzZUImNNnkspXr9nxcm8PANw5wilPJ5o0idb4sqMKKLhCv16llDd3xJcH22LZXbn6HTW9W2vNDx2VZJebOM6G2CJN4eXdKW5w4NnXXtiQvoerGY8FzsHC9iF8exMy7hsnxWdEQ2FjEHJt-7VwIBLn2EFX6ABlkuXL19JqUamLXcFNyeVFEyzhsGlxUhFn3hK5uldKlWiwk2_aaiCfpTX9fOKXsr6LLiULfaWRidIYDdGhE1hTzdAz3">
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-1">Artisan Ceramic Bowl</h3>
+<p class="text-on-surface-variant font-body-sm text-body-sm mb-3">Hand-glazed stoneware</p>
+<div class="flex justify-between items-center">
+<span class="font-headline-sm text-headline-sm text-primary">$34.50</span>
+<button class="bg-secondary-container text-on-secondary-container p-2 rounded-lg hover:bg-primary hover:text-white transition-colors">
+<span class="material-symbols-outlined">add_shopping_cart</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Services Section -->
+<section class="max-w-container-max mx-auto px-margin-desktop py-stack-lg">
+<h2 class="font-headline-md text-headline-md mb-stack-md text-on-surface">Our Services</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<div class="relative h-80 rounded-xl overflow-hidden group cursor-pointer shadow-lg">
+<img class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="A professional dog groomer carefully brushing a fluffy white poodle in a high-end, modern grooming spa. The background features sleek white tiles and lavender accents. The atmosphere is calm and professional with high-key lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAMJLwysOQgFEFqxPQ2utHm0N79V411N6ngWBxjSthJSlCwcYrWy6N3Fe2-p4VYvlqosgcDzKKZ3HaZY6HZioWRy6Wyk36sqKanLYp9HwF9i2ph1ZrKR9JPtxNwH1kKZH3jfXiiJhW-Pu0FDlYOmUod9LD1e7wE2Z8pohWpfhIwZEKEhHpzaLn9Z4Z6hMekVkZ01Jp6v89WuKDuH82_oyqFwrFxx7tecT09bmPLIh6YksKuePbaw_tg3yv3N7kluIWYM2p0MaQzYpTa">
+<div class="absolute inset-0 bg-gradient-to-t from-on-surface/80 via-transparent to-transparent flex flex-col justify-end p-8">
+<h3 class="text-white font-headline-md text-headline-md mb-2">Luxury Grooming</h3>
+<p class="text-white/90 font-body-sm text-body-sm mb-4">Spa treatments and stylistic grooming by certified experts.</p>
+<button class="w-fit border border-white text-white px-6 py-2 rounded-full font-label-md text-label-md hover:bg-white hover:text-on-surface transition-colors">Book Now</button>
+</div>
+</div>
+<div class="relative h-80 rounded-xl overflow-hidden group cursor-pointer shadow-lg">
+<img class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="A friendly veterinarian in a clean, modern clinic setting, examining a small puppy. The lighting is bright and reassuring. The aesthetic is professional, featuring high-end medical equipment in a minimalist environment with soft purple details." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4ftmhpXhyCsIRU_jQZVH3_i8vc48BJhFEAs6a6_IjxNc_DZ8H-k7XaTeTIkky4yoGCmhaFTGHivIP5Zj_aCrCufnVicBMxHuOCSoCGU2qszby6eO7IB3GbKf_iLqQAZjNw8_pAb5514qhbZaNJMu-sULQLIoBKCpX2L110v1f09jwOnJOr9a19XB9W9fk2jVdW-u-vTWVippTdM7VbBJnFWIPqyugx43gfRauoMdlYvwSslgJxAhlduFrwhR9bLe8wqO8FshbHcoU">
+<div class="absolute inset-0 bg-gradient-to-t from-on-surface/80 via-transparent to-transparent flex flex-col justify-end p-8">
+<h3 class="text-white font-headline-md text-headline-md mb-2">Vet Consultation</h3>
+<p class="text-white/90 font-body-sm text-body-sm mb-4">Telehealth or in-person checkups for complete peace of mind.</p>
+<button class="w-fit border border-white text-white px-6 py-2 rounded-full font-label-md text-label-md hover:bg-white hover:text-on-surface transition-colors">Schedule Visit</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Trust Indicators -->
+<section class="bg-primary/5 py-stack-lg">
+<div class="max-w-container-max mx-auto px-margin-desktop grid grid-cols-1 md:grid-cols-4 gap-gutter text-center">
+<div class="flex flex-col items-center">
+<span class="material-symbols-outlined text-primary text-4xl mb-3">verified</span>
+<h4 class="font-headline-sm text-headline-sm text-on-surface mb-1">Certified Products</h4>
+<p class="text-on-surface-variant font-body-sm text-body-sm">Every item is vet-approved</p>
+</div>
+<div class="flex flex-col items-center">
+<span class="material-symbols-outlined text-primary text-4xl mb-3">local_shipping</span>
+<h4 class="font-headline-sm text-headline-sm text-on-surface mb-1">Priority Delivery</h4>
+<p class="text-on-surface-variant font-body-sm text-body-sm">Free shipping over $50</p>
+</div>
+<div class="flex flex-col items-center">
+<span class="material-symbols-outlined text-primary text-4xl mb-3">volunteer_activism</span>
+<h4 class="font-headline-sm text-headline-sm text-on-surface mb-1">Love &amp; Care</h4>
+<p class="text-on-surface-variant font-body-sm text-body-sm">Ethically sourced supplies</p>
+</div>
+<div class="flex flex-col items-center">
+<span class="material-symbols-outlined text-primary text-4xl mb-3">support_agent</span>
+<h4 class="font-headline-sm text-headline-sm text-on-surface mb-1">24/7 Assistance</h4>
+<p class="text-on-surface-variant font-body-sm text-body-sm">Expert pet care advice</p>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest dark:bg-inverse-surface border-t border-outline-variant">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter px-margin-desktop py-stack-lg max-w-container-max mx-auto">
+<div>
+<div class="font-headline-sm text-headline-sm text-primary mb-4">artPetShop</div>
+<p class="text-on-surface-variant font-body-sm text-body-sm mb-4 leading-relaxed">Redefining pet care through artful design and uncompromising quality. Because they deserve the best.</p>
+<div class="flex gap-4">
+<span class="material-symbols-outlined text-on-surface-variant hover:text-primary cursor-pointer transition-colors">social_leaderboard</span>
+<span class="material-symbols-outlined text-on-surface-variant hover:text-primary cursor-pointer transition-colors">photo_camera</span>
+<span class="material-symbols-outlined text-on-surface-variant hover:text-primary cursor-pointer transition-colors">videocam</span>
+</div>
+</div>
+<div>
+<h5 class="font-label-md text-label-md text-on-surface mb-4">Quick Links</h5>
+<ul class="space-y-3">
+<li><a class="text-on-surface-variant hover:text-primary hover:translate-x-1 transition-transform inline-block font-body-sm text-body-sm" href="#">Orders</a></li>
+<li><a class="text-on-surface-variant hover:text-primary hover:translate-x-1 transition-transform inline-block font-body-sm text-body-sm" href="#">Appointments</a></li>
+<li><a class="text-on-surface-variant hover:text-primary hover:translate-x-1 transition-transform inline-block font-body-sm text-body-sm" href="#">Account</a></li>
+</ul>
+</div>
+<div>
+<h5 class="font-label-md text-label-md text-on-surface mb-4">Support</h5>
+<ul class="space-y-3">
+<li><a class="text-on-surface-variant hover:text-primary hover:translate-x-1 transition-transform inline-block font-body-sm text-body-sm" href="#">Support Center</a></li>
+<li><a class="text-on-surface-variant hover:text-primary hover:translate-x-1 transition-transform inline-block font-body-sm text-body-sm" href="#">Secure Payment</a></li>
+<li><a class="text-on-surface-variant hover:text-primary hover:translate-x-1 transition-transform inline-block font-body-sm text-body-sm" href="#">Privacy Policy</a></li>
+</ul>
+</div>
+<div>
+<h5 class="font-label-md text-label-md text-on-surface mb-4">Newsletter</h5>
+<p class="text-on-surface-variant font-body-sm text-body-sm mb-4">Join our community for exclusive tips and offers.</p>
+<div class="flex gap-2">
+<input class="bg-surface border border-outline-variant rounded-lg px-4 py-2 text-body-sm w-full focus:ring-1 focus:ring-primary focus:border-primary outline-none" placeholder="Your email" type="email">
+<button class="bg-primary text-white p-2 rounded-lg hover:bg-primary-container transition-colors">
+<span class="material-symbols-outlined">send</span>
+</button>
+</div>
+</div>
+</div>
+<div class="px-margin-desktop py-4 border-t border-outline-variant/30 text-center max-w-container-max mx-auto">
+<p class="text-on-surface-variant font-body-sm text-body-sm opacity-60">© 2024 artPetShop. All rights reserved.</p>
+</div>
+</footer>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-2 pb-safe bg-surface/90 dark:bg-surface-container/90 backdrop-blur-md border-t border-outline-variant/20 shadow-[0_-4px_12px_rgba(0,0,0,0.05)]">
+<div class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed bg-primary-container/30 rounded-full px-4 py-1 active:scale-90 transition-transform duration-150">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-sm text-[10px]">Home</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant active:scale-90 transition-transform duration-150">
+<span class="material-symbols-outlined">category</span>
+<span class="font-label-sm text-[10px]">Categories</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant active:scale-90 transition-transform duration-150">
+<span class="material-symbols-outlined">shopping_basket</span>
+<span class="font-label-sm text-[10px]">Cart</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant active:scale-90 transition-transform duration-150">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="font-label-sm text-[10px]">Orders</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant active:scale-90 transition-transform duration-150">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-sm text-[10px]">Profile</span>
+</div>
+</nav>
+<script>
+        // Simple parallax or micro-interactions could be added here
+        document.addEventListener('mousemove', (e) => {
+            const cards = document.querySelectorAll('.glass-card');
+            cards.forEach(card => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                if (x > 0 && x < rect.width && y > 0 && y < rect.height) {
+                    card.style.setProperty('--mouse-x', `${x}px`);
+                    card.style.setProperty('--mouse-y', `${y}px`);
+                }
+            });
+        });
+    </script>
+</body></html>
