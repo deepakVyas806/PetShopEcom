@@ -42,7 +42,7 @@ export default function ModifiedHeader() {
 
   const navLinks = [
     { label: "Shop",      href: "/marketplace",    guarded: false },
-    { label: "Services",  href: "/services/book",  guarded: false },
+    { label: "Services",  href: "/services",        guarded: false },
     { label: "My Orders", href: "/orders",          guarded: true  },
   ];
 

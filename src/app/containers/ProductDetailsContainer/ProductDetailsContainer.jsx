@@ -1,8 +1,62 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import useProductDetails from "./ProductDetailsContainer.hook";
+import { fmt } from "@/lib/currency";
+import ReviewCard from "@/app/containers/ReviewsContainer/Components/ReviewCard";
+import RatingSummary from "@/app/containers/ReviewsContainer/Components/RatingSummary";
+import StarRating from "@/app/containers/ReviewsContainer/Components/StarRating";
+
+const PRODUCT_RATING_DISTRIBUTION = [
+  { star: "5", pct: 72 },
+  { star: "4", pct: 16 },
+  { star: "3", pct: 7 },
+  { star: "2", pct: 3 },
+  { star: "1", pct: 2 },
+];
+
+const PRODUCT_REVIEWS = [
+  {
+    id: "pr1",
+    name: "Sarah Jenkins",
+    initials: "SJ",
+    avatarBg: "bg-purple-100",
+    avatarFg: "text-purple-700",
+    rating: 5,
+    verified: true,
+    date: "May 12, 2025",
+    title: "Total game changer for my Labrador!",
+    body: "My Labrador has sensitive skin and this food was a game changer. Her coat is finally shiny again and she's so much more energetic.",
+    photos: [],
+  },
+  {
+    id: "pr2",
+    name: "Mark Thompson",
+    initials: "MT",
+    avatarBg: "bg-blue-100",
+    avatarFg: "text-blue-700",
+    rating: 4,
+    verified: true,
+    date: "Apr 28, 2025",
+    title: "Great quality, wish it came in larger bags",
+    body: "Great quality, though I wish it came in even larger bags. My Husky loves the taste and finishes it in no time.",
+    photos: [],
+  },
+  {
+    id: "pr3",
+    name: "Emily Chen",
+    initials: "EC",
+    avatarBg: "bg-green-100",
+    avatarFg: "text-green-700",
+    rating: 5,
+    verified: true,
+    date: "Apr 10, 2025",
+    title: "Premium packaging, premium results",
+    body: "Excellent delivery speed and the packaging is so premium. Worth every penny for my rescue dog. Will keep ordering.",
+    photos: [],
+  },
+];
 
 export default function ProductDetailsContainer({ productId }) {
   const {
@@ -25,49 +79,23 @@ export default function ProductDetailsContainer({ productId }) {
     handleAddToCart,
     handleBuyNow,
     handleAddBundleToCart,
-    addedToCartSuccess
+    addedToCartSuccess,
+    removeFromCart,
   } = useProductDetails(productId);
 
-  // Helper to render star ratings
-  const renderStars = (rating, sizeClass = "text-[12px]") => {
-    const stars = [];
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 !== 0;
+  const [inCart, setInCart] = useState(false);
 
-    for (let i = 1; i <= 5; i++) {
-      if (i <= fullStars) {
-        stars.push(
-          <span
-            key={i}
-            className={`material-symbols-outlined ${sizeClass} text-[#FFB800]`}
-            style={{ fontVariationSettings: "'FILL' 1" }}
-          >
-            star
-          </span>
-        );
-      } else if (i === fullStars + 1 && hasHalfStar) {
-        stars.push(
-          <span
-            key={i}
-            className={`material-symbols-outlined ${sizeClass} text-[#FFB800]`}
-            style={{ fontVariationSettings: "'FILL' 0.5" }}
-          >
-            star_half
-          </span>
-        );
-      } else {
-        stars.push(
-          <span
-            key={i}
-            className={`material-symbols-outlined ${sizeClass} text-[#FFB800]`}
-            style={{ fontVariationSettings: "'FILL' 0" }}
-          >
-            star
-          </span>
-        );
-      }
-    }
-    return stars;
+  const [helpfulCounts, setHelpfulCounts] = useState({ pr1: 17, pr2: 9, pr3: 24 });
+  const [votedIds, setVotedIds] = useState(new Set());
+
+  const toggleHelpful = (id) => {
+    const isVoted = votedIds.has(id);
+    setVotedIds((prev) => {
+      const next = new Set(prev);
+      isVoted ? next.delete(id) : next.add(id);
+      return next;
+    });
+    setHelpfulCounts((c) => ({ ...c, [id]: c[id] + (isVoted ? -1 : 1) }));
   };
 
   // Helper to get estimated delivery date range
@@ -153,9 +181,7 @@ export default function ProductDetailsContainer({ productId }) {
 
               {/* Star Rating summary */}
               <div className="flex items-center space-x-2 select-none flex-wrap gap-y-1">
-                <div className="flex">
-                  {renderStars(product.rating || 4.8, "text-[14px]")}
-                </div>
+                <StarRating rating={product.rating || 4.8} size={14} />
                 <span className="text-xs text-on-surface-variant font-medium">
                   {product.rating || 4.8}
                 </span>
@@ -182,11 +208,11 @@ export default function ProductDetailsContainer({ productId }) {
             <div className="p-5 bg-surface-container-low rounded-2xl border border-outline-variant/20 shadow-sm space-y-4">
               <div className="flex items-baseline flex-wrap gap-2.5">
                 <span className="text-2xl md:text-3xl font-extrabold text-primary">
-                  ${product.price.toFixed(2)}
+                  {fmt(product.price)}
                 </span>
                 {product.mrp && (
                   <span className="text-sm text-on-surface-variant line-through font-medium">
-                    ${product.mrp.toFixed(2)}
+                    {fmt(product.mrp)}
                   </span>
                 )}
                 {discountPercent > 0 && (
@@ -227,41 +253,48 @@ export default function ProductDetailsContainer({ productId }) {
                 </div>
               </div>
 
-              {/* Sleek Minimalistic Controls Row */}
+              {/* Controls Row */}
               <div className="flex flex-col sm:flex-row gap-2 pt-2 items-stretch">
-                {/* Quantity Box */}
-                <div className="flex items-center justify-between bg-white dark:bg-surface-container-lowest border border-outline-variant/30 rounded-lg h-9 w-full sm:w-24 select-none">
+                {inCart ? (
+                  /* Quantity stepper — replaces Add to Cart after first click */
+                  <div className="flex items-center justify-between bg-white dark:bg-surface-container-lowest border border-outline-variant/30 rounded-lg h-9 flex-1 select-none">
+                    <button
+                      onClick={() => {
+                        if (quantity === 1) {
+                          removeFromCart(product.id);
+                          setInCart(false);
+                        } else {
+                          decrementQuantity();
+                        }
+                      }}
+                      className={`px-3 h-full transition-colors cursor-pointer border-none outline-none flex items-center justify-center ${
+                        quantity === 1
+                          ? "text-error"
+                          : "text-on-surface-variant hover:bg-surface-container-low"
+                      }`}
+                    >
+                      <span className="material-symbols-outlined text-sm">
+                        {quantity === 1 ? "delete" : "remove"}
+                      </span>
+                    </button>
+                    <span className="font-bold text-on-surface w-6 text-center text-xs">{quantity}</span>
+                    <button
+                      onClick={() => { incrementQuantity(); handleAddToCart(); }}
+                      className="px-3 h-full hover:bg-surface-container-low transition-colors cursor-pointer border-none outline-none text-on-surface-variant flex items-center justify-center"
+                    >
+                      <span className="material-symbols-outlined text-sm">add</span>
+                    </button>
+                  </div>
+                ) : (
+                  /* Add to Cart — shown only before first click */
                   <button
-                    onClick={decrementQuantity}
-                    className="px-2 h-full hover:bg-surface-container-low transition-colors cursor-pointer border-none outline-none text-on-surface-variant flex items-center justify-center"
+                    onClick={() => { handleAddToCart(); setInCart(true); }}
+                    className="flex-1 h-9 rounded-full font-semibold text-xs transition-all active:scale-95 cursor-pointer flex items-center justify-center gap-1.5 border-none hover:shadow-md bg-primary-container text-on-primary-container hover:bg-primary hover:text-on-primary"
                   >
-                    <span className="material-symbols-outlined text-sm">remove</span>
+                    <span className="material-symbols-outlined leading-none" style={{ fontSize: 16 }}>add_shopping_cart</span>
+                    Add to Cart
                   </button>
-                  <span className="font-bold text-on-surface w-6 text-center text-xs">
-                    {quantity}
-                  </span>
-                  <button
-                    onClick={incrementQuantity}
-                    className="px-2 h-full hover:bg-surface-container-low transition-colors cursor-pointer border-none outline-none text-on-surface-variant flex items-center justify-center"
-                  >
-                    <span className="material-symbols-outlined text-sm">add</span>
-                  </button>
-                </div>
-
-                {/* Add to Cart Button */}
-                <button
-                  onClick={handleAddToCart}
-                  className={`flex-1 h-9 rounded-full font-semibold text-xs transition-all active:scale-95 cursor-pointer flex items-center justify-center gap-1.5 border-none hover:shadow-md ${
-                    addedToCartSuccess
-                      ? "bg-primary text-on-primary"
-                      : "bg-primary-container text-on-primary-container hover:bg-primary hover:text-on-primary"
-                  }`}
-                >
-                  <span className="material-symbols-outlined leading-none" style={{ fontSize: 16 }}>
-                    {addedToCartSuccess ? "check" : "add_shopping_cart"}
-                  </span>
-                  {addedToCartSuccess ? "Added!" : "Add to Cart"}
-                </button>
+                )}
 
                 {/* Buy Now Button */}
                 <button
@@ -293,13 +326,13 @@ export default function ProductDetailsContainer({ productId }) {
         </div>
 
         {/* Frequently Bought Together Bundle */}
-        <section className="mt-12">
-          <h2 className="font-headline-sm text-headline-sm mb-4 flex items-center gap-1.5 font-bold text-on-surface">
-            <span className="material-symbols-outlined text-primary">shopping_basket</span>
+        <section className="mt-8">
+          <h2 className="text-xs font-bold mb-3 flex items-center gap-1.5 text-on-surface">
+            <span className="material-symbols-outlined text-primary text-base">shopping_basket</span>
             Frequently Bought Together
           </h2>
-          
-          <div className="bg-surface-container/50 dark:bg-surface-container/30 p-5 rounded-2xl border border-outline-variant/20 flex flex-col md:flex-row items-center justify-center gap-6">
+
+          <div className="bg-surface-container/50 dark:bg-surface-container/30 p-4 rounded-xl border border-outline-variant/20 flex flex-col md:flex-row items-center justify-center gap-4">
             <div className="flex items-center gap-4 flex-wrap justify-center select-none">
               
               {/* Product Card 1: Current Item */}
@@ -336,7 +369,7 @@ export default function ProductDetailsContainer({ productId }) {
                   </span>
                 </div>
                 <div className="absolute bottom-1.5 left-1.5 right-1.5 text-center bg-black/60 text-white text-[9px] rounded py-0.5 font-bold">
-                  +${bundleItems[0].price.toFixed(2)}
+                  +{fmt(bundleItems[0].price)}
                 </div>
               </div>
 
@@ -362,23 +395,19 @@ export default function ProductDetailsContainer({ productId }) {
                   </span>
                 </div>
                 <div className="absolute bottom-1.5 left-1.5 right-1.5 text-center bg-black/60 text-white text-[9px] rounded py-0.5 font-bold">
-                  +${bundleItems[1].price.toFixed(2)}
+                  +{fmt(bundleItems[1].price)}
                 </div>
               </div>
 
             </div>
 
             {/* Bundle Total Calculator Box */}
-            <div className="md:border-l border-outline-variant/30 md:pl-6 flex flex-col items-center md:items-start space-y-2">
-              <span className="text-on-surface-variant text-xs font-semibold">
-                Total for items:
-              </span>
-              <span className="text-xl md:text-2xl font-black text-on-surface">
-                ${bundleTotal.toFixed(2)}
-              </span>
+            <div className="md:border-l border-outline-variant/30 md:pl-5 flex flex-col items-center md:items-start space-y-2">
+              <span className="text-on-surface-variant text-xs font-semibold">Total for items:</span>
+              <span className="text-sm font-black text-on-surface">{fmt(bundleTotal)}</span>
               <button
                 onClick={handleAddBundleToCart}
-                className="bg-primary text-on-primary text-xs px-6 py-2.5 rounded-full font-bold hover:bg-primary-hover active:scale-95 transition-all shadow-md cursor-pointer border-none outline-none"
+                className="bg-primary text-on-primary text-xs px-4 py-2 rounded-full font-bold hover:brightness-105 active:scale-95 transition-all shadow-sm cursor-pointer border-none outline-none"
               >
                 Add Bundle to Cart
               </button>
@@ -387,14 +416,14 @@ export default function ProductDetailsContainer({ productId }) {
         </section>
 
         {/* Tabbed Detailed Content */}
-        <section className="mt-12">
+        <section className="mt-8">
           {/* Tab Headers */}
-          <div className="flex border-b border-outline-variant/30 mb-stack-md select-none overflow-x-auto">
+          <div className="flex border-b border-outline-variant/30 mb-4 select-none overflow-x-auto">
             {["Specifications", "Nutrition Guide", "Sourcing"].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-5 py-3 border-b-2 text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+                className={`px-4 py-2 border-b-2 text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
                   activeTab === tab
                     ? "border-primary text-primary"
                     : "border-transparent text-on-surface-variant hover:text-primary"
@@ -407,10 +436,10 @@ export default function ProductDetailsContainer({ productId }) {
 
           {/* Tab Body */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-gutter">
-            
+
             {/* Left Pane: Detail Values Table */}
-            <div className="bg-white dark:bg-surface-container-lowest p-5 rounded-2xl border border-outline-variant/20 shadow-xs space-y-3">
-              <h3 className="text-sm font-bold text-on-surface mb-2">Product Specifications</h3>
+            <div className="bg-white dark:bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/20 shadow-xs space-y-3">
+              <h3 className="text-xs font-bold text-on-surface mb-1">Product Specifications</h3>
               
               {activeTab === "Specifications" && (
                 <div className="space-y-2.5">
@@ -484,10 +513,9 @@ export default function ProductDetailsContainer({ productId }) {
             </div>
 
             {/* Right Pane: Key Benefits List */}
-            <div className="bg-surface-container-low p-5 rounded-2xl border border-outline-variant/20 shadow-xs space-y-4">
-              <h3 className="text-sm font-bold text-on-surface">Key Benefits</h3>
-              
-              <ul className="space-y-3.5">
+            <div className="bg-surface-container-low p-4 rounded-xl border border-outline-variant/20 shadow-xs space-y-3">
+              <h3 className="text-xs font-bold text-on-surface">Key Benefits</h3>
+              <ul className="space-y-2.5">
                 <li className="flex items-start gap-2.5">
                   <span className="material-symbols-outlined text-green-600 mt-0.5 text-base">check_circle</span>
                   <div>
@@ -515,168 +543,41 @@ export default function ProductDetailsContainer({ productId }) {
           </div>
         </section>
 
-        {/* Customer Reviews Panel */}
-        <section className="mt-12">
-          
-          {/* Header toolbar */}
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-6 gap-3">
+        {/* Customer Reviews — same components as ServiceDetailsContainer */}
+        <section className="mt-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-3 gap-3">
             <div>
-              <h2 className="font-headline-sm text-headline-sm text-on-surface font-bold">Community Stories</h2>
+              <h2 className="text-xs font-bold text-on-surface">Community Stories</h2>
               <p className="text-on-surface-variant text-xs">See what other pet parents are saying</p>
             </div>
-            <button className="bg-white dark:bg-surface-container-lowest border-2 border-primary text-primary font-bold text-xs px-4 py-1.5 rounded-full hover:bg-primary/5 active:scale-95 transition-all cursor-pointer">
+            <button className="bg-white dark:bg-surface-container-lowest border-2 border-primary text-primary font-bold text-xs px-4 py-1.5 rounded-full hover:bg-primary/5 active:scale-95 transition-all cursor-pointer self-start sm:self-auto">
               Write a Review
             </button>
           </div>
 
-          {/* Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-gutter">
-            
-            {/* Review Card 1 */}
-            <div className="bg-white dark:bg-surface-container-lowest p-4 rounded-2xl border border-outline-variant/20 shadow-xs space-y-3.5 flex flex-col justify-between">
-              <div className="space-y-2">
-                <div className="flex items-center space-x-2.5">
-                  <div className="w-9 h-9 rounded-full bg-surface-container-high overflow-hidden border border-primary/20">
-                    <img
-                      alt="Sarah Jenkins"
-                      className="w-full h-full object-cover"
-                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9LESqyMHcgOTvwOfQNxBr9zXOy-4T_v5LLMBTxnaxmjyPPQ_0fZGn0ChrNV25SDrs4VZN1gH4nGipcW01_WJ3PtzmbIFWWAGq1YNNUpzw8SZmncWWU2UCJxnQOKD19pMGuCRH-w2Nz0OFSwUwJ5Ffonxg0aM6YqDmUbCK0kxVivk142pRyAk_13ErtnlnulIP7whf4O4FQb56PjRH9Hq0Etl6qfar9quYok5CbrDERxnFyL7GKPCJlL4GpJdbvdLe4f7JTRLYmMLc"
-                    />
-                  </div>
-                  <div>
-                    <div className="font-bold text-xs text-on-surface">Sarah Jenkins</div>
-                    <div className="flex select-none">
-                      {renderStars(5, "text-[12px]")}
-                    </div>
-                  </div>
-                </div>
-                
-                <p className="text-on-surface-variant text-xs italic leading-relaxed">
-                  "My Labrador has sensitive skin and this food was a game changer. Her coat is finally shiny again!"
-                </p>
-              </div>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+            <aside className="lg:col-span-4">
+              <RatingSummary product={{ ...product, ratingDistribution: PRODUCT_RATING_DISTRIBUTION }} />
+            </aside>
 
-              <div className="space-y-2 mt-2">
-                {/* User Pet Photos */}
-                <div className="grid grid-cols-2 gap-1.5 select-none">
-                  <div className="h-16 rounded-lg overflow-hidden bg-surface-container border border-outline-variant/20">
-                    <img
-                      alt="User Pet 1"
-                      className="w-full h-full object-cover hover:scale-105 transition-transform"
-                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuBf4VlV3ckog_cxIFMuFhJvCsqDdTdbSVa1CNGlvvec_kj8F_gFEIQFOFEbgbN4qP3BWpht8vwnEj0e4PvIzhTz9FiDFbytz_rj8j59d7D2PuAcLK0PwoH24J3kZbw4wOzmHfiPScRQG-RVXQk3u-P4NGhO-bf_y3lZAPty9--4rrxiGSI5SwGUDeht9DGQz_BavnBn4pDIOAOSvwcuW0-6Ywh39kIJkWd_uUhmviq8lOf7oTjjLLOH9MpbnTuW-9rwgOv-mDn-xBeW"
-                    />
-                  </div>
-                  <div className="h-16 rounded-lg overflow-hidden bg-surface-container border border-outline-variant/20">
-                    <img
-                      alt="User Pet 2"
-                      className="w-full h-full object-cover hover:scale-105 transition-transform"
-                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuChmW-vsKR1T42Icof-4T-b6EavjTEB1cBMDAsRm25ywIlTOcGv5K8eX9RgD4d87HvQwoSlfJXE3EYzUL1MzutqfcFOFqEVgiVbOclTP--UPAteiwbQqYgJDk0rViHxpZnC0NcuasJ3Bog3TthCuM2kgwxUTvwAvgiy04XZhjyglwI3DTRY3N2KbG_9w__tAU_yzPKvlrVuYtY8MsFY7p1hZSubnvbOOhZn1G9xVtQQrGMTh5Lzn_x7G17m6xn40W3PeZ08L9YlMlyT"
-                    />
-                  </div>
-                </div>
+            <div className="lg:col-span-8 space-y-4">
+              {PRODUCT_REVIEWS.map((review) => (
+                <ReviewCard
+                  key={review.id}
+                  review={review}
+                  helpfulCount={helpfulCounts[review.id]}
+                  isVoted={votedIds.has(review.id)}
+                  onHelpful={() => toggleHelpful(review.id)}
+                />
+              ))}
 
-                <div className="text-on-surface-variant text-[10px] font-bold flex items-center gap-1">
-                  <span className="material-symbols-outlined text-[13px] text-green-600">verified_user</span>
-                  Verified Purchase
-                </div>
+              <div className="flex justify-center pt-2">
+                <Link href="/reviews" className="text-primary font-bold text-xs hover:underline flex items-center gap-0.5">
+                  View All Reviews
+                  <span className="material-symbols-outlined leading-none" style={{ fontSize: 16 }}>chevron_right</span>
+                </Link>
               </div>
             </div>
-
-            {/* Review Card 2 */}
-            <div className="bg-white dark:bg-surface-container-lowest p-4 rounded-2xl border border-outline-variant/20 shadow-xs space-y-3.5 flex flex-col justify-between">
-              <div className="space-y-2">
-                <div className="flex items-center space-x-2.5">
-                  <div className="w-9 h-9 rounded-full bg-surface-container-high overflow-hidden border border-primary/20">
-                    <img
-                      alt="Mark Thompson"
-                      className="w-full h-full object-cover"
-                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjVb36aNRPTLouWqEcxRuMWbXr8fSAM3ftdOBK1lJMgQQv_fB1wCn1GqcDIspzsZqdpodZUVO-b10coWGJKWr_KRzrWyj7ZszPFFbAFenDx4X9KPdEWZz2PORVxR4dnLtMP6AtZ1yScTGW_jmQ6TzGagwuy7vhAm2pNHmbYq1uK0TgNcH-9u0YfplbS735dvfXWjy8jUrTMtwSK2gSbypX2ZLHQulzBe5u0uUR1oZSd_aoYlTatRc_82uDNn09xwXxtcFSUozHi7YE"
-                    />
-                  </div>
-                  <div>
-                    <div className="font-bold text-xs text-on-surface">Mark Thompson</div>
-                    <div className="flex select-none">
-                      {renderStars(4, "text-[12px]")}
-                    </div>
-                  </div>
-                </div>
-                
-                <p className="text-on-surface-variant text-xs italic leading-relaxed">
-                  "Great quality, though I wish it came in even larger bags. My Husky loves the taste."
-                </p>
-              </div>
-
-              <div className="space-y-2 mt-2">
-                {/* User Pet Photo */}
-                <div className="h-16 rounded-lg overflow-hidden bg-surface-container border border-outline-variant/20">
-                  <img
-                    alt="User Pet 3"
-                    className="w-full h-full object-cover hover:scale-105 transition-transform"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDeTw9puA01ASb07PuVgjlM_4pPLh17oQr0GL-lh11UwLoJyMo9_AKYA4l147d6I0gEXl-Id_2WsFCYriCE6Pgrn9_3clCeV5bMufA9eZAswzyDk_kSzLOyJ9SyYrYZQ-M93wfXIAhp-J_miI_lXTAb4YyejiKvSgTPidL9vPHGg2mEIKE65WPpDBf2N9D0pIAZpqm0duqVfSqQ-_4_cQdjHNDuOqsabzNvO23PS0ghjvzZGL3NpkAVIVGEJ35YQWVdyXVfVuB-TqoR"
-                  />
-                </div>
-
-                <div className="text-on-surface-variant text-[10px] font-bold flex items-center gap-1">
-                  <span className="material-symbols-outlined text-[13px] text-green-600">verified_user</span>
-                  Verified Purchase
-                </div>
-              </div>
-            </div>
-
-            {/* Review Card 3 */}
-            <div className="bg-white dark:bg-surface-container-lowest p-4 rounded-2xl border border-outline-variant/20 shadow-xs space-y-3.5 flex flex-col justify-between">
-              <div className="space-y-2">
-                <div className="flex items-center space-x-2.5">
-                  <div className="w-9 h-9 rounded-full bg-surface-container-high overflow-hidden border border-primary/20">
-                    <img
-                      alt="Emily Chen"
-                      className="w-full h-full object-cover"
-                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuBprqtGteVhcXcwvbnBqctzetyGggeMP_XntnvBpeStvlJw__d-eT6qNI3ZP8OnXeY9ezjL0Vzdo05ClrxXW12k3rF-ZFAS6M3LgSVP03KYoK43LLq0fMHTp3Npjx1pQlVVgbXaINRTaQcDTDLvT1akONciNFlKjnM-ZRL0K_4SrjgXvAFMExhWe6G5KdCp-qcsYnLdXRYZ8rBfZryLfeM8PYA7BvWAMNqNnNU-GpV0RdiWXV3Vc6AmIFqT3OqH9GeMDtUXVeh5IgZn"
-                    />
-                  </div>
-                  <div>
-                    <div className="font-bold text-xs text-on-surface">Emily Chen</div>
-                    <div className="flex select-none">
-                      {renderStars(5, "text-[12px]")}
-                    </div>
-                  </div>
-                </div>
-                
-                <p className="text-on-surface-variant text-xs italic leading-relaxed">
-                  "Excellent delivery speed and the packaging is so premium. Worth every penny for my rescue dog."
-                </p>
-              </div>
-
-              <div className="space-y-2 mt-2">
-                {/* User Pet Photo */}
-                <div className="h-16 rounded-lg overflow-hidden bg-surface-container border border-outline-variant/20">
-                  <img
-                    alt="User Pet 4"
-                    className="w-full h-full object-cover hover:scale-105 transition-transform"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAl6-fJIspdmYuszC-9PjolXiQBfc0lJUzbLT2_OEQTfrt3lgD-kLymNAr115u_o9oQYdOrEwskDFrWdaaVK6-d-89XDlvvPg-lpwd734EpzuD6OQAQIg_oxmuh6-18OKDVaHiUl9BtpfY5pdWcrcikA3QP9KWRqDA_vV7Ts6McCEm-oadbGoIpZo7SEWsOd_6GlhzbpN2aLcMSo5DkVeWacTuVilC4ubVSQXhN-kCe1Tc0CNbIKcsgQjClYPx84BUni_YcW4F8YbPx"
-                  />
-                </div>
-
-                <div className="text-on-surface-variant text-[10px] font-bold flex items-center gap-1">
-                  <span className="material-symbols-outlined text-[13px] text-green-600">verified_user</span>
-                  Verified Purchase
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-          {/* View All Reviews link */}
-          <div className="mt-6 flex justify-center">
-            <Link
-              href="/reviews"
-              className="text-primary font-bold text-xs hover:underline flex items-center gap-0.5"
-            >
-              View All Reviews
-              <span className="material-symbols-outlined leading-none" style={{ fontSize: 16 }}>
-                chevron_right
-              </span>
-            </Link>
           </div>
         </section>
 

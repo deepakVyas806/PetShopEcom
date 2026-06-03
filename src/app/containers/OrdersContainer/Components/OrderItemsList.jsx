@@ -1,5 +1,7 @@
 "use client";
 
+import { fmt } from "@/lib/currency";
+
 export default function OrderItemsList({ items }) {
   return (
     <div className="mt-4 pt-4 border-t border-outline-variant/20 space-y-3">
@@ -26,7 +28,7 @@ export default function OrderItemsList({ items }) {
 
           {/* Price */}
           <span className="text-xs font-semibold text-on-surface flex-shrink-0 w-16 text-right">
-            ${item.price.toFixed(2)}
+            {fmt(item.price)}
           </span>
         </div>
       ))}

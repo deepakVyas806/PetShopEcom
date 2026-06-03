@@ -35,10 +35,10 @@ export default function ProductsListContainer() {
   return (
     <div className="w-full bg-background text-on-background transition-colors duration-300">
       {/* Content Container */}
-      <div className="max-w-container-max mx-auto px-margin-desktop py-stack-md">
-        
-        {/* Breadcrumbs & Title Toolbar */}
-        <BreadcrumbsToolbar 
+      <div className="max-w-container-max mx-auto px-4 md:px-margin-desktop py-4">
+
+        {/* Breadcrumbs & Title Toolbar — above sidebar+grid split */}
+        <BreadcrumbsToolbar
           totalCount={totalCount}
           sortBy={sortBy}
           setSortBy={setSortBy}
@@ -46,10 +46,10 @@ export default function ProductsListContainer() {
         />
 
         {/* Core Layout Split */}
-        <div className="flex flex-col md:flex-row gap-gutter">
-          
+        <div className="flex flex-col md:flex-row gap-4 md:gap-gutter">
+
           {/* Desktop Filter Sidebar */}
-          <SidebarFilters 
+          <SidebarFilters
             selectedPetTypes={selectedPetTypes}
             onPetTypeChange={handlePetTypeChange}
             priceRange={priceRange}
@@ -64,7 +64,7 @@ export default function ProductsListContainer() {
           <section className="flex-1">
             {totalCount > 0 ? (
               <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-gutter">
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
                   {products.map((product) => (
                     <ProductCard 
                       key={product.id}

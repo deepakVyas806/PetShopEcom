@@ -2,17 +2,15 @@
 
 export default function OrderHeader({ order }) {
   return (
-    <div className="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-3">
+    <div className="mb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
       <div>
-        <h1 className="text-base font-extrabold text-primary mb-1">Track Your Order</h1>
+        <h1 className="text-sm font-bold text-on-surface mb-0.5">Track Your Order</h1>
         <p className="text-xs text-on-surface-variant">
-          Order #{order.id} &bull; Placed on {order.date}
+          #{order.id} · Placed on {order.date}
         </p>
       </div>
-
-      {/* Status badge */}
-      <div className="bg-primary-fixed text-on-primary-fixed px-4 py-1.5 rounded-full text-xs font-semibold inline-flex items-center gap-2 self-start md:self-auto">
-        <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse-soft flex-shrink-0" />
+      <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-3 py-1.5 rounded-full text-xs font-semibold self-start sm:self-auto">
+        <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse flex-shrink-0" />
         {order.status}
       </div>
     </div>

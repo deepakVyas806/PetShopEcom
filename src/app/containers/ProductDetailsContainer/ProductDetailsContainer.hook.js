@@ -105,7 +105,7 @@ const BUNDLE_ITEMS = [
 ];
 
 export default function useProductDetails(productId) {
-  const { products: storeProducts, addToCart } = useStore();
+  const { products: storeProducts, addToCart, removeFromCart } = useStore();
 
   // Find product by id from static foods first (to match list page), then store products
   const product = useMemo(() => {
@@ -279,6 +279,7 @@ export default function useProductDetails(productId) {
     handleAddToCart,
     handleBuyNow,
     handleAddBundleToCart,
-    addedToCartSuccess
+    addedToCartSuccess,
+    removeFromCart,
   };
 }

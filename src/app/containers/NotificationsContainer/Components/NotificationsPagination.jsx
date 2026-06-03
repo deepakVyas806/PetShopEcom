@@ -7,7 +7,7 @@ export default function NotificationsPagination({ total = 3 }) {
   const [current, setCurrent] = useState(1);
 
   return (
-    <div className="pt-6 flex justify-center">
+    <div className="pt-3 flex justify-center">
       <nav className="flex items-center gap-1.5">
         <button
           onClick={() => setCurrent((p) => Math.max(1, p - 1))}

@@ -1,56 +1,38 @@
 "use client";
 
-const glassCard = {
-  background: "rgba(255,255,255,0.8)",
-  backdropFilter: "blur(12px)",
-  WebkitBackdropFilter: "blur(12px)",
-  border: "1px solid #F3E8FF",
-  boxShadow: "0 10px 25px -5px rgba(124,58,237,0.10)",
-};
+import Link from "next/link";
+import { fmt } from "@/lib/currency";
 
-function StatCard({ icon, value, label, sub, fill = false }) {
-  return (
-    <div
-      className="p-6 rounded-xl hover:border-primary/30 transition-all duration-300 group"
-      style={glassCard}
-    >
-      <div className="flex items-center justify-between mb-4">
+const GLASS = "bg-white/80 backdrop-blur-xl border border-[#F3E8FF] rounded-xl shadow-sm";
+
+function StatCard({ icon, value, label, sub, fill, href }) {
+  const Inner = (
+    <div className={`${GLASS} p-3.5 flex items-center gap-3 hover:border-primary/30 transition-all group`}>
+      <div className="bg-primary/10 p-2 rounded-lg shrink-0">
         <span
-          className="material-symbols-outlined bg-primary/10 text-primary p-2 rounded-lg text-[22px]"
+          className="material-symbols-outlined text-primary text-lg leading-none"
           style={fill ? { fontVariationSettings: "'FILL' 1" } : {}}
         >
           {icon}
         </span>
-        <span className="text-primary font-bold text-base">{value}</span>
       </div>
-      <h3 className="text-xs font-medium text-on-surface-variant">{label}</h3>
-      <p className="text-xs text-outline mt-1">{sub}</p>
+      <div className="min-w-0">
+        <p className="text-sm font-black text-on-surface leading-none">{value}</p>
+        <p className="text-[10px] font-semibold text-on-surface-variant mt-0.5 truncate">{label}</p>
+        <p className="text-[9px] text-outline mt-0.5 truncate">{sub}</p>
+      </div>
     </div>
   );
+
+  return href ? <Link href={href}>{Inner}</Link> : Inner;
 }
 
 export default function ProfileStatsRow({ stats }) {
   return (
-    <section className="grid grid-cols-1 sm:grid-cols-3 gap-gutter">
-      <StatCard
-        icon="package_2"
-        value={stats.totalOrders}
-        label="Total Orders"
-        sub={`${stats.pendingOrders} pending delivery`}
-      />
-      <StatCard
-        icon="favorite"
-        value={stats.wishlistItems}
-        label="Wishlist Items"
-        sub={`In stock: ${stats.wishlistInStock}`}
-        fill
-      />
-      <StatCard
-        icon="stars"
-        value={stats.rewardPoints}
-        label="Reward Points"
-        sub={`$${stats.rewardValue} value`}
-      />
+    <section className="grid grid-cols-3 gap-3">
+      <StatCard icon="package_2" value={stats.totalOrders} label="Orders" sub={`${stats.pendingOrders} pending`} href="/orders" />
+      <StatCard icon="favorite" value={stats.wishlistItems} label="Wishlist" sub={`${stats.wishlistInStock} in stock`} fill href="/wishlist" />
+      <StatCard icon="stars" value={stats.rewardPoints} label="Points" sub={`${fmt(Number(stats.rewardValue))} value`} fill />
     </section>
   );
 }

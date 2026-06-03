@@ -9,51 +9,40 @@ export default function RecentlyViewed({ items }) {
   const scrollRef = useRef(null);
   const scroll = (dir) => scrollRef.current?.scrollBy({ left: dir * 280, behavior: "smooth" });
 
+  if (!items?.length) return null;
+
   return (
-    <section className="mt-16">
-      {/* Section header */}
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-sm font-bold text-on-surface">Recently Viewed</h2>
-        <div className="flex gap-2">
+    <section className="mt-6">
+      <div className="flex items-center justify-between mb-3">
+        <h2 className="text-xs font-bold text-on-surface">Recently Viewed</h2>
+        <div className="flex gap-1.5">
           <button
             onClick={() => scroll(-1)}
-            className="p-1.5 border border-outline-variant rounded-full hover:bg-surface-variant transition-colors cursor-pointer bg-transparent"
-            aria-label="Scroll left"
+            className="p-1 border border-outline-variant rounded-full hover:bg-surface-variant transition-colors cursor-pointer bg-transparent"
           >
-            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>chevron_left</span>
+            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>chevron_left</span>
           </button>
           <button
             onClick={() => scroll(1)}
-            className="p-1.5 border border-outline-variant rounded-full hover:bg-surface-variant transition-colors cursor-pointer bg-transparent"
-            aria-label="Scroll right"
+            className="p-1 border border-outline-variant rounded-full hover:bg-surface-variant transition-colors cursor-pointer bg-transparent"
           >
-            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>chevron_right</span>
+            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>chevron_right</span>
           </button>
         </div>
       </div>
-
-      {/* Horizontal strip */}
       <div
         ref={scrollRef}
-        className="flex gap-4 overflow-x-auto no-scrollbar pb-4 -mx-4 px-4 md:-mx-10 md:px-10"
+        className="flex gap-3 overflow-x-auto pb-3"
+        style={{ scrollbarWidth: "none" }}
       >
-        {items.map((item) => {
-          // Map recently-viewed item shape to ProductCard's product shape
-          const product = {
-            id:    item.id,
-            name:  item.name,
-            image: item.image,
-            price: item.price,
-          };
-          return (
-            <div key={item.id} className="flex-none w-52">
-              <ProductCard
-                product={product}
-                onAddToCart={(p) => addToCart({ ...p, id: p.id })}
-              />
-            </div>
-          );
-        })}
+        {items.map((item) => (
+          <div key={item.id} className="flex-none w-48">
+            <ProductCard
+              product={{ id: item.id, name: item.name, image: item.image, price: item.price }}
+              onAddToCart={(p) => addToCart({ ...p, id: p.id })}
+            />
+          </div>
+        ))}
       </div>
     </section>
   );

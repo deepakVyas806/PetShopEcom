@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { fmt } from "@/lib/currency";
 
 export default function OrderSummary({
   cartCount,
@@ -31,19 +32,19 @@ export default function OrderSummary({
         <div className="space-y-2.5 text-xs text-on-surface-variant">
           <div className="flex justify-between">
             <span>Subtotal ({cartCount} items)</span>
-            <span className="font-semibold text-on-surface">${subtotal.toFixed(2)}</span>
+            <span className="font-semibold text-on-surface">{fmt(subtotal)}</span>
           </div>
           <div className="flex justify-between">
             <span>Shipping</span>
             {shipping === 0 ? (
               <span className="text-green-600 font-bold">FREE</span>
             ) : (
-              <span className="font-semibold text-on-surface">${shipping.toFixed(2)}</span>
+              <span className="font-semibold text-on-surface">{fmt(shipping)}</span>
             )}
           </div>
           <div className="flex justify-between">
             <span>Tax (8.5%)</span>
-            <span className="font-semibold text-on-surface">${tax.toFixed(2)}</span>
+            <span className="font-semibold text-on-surface">{fmt(tax)}</span>
           </div>
           
           {appliedCode && (
@@ -58,7 +59,7 @@ export default function OrderSummary({
                   [Remove]
                 </button>
               </span>
-              <span>-${promoDiscount.toFixed(2)}</span>
+              <span>-{fmt(promoDiscount)}</span>
             </div>
           )}
         </div>
@@ -66,7 +67,7 @@ export default function OrderSummary({
         {/* Total Row */}
         <div className="pt-3 border-t border-outline-variant/10 flex justify-between items-baseline">
           <span className="text-xs font-bold text-on-surface">Total</span>
-          <span className="text-sm font-black text-primary">${grandTotal.toFixed(2)}</span>
+          <span className="text-sm font-black text-primary">{fmt(grandTotal)}</span>
         </div>
 
         {/* Promo Code Input Box */}

@@ -1,5 +1,7 @@
 "use client";
 
+import { fmt } from "@/lib/currency";
+
 export default function OrderItemsSummary({ items, subtotal, shipping, total }) {
   return (
     <section className="bg-surface-container-lowest rounded-xl border border-outline-variant/30 overflow-hidden shadow-sm">
@@ -33,7 +35,7 @@ export default function OrderItemsSummary({ items, subtotal, shipping, total }) 
 
             {/* Price */}
             <div className="text-right flex-shrink-0">
-              <p className="text-xs font-bold text-primary">${item.price.toFixed(2)}</p>
+              <p className="text-xs font-bold text-primary">{fmt(item.price)}</p>
               <p className="text-[10px] text-on-surface-variant">Qty: {item.qty}</p>
             </div>
           </div>
@@ -44,17 +46,17 @@ export default function OrderItemsSummary({ items, subtotal, shipping, total }) 
       <div className="p-4 bg-surface-container-low space-y-1.5">
         <div className="flex justify-between text-xs text-on-surface-variant">
           <span>Subtotal</span>
-          <span className="font-medium text-on-surface">${subtotal.toFixed(2)}</span>
+          <span className="font-medium text-on-surface">{fmt(subtotal)}</span>
         </div>
         <div className="flex justify-between text-xs text-on-surface-variant">
           <span>Shipping</span>
           <span className="font-semibold text-green-600">
-            {shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}
+            {shipping === 0 ? "Free" : fmt(shipping)}
           </span>
         </div>
         <div className="flex justify-between pt-2 border-t border-outline-variant/20">
           <span className="text-sm font-bold text-on-surface">Total</span>
-          <span className="text-sm font-extrabold text-primary">${total.toFixed(2)}</span>
+          <span className="text-sm font-extrabold text-primary">{fmt(total)}</span>
         </div>
       </div>
     </section>

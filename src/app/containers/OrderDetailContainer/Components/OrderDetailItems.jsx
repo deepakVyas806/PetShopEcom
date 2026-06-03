@@ -1,5 +1,7 @@
 "use client";
 
+import { fmt } from "@/lib/currency";
+
 export default function OrderDetailItems({ items }) {
   return (
     <section
@@ -40,10 +42,10 @@ export default function OrderDetailItems({ items }) {
 
             {/* Price */}
             <div className="text-right flex-shrink-0">
-              <p className="text-xs font-bold text-primary">${item.price.toFixed(2)}</p>
+              <p className="text-xs font-bold text-primary">{fmt(item.price)}</p>
               {item.originalPrice && (
                 <p className="text-[10px] text-on-surface-variant line-through">
-                  ${item.originalPrice.toFixed(2)}
+                  {fmt(item.originalPrice)}
                 </p>
               )}
             </div>

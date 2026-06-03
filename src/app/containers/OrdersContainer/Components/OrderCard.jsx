@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import OrderItemsList from "./OrderItemsList";
+import { fmt } from "@/lib/currency";
 
 // ─── Status display config ─────────────────────────────────────────────────────
 const STATUS_CONFIG = {
@@ -69,7 +70,7 @@ function getActions(status) {
 
 // ─── Action button renderer ───────────────────────────────────────────────────
 function ActionButton({ action }) {
-  const base = "px-4 py-2 rounded-xl text-xs font-semibold transition-all active:scale-95 cursor-pointer border-none flex items-center gap-1.5";
+  const base = "px-3 py-1.5 rounded-lg text-xs font-semibold transition-all active:scale-95 cursor-pointer border-none flex items-center gap-1.5";
 
   const cls = {
     primary:      `${base} bg-primary text-on-primary hover:shadow-md`,
@@ -112,7 +113,7 @@ export default function OrderCard({ order, isExpanded, onToggleExpand }) {
       }`}
       style={{ boxShadow: "0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03)" }}
     >
-      <div className="p-5">
+      <div className="p-4">
         {/* ── Header row ───────────────────────────────────────────── */}
         <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
           {/* Left: icon + order info */}
@@ -138,7 +139,7 @@ export default function OrderCard({ order, isExpanded, onToggleExpand }) {
           {/* Right: total */}
           <div className="text-right">
             <p className="text-[10px] text-on-surface-variant">Total Amount</p>
-            <p className="text-sm font-bold text-primary">${order.total.toFixed(2)}</p>
+            <p className="text-sm font-bold text-primary">{fmt(order.total)}</p>
           </div>
         </div>
 

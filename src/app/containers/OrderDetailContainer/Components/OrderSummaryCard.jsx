@@ -1,5 +1,7 @@
 "use client";
 
+import { fmt } from "@/lib/currency";
+
 export default function OrderSummaryCard({ subtotal, shippingCost, tax, total }) {
   return (
     <section className="bg-primary text-on-primary p-5 rounded-xl shadow-lg relative overflow-hidden">
@@ -20,22 +22,22 @@ export default function OrderSummaryCard({ subtotal, shippingCost, tax, total })
       <div className="space-y-2 relative z-10">
         <div className="flex justify-between text-xs opacity-90">
           <span>Subtotal</span>
-          <span>${subtotal.toFixed(2)}</span>
+          <span>{fmt(subtotal)}</span>
         </div>
         <div className="flex justify-between text-xs opacity-90">
           <span>Shipping</span>
           <span className="font-bold">
-            {shippingCost === 0 ? "FREE" : `$${shippingCost.toFixed(2)}`}
+            {shippingCost === 0 ? "FREE" : fmt(shippingCost)}
           </span>
         </div>
         <div className="flex justify-between text-xs opacity-90">
           <span>Tax</span>
-          <span>${tax.toFixed(2)}</span>
+          <span>{fmt(tax)}</span>
         </div>
 
         <div className="pt-3 border-t border-white/20 flex justify-between items-end">
           <span className="text-xs font-bold">Total</span>
-          <span className="text-base font-extrabold">${total.toFixed(2)}</span>
+          <span className="text-base font-extrabold">{fmt(total)}</span>
         </div>
       </div>
 
