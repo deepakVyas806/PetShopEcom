@@ -70,12 +70,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [bookings, setBookings] = useState<BookingItem[]>([]);
   const [orders, setOrders] = useState<OrderItem[]>([]);
-  const [userRole, setUserRole] = useState<"guest" | "customer" | "admin">("customer");
-  const [currentUser, setCurrentUser] = useState<UserProfile | null>({
-    name: "Lady Genevieve",
-    email: "genevieve@artpetshop.com",
-    avatar: "🐶",
-  });
+  const [userRole, setUserRole] = useState<"guest" | "customer" | "admin">("guest");
+  const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
 
   // Load configuration items on mount
   useEffect(() => {

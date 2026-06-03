@@ -1,36 +1,57 @@
 "use client";
 
-import React from "react";
-import useHomePage from "./HomePageContainer.hook";
-import HeroSection from "./Components/HeroSection";
-import ShopByPet from "./Components/ShopByPet";
-import BestSellers from "./Components/BestSellers";
-import ServicesSection from "./Components/ServicesSection";
-import TrustIndicators from "./Components/TrustIndicators";
+import useHomePage        from "./HomePageContainer.hook";
+import TrustBar           from "./Components/TrustBar";
+import HeroSection        from "./Components/HeroSection";
+import ShopByPet          from "./Components/ShopByPet";
+import LifeStageSection   from "./Components/LifeStageSection";
+import BestSellers        from "./Components/BestSellers";
+import ServicesSection    from "./Components/ServicesSection";
+import BundlePromo        from "./Components/BundlePromo";
+import Testimonials       from "./Components/Testimonials";
 
 export default function HomePageContainer() {
-  const { premiumShowcase, addedItems, handleAddToCart } = useHomePage();
+  const {
+    premiumShowcase,
+    addedItems,
+    handleAddToCart,
+    favorites,
+    toggleFavorite,
+  } = useHomePage();
 
   return (
-    <div className="min-h-screen bg-surface text-on-surface transition-colors duration-300 pb-16 md:pb-0">
-      {/* Hero Section Carousel */}
+    <div className="min-h-screen bg-background text-on-background pb-16 md:pb-0">
+
+      {/* 1. Trust strip */}
+      <TrustBar />
+
+      {/* 2. Hero */}
       <HeroSection />
 
-      {/* Shop By Pet Grid */}
+      {/* 3. Shop by Pet */}
       <ShopByPet />
 
-      {/* Best Sellers Slider */}
-      <BestSellers 
+      {/* 4. Shop by Life Stage */}
+      <LifeStageSection />
+
+      {/* 5. Best Sellers */}
+      <BestSellers
         premiumShowcase={premiumShowcase}
         addedItems={addedItems}
         handleAddToCart={handleAddToCart}
+        favorites={favorites}
+        toggleFavorite={toggleFavorite}
       />
 
-      {/* Services Grid (Grooming & Veterinary) */}
+      {/* 6. Services */}
       <ServicesSection />
 
-      {/* Trust & Reassurance Indicators */}
-      <TrustIndicators />
+      {/* 7. Bundle promo */}
+      <BundlePromo />
+
+      {/* 8. Testimonials */}
+      <Testimonials />
+
     </div>
   );
 }

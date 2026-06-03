@@ -1,9 +1,11 @@
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useStore } from "@/context/StoreContext";
+import { useAuth } from "@/context/AuthContext";
 
 export default function useShoppingCart() {
   const { cart, updateQuantity, removeFromCart } = useStore();
+  const { isAuthenticated } = useAuth();
   const router = useRouter();
 
   // Promo code states
@@ -80,10 +82,14 @@ export default function useShoppingCart() {
     }
   };
 
-  // Place order/Checkout action
+  // Place order/Checkout action — redirects to signin if unauthenticated
   const handleProceedToCheckout = () => {
     if (cart.length === 0) return;
-    router.push("/checkout");
+    if (isAuthenticated) {
+      router.push("/checkout");
+    } else {
+      router.push("/signin?redirect=/checkout");
+    }
   };
 
   return {

@@ -233,7 +233,7 @@ export default function ShoppingCartContainer() {
                 {/* Main Action Button - Restricted to text-sm */}
                 <button 
                   onClick={handleProceedToCheckout}
-                  className="w-full h-9 rounded-lg bg-gradient-to-r from-primary to-primary-container text-on-primary font-bold text-xs shadow-md hover:shadow-lg hover:scale-[1.01] active:scale-[0.99] transition-all cursor-pointer border-none outline-none flex items-center justify-center"
+                  className="w-full h-9 rounded-lg bg-primary text-on-primary font-bold text-xs shadow-md hover:shadow-lg hover:scale-[1.01] active:scale-[0.99] transition-all cursor-pointer border-none outline-none flex items-center justify-center"
                 >
                   Proceed to Checkout
                 </button>

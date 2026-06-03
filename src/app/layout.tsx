@@ -3,6 +3,7 @@ import { Inter, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { siteConfig } from "@/config/site";
 import { StoreProvider } from "@/context/StoreContext";
+import { AuthProvider } from "@/context/AuthContext";
 import AppChrome from "@/components/layout/AppChrome";
 
 
@@ -64,9 +65,11 @@ export default function RootLayout({
 
       <body className="min-h-full flex flex-col font-sans selection:bg-brand-primary selection:text-white bg-brand-background text-brand-foreground pb-20 md:pb-0">
         <StoreProvider>
-          <AppChrome>
-            {children}
-          </AppChrome>
+          <AuthProvider>
+            <AppChrome>
+              {children}
+            </AppChrome>
+          </AuthProvider>
         </StoreProvider>
       </body>
     </html>

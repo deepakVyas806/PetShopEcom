@@ -147,7 +147,7 @@ function SummaryPanel() {
           </div>
         </div>
         <div className="mt-8 space-y-2">
-          <button className="w-full py-3 bg-gradient-to-r from-primary to-primary-container text-on-primary rounded-full text-xs font-bold shadow-md hover:shadow-lg transition-all duration-200 active:scale-[0.98]">
+          <button className="w-full py-3 bg-primary text-on-primary rounded-full text-xs font-bold shadow-sm hover:shadow-md transition-all duration-200 active:scale-[0.98]">
             Track My Order
           </button>
           <button className="w-full py-3 bg-secondary-container text-on-secondary-container rounded-full text-xs font-bold flex items-center justify-center gap-2 hover:bg-surface-container-high transition-all">

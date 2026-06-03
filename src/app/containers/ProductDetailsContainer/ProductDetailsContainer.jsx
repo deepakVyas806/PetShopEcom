@@ -152,13 +152,29 @@ export default function ProductDetailsContainer({ productId }) {
               </h1>
 
               {/* Star Rating summary */}
-              <div className="flex items-center space-x-2 select-none">
+              <div className="flex items-center space-x-2 select-none flex-wrap gap-y-1">
                 <div className="flex">
                   {renderStars(product.rating || 4.8, "text-[14px]")}
                 </div>
                 <span className="text-xs text-on-surface-variant font-medium">
-                  {product.rating || 4.8} ({product.reviewsCount || "2,451"} reviews)
+                  {product.rating || 4.8}
                 </span>
+                <Link
+                  href="/reviews"
+                  className="text-xs text-primary font-semibold hover:underline"
+                >
+                  ({product.reviewsCount || "2,451"} reviews)
+                </Link>
+                <span className="text-outline-variant/60">·</span>
+                <Link
+                  href="/reviews"
+                  className="text-xs text-primary font-semibold hover:underline flex items-center gap-0.5"
+                >
+                  See all reviews
+                  <span className="material-symbols-outlined leading-none" style={{ fontSize: 14 }}>
+                    chevron_right
+                  </span>
+                </Link>
               </div>
             </div>
 
@@ -235,22 +251,22 @@ export default function ProductDetailsContainer({ productId }) {
                 {/* Add to Cart Button */}
                 <button
                   onClick={handleAddToCart}
-                  className={`flex-1 h-9 rounded-lg font-bold text-xs transition-all active:scale-95 cursor-pointer flex items-center justify-center gap-1 border ${
+                  className={`flex-1 h-9 rounded-full font-semibold text-xs transition-all active:scale-95 cursor-pointer flex items-center justify-center gap-1.5 border-none hover:shadow-md ${
                     addedToCartSuccess
-                      ? "bg-primary text-white border-primary"
-                      : "border-primary text-primary hover:bg-primary/5"
+                      ? "bg-primary text-on-primary"
+                      : "bg-primary-container text-on-primary-container hover:bg-primary hover:text-on-primary"
                   }`}
                 >
-                  <span className="material-symbols-outlined text-sm">
-                    {addedToCartSuccess ? "check" : "shopping_cart"}
+                  <span className="material-symbols-outlined leading-none" style={{ fontSize: 16 }}>
+                    {addedToCartSuccess ? "check" : "add_shopping_cart"}
                   </span>
-                  {addedToCartSuccess ? "Added" : "Add to Cart"}
+                  {addedToCartSuccess ? "Added!" : "Add to Cart"}
                 </button>
 
                 {/* Buy Now Button */}
                 <button
                   onClick={handleBuyNow}
-                  className="flex-1 bg-gradient-to-r from-primary to-primary-container text-on-primary h-9 rounded-lg font-bold text-xs hover:shadow-md hover:scale-[1.01] active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center border-none outline-none"
+                  className="flex-1 bg-primary text-on-primary h-9 rounded-lg font-bold text-xs hover:shadow-md hover:scale-[1.01] active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center border-none outline-none"
                 >
                   Buy Now
                 </button>
@@ -650,11 +666,17 @@ export default function ProductDetailsContainer({ productId }) {
 
           </div>
 
-          {/* Bottom Expand Trigger */}
+          {/* View All Reviews link */}
           <div className="mt-6 flex justify-center">
-            <button className="text-primary font-bold text-xs hover:underline flex items-center gap-0.5 cursor-pointer">
-              View All Reviews <span className="material-symbols-outlined text-sm">expand_more</span>
-            </button>
+            <Link
+              href="/reviews"
+              className="text-primary font-bold text-xs hover:underline flex items-center gap-0.5"
+            >
+              View All Reviews
+              <span className="material-symbols-outlined leading-none" style={{ fontSize: 16 }}>
+                chevron_right
+              </span>
+            </Link>
           </div>
         </section>
 

@@ -56,3 +56,6 @@ desktop.ini
 
 # credentials
 *.pem
+
+# Claude Code internal session memory (AI assistant tooling — not project code)
+memory/

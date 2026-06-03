@@ -1,5 +1,6 @@
 import React, { Suspense } from "react";
 import CheckoutContainer from "@/app/containers/CheckoutContainer/CheckoutContainer";
+import AuthGuard from "@/components/auth/AuthGuard";
 
 export default function CheckoutPage() {
   return (
@@ -10,7 +11,9 @@ export default function CheckoutPage() {
         </div>
       }
     >
-      <CheckoutContainer />
+      <AuthGuard>
+        <CheckoutContainer />
+      </AuthGuard>
     </Suspense>
   );
 }

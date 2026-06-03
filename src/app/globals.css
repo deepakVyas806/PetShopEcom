@@ -464,12 +464,8 @@ html {
 
 .ring-primary { --tw-ring-color: var(--primary) !important; }
 .accent-primary { accent-color: var(--primary) !important; }
-.from-primary {
-  --tw-gradient-from: var(--primary) var(--tw-gradient-from-position) !important;
-  --tw-gradient-to: color-mix(in srgb, var(--primary) 0%, transparent) var(--tw-gradient-to-position) !important;
-  --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position)) !important;
-}
-.to-primary-container { --tw-gradient-to: var(--primary-container) var(--tw-gradient-to-position) !important; }
+/* Gradient utilities removed — all CTA buttons now use bg-primary directly. */
+/* Remaining gradient usages (image overlays, decorative) use inline styles. */
 
 .hover\:bg-primary:hover { background-color: var(--primary) !important; }
 .hover\:bg-primary-hover:hover { background-color: var(--primary-hover) !important; }
@@ -482,6 +478,27 @@ html {
 .focus\:ring-primary:focus { --tw-ring-color: var(--primary) !important; }
 .focus-within\:border-primary:focus-within { border-color: var(--primary) !important; }
 .focus-within\:ring-primary:focus-within { --tw-ring-color: var(--primary) !important; }
+
+/* Pulse animation used in TrackOrder status badge */
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.6; }
+}
+.animate-pulse-soft {
+  animation: pulse-soft 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Hide scrollbar — used in RecentlyViewed horizontal scroll */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Auth modal — Tailwind transition helpers */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.animate-spin {
+  animation: spin 0.75s linear infinite;
+}
 
 @keyframes checkout-confetti-fall {
   to {

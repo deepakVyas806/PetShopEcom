@@ -90,7 +90,7 @@ function ShippingStep({ goToStep }) {
       <div className="flex justify-end pt-4">
         <button
           onClick={() => goToStep(2)}
-          className="bg-gradient-to-r from-primary to-tertiary-container text-on-primary px-8 py-3 rounded-full text-xs font-medium hover:shadow-lg transition-all active:scale-95 flex items-center gap-2"
+          className="bg-primary text-on-primary px-8 py-3 rounded-full text-xs font-medium hover:shadow-lg transition-all active:scale-95 flex items-center gap-2"
         >
           Continue to Delivery
           <span className="material-symbols-outlined text-sm">arrow_forward</span>
@@ -126,7 +126,7 @@ function DeliveryStep({ goToStep }) {
           <span className="material-symbols-outlined text-sm">arrow_back</span>
           Back
         </button>
-        <button onClick={() => goToStep(3)} className="bg-gradient-to-r from-primary to-tertiary-container text-on-primary px-8 py-3 rounded-full text-xs font-medium hover:shadow-lg transition-all active:scale-95 flex items-center gap-2">
+        <button onClick={() => goToStep(3)} className="bg-primary text-on-primary px-8 py-3 rounded-full text-xs font-medium hover:shadow-lg transition-all active:scale-95 flex items-center gap-2">
           Continue to Payment
           <span className="material-symbols-outlined text-sm">arrow_forward</span>
         </button>
@@ -180,7 +180,7 @@ function PaymentStep({ goToStep, handlePay }) {
           <span className="material-symbols-outlined text-sm">arrow_back</span>
           Back
         </button>
-        <button onClick={handlePay} className="bg-gradient-to-r from-primary to-tertiary-container text-on-primary px-10 py-4 rounded-full text-sm font-semibold hover:shadow-xl transition-all active:scale-95 flex items-center gap-3 shadow-lg">
+        <button onClick={handlePay} className="bg-primary text-on-primary px-10 py-4 rounded-full text-sm font-semibold hover:shadow-xl transition-all active:scale-95 flex items-center gap-3 shadow-lg">
           <span className="material-symbols-outlined text-sm">lock</span>
           Pay $84.45
         </button>
