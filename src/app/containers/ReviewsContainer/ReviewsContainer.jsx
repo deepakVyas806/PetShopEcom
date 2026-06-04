@@ -6,6 +6,7 @@ import RatingSummary         from "./Components/RatingSummary";
 import CustomerPhotos        from "./Components/CustomerPhotos";
 import ReviewFilters         from "./Components/ReviewFilters";
 import ReviewCard            from "./Components/ReviewCard";
+import Pagination            from "@/components/common/Pagination";
 
 export default function ReviewsContainer() {
   const {
@@ -63,16 +64,12 @@ export default function ReviewsContainer() {
           )}
 
           {/* Load more */}
-          {hasMore && (
-            <div className="flex justify-center py-6">
-              <button
-                onClick={loadMore}
-                className="px-10 py-2.5 rounded-full border-2 border-primary text-primary text-xs font-bold hover:bg-primary/5 transition-all cursor-pointer bg-transparent"
-              >
-                Load More Reviews
-              </button>
-            </div>
-          )}
+          <Pagination
+            variant="load-more"
+            hasMore={hasMore}
+            onLoadMore={loadMore}
+            label="Load More Reviews"
+          />
         </section>
       </div>
     </main>

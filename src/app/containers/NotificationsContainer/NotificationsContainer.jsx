@@ -3,9 +3,9 @@
 import useNotificationsContainer  from "./NotificationsContainer.hook";
 import NotificationsHeader        from "./Components/NotificationsHeader";
 import NotificationsFilter        from "./Components/NotificationsFilter";
-import NotificationCard           from "./Components/NotificationCard";
-import NotificationsEmpty         from "./Components/NotificationsEmpty";
-import NotificationsPagination    from "./Components/NotificationsPagination";
+import NotificationCard   from "./Components/NotificationCard";
+import NotificationsEmpty from "./Components/NotificationsEmpty";
+import Pagination         from "@/components/common/Pagination";
 
 export default function NotificationsContainer() {
   const {
@@ -46,7 +46,7 @@ export default function NotificationsContainer() {
                   />
                 ))}
               </div>
-              <NotificationsPagination total={3} />
+              <Pagination currentPage={1} totalPages={3} />
             </>
           )}
         </div>

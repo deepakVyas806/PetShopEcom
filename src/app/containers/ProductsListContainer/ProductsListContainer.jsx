@@ -6,6 +6,7 @@ import BreadcrumbsToolbar from "./Components/BreadcrumbsToolbar";
 import SidebarFilters from "./Components/SidebarFilters";
 import ProductCard from "./Components/ProductCard";
 import MobileFilterDrawer from "./Components/MobileFilterDrawer";
+import Pagination from "@/components/common/Pagination";
 
 export default function ProductsListContainer() {
   const {
@@ -78,36 +79,11 @@ export default function ProductsListContainer() {
                 </div>
 
                 {/* Pagination */}
-                <div className="mt-8 flex justify-center gap-1.5 select-none text-xs">
-                  <button 
-                    onClick={() => currentPage > 1 && setCurrentPage(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    className="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant hover:bg-primary/5 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed text-on-surface"
-                  >
-                    <span className="material-symbols-outlined text-sm">chevron_left</span>
-                  </button>
-                  
-                  <button className="w-8 h-8 flex items-center justify-center rounded-lg bg-primary text-on-primary font-bold shadow-sm">
-                    1
-                  </button>
-                  <button className="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant hover:bg-primary/5 transition-colors cursor-pointer text-on-surface">
-                    2
-                  </button>
-                  <button className="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant hover:bg-primary/5 transition-colors cursor-pointer text-on-surface">
-                    3
-                  </button>
-                  <span className="w-8 h-8 flex items-center justify-center text-on-surface-variant font-medium">...</span>
-                  <button className="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant hover:bg-primary/5 transition-colors cursor-pointer text-on-surface">
-                    12
-                  </button>
-                  
-                  <button 
-                    onClick={() => setCurrentPage(currentPage + 1)}
-                    className="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant hover:bg-primary/5 transition-colors cursor-pointer text-on-surface"
-                  >
-                    <span className="material-symbols-outlined text-sm">chevron_right</span>
-                  </button>
-                </div>
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={12}
+                  onPageChange={setCurrentPage}
+                />
               </>
             ) : (
               <div className="w-full py-16 text-center bg-surface-container-lowest border border-outline-variant/20 rounded-xl p-5 shadow-inner">

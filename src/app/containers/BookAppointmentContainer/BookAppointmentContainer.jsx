@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import useBookAppointment, { TIME_SLOTS } from "./BookAppointmentContainer.hook";
 import { fmt } from "@/lib/currency";
+import PageHeader from "@/components/common/PageHeader";
 
 const DAY_LABELS = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
 
@@ -33,10 +34,15 @@ export default function BookAppointmentContainer() {
     <div className="w-full bg-background text-on-background min-h-screen">
       <main className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-4">
 
-        <div className="mb-4">
-          <h1 className="text-sm font-bold text-on-surface">Schedule Your Appointment</h1>
-          <p className="text-xs text-on-surface-variant">Pick a date and time that works for you.</p>
-        </div>
+        <PageHeader
+          breadcrumbs={[
+            { label: "Home",         href: "/" },
+            { label: "Services",     href: "/services" },
+            { label: "Book Appointment" },
+          ]}
+          title="Schedule Your Appointment"
+          subtitle="Pick a date and time that works for you."
+        />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
 

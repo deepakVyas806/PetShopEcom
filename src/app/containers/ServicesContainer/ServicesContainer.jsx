@@ -5,6 +5,8 @@ import useServices from "./ServicesContainer.hook";
 import FilterPanel from "@/components/common/FilterPanel";
 import ServiceCard from "./Components/ServiceCard";
 import ServicesCategoryFilter from "./Components/ServicesCategoryFilter";
+import PageHeader from "@/components/common/PageHeader";
+import Pagination from "@/components/common/Pagination";
 
 const PROMO_IMAGE =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuDpwTBDGSHMOEiqQdIAlHeRB0OBgO9vM9pwKvzIcRfGqYRV8OiNroaZHPoBk64R3pNRpPv0S04r-9hZlUEiO91tWnLBCw_0p9NYRwDyTBJiu62f5BAb2vRETDUwob99oda-sXu6AOtp-G2pAZLTB6Fq-eR1XbznbULnMTJygDxLjHHMAu636-4ySBc-smeTHEiq9d0HBtfa3tZXS7SSTbCZF0gpJihhEuyqi-SvQr3-C7oEwxHovxLc5DW8YQ05Ju1AozTI5zkoeNWI";
@@ -33,45 +35,33 @@ export default function ServicesContainer() {
     <div className="w-full bg-background text-on-background transition-colors duration-300">
       <div className="max-w-container-max mx-auto px-4 md:px-margin-desktop py-4">
 
-        {/* Page Header — above sidebar+grid split */}
-        <div className="flex flex-col gap-3 mb-4">
-          <nav className="flex text-xs text-on-surface-variant items-center gap-1.5 select-none">
-            <Link href="/" className="hover:text-primary transition-colors">Home</Link>
-            <span className="material-symbols-outlined text-[12px]">chevron_right</span>
-            <Link href="/services" className="hover:text-primary transition-colors">Services</Link>
-            <span className="material-symbols-outlined text-[12px]">chevron_right</span>
-            <span className="text-on-surface font-semibold capitalize">
-              {activeCategory === "all" ? "All Services" : activeCategory}
-            </span>
-          </nav>
-
-          <div className="flex flex-wrap justify-between items-center gap-3">
-            <div>
-              <h1 className="text-sm font-bold text-on-surface tracking-tight">Professional Pet Care</h1>
-              <p className="text-xs text-on-surface-variant mt-0.5">
-                {totalCount > 0 ? `${totalCount} services available` : "No services found"}
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1.5">
-                <span className="text-xs text-on-surface-variant font-medium hidden sm:block">Sort:</span>
-                <select className="bg-surface-container-lowest border border-outline-variant rounded-lg px-2 py-1.5 text-xs focus:border-primary focus:ring-1 focus:ring-primary outline-none text-on-surface cursor-pointer font-medium">
-                  <option>Popularity</option>
-                  <option>Price ↑</option>
-                  <option>Price ↓</option>
-                  <option>Rating</option>
-                </select>
-              </div>
-              <button
-                onClick={() => setMobileFiltersOpen(true)}
-                className="md:hidden flex items-center gap-1.5 px-3 py-1.5 border border-outline-variant rounded-lg bg-surface text-xs font-medium text-on-surface hover:bg-primary/5 active:scale-95 transition-all cursor-pointer"
-              >
-                <span className="material-symbols-outlined text-sm">filter_list</span>
-                Filter
-              </button>
-            </div>
+        {/* Page Header */}
+        <PageHeader
+          breadcrumbs={[
+            { label: "Home", href: "/" },
+            { label: "Services", href: "/services" },
+            { label: activeCategory === "all" ? "All Services" : activeCategory },
+          ]}
+          title="Professional Pet Care"
+          subtitle={totalCount > 0 ? `${totalCount} services available` : "No services found"}
+        >
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs text-on-surface-variant font-medium hidden sm:block">Sort:</span>
+            <select className="bg-surface-container-lowest border border-outline-variant rounded-lg px-2 py-1.5 text-xs focus:border-primary focus:ring-1 focus:ring-primary outline-none text-on-surface cursor-pointer font-medium">
+              <option>Popularity</option>
+              <option>Price ↑</option>
+              <option>Price ↓</option>
+              <option>Rating</option>
+            </select>
           </div>
-        </div>
+          <button
+            onClick={() => setMobileFiltersOpen(true)}
+            className="md:hidden flex items-center gap-1.5 px-3 py-1.5 border border-outline-variant rounded-lg bg-surface text-xs font-medium text-on-surface hover:bg-primary/5 active:scale-95 transition-all cursor-pointer"
+          >
+            <span className="material-symbols-outlined leading-none" style={{ fontSize: 15 }}>filter_list</span>
+            Filter
+          </button>
+        </PageHeader>
 
         {/* Layout Split */}
         <div className="flex flex-col md:flex-row gap-4 md:gap-gutter">
@@ -130,39 +120,12 @@ export default function ServicesContainer() {
               </div>
 
               {/* Pagination */}
-              <div className="mt-12 flex flex-col items-center gap-3">
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => currentPage > 1 && setCurrentPage(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    className="w-9 h-9 flex items-center justify-center rounded-lg border border-outline-variant/30 text-on-surface-variant hover:border-primary hover:text-primary transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-                  >
-                    <span className="material-symbols-outlined text-sm">chevron_left</span>
-                  </button>
-                  {[1, 2, 3].map((p) => (
-                    <button
-                      key={p}
-                      onClick={() => setCurrentPage(p)}
-                      className={`w-9 h-9 flex items-center justify-center rounded-lg text-xs font-bold transition-all ${
-                        currentPage === p
-                          ? "bg-primary text-white shadow-md"
-                          : "border border-outline-variant/30 text-on-surface-variant hover:border-primary hover:text-primary"
-                      }`}
-                    >
-                      {p}
-                    </button>
-                  ))}
-                  <span className="px-1 text-on-surface-variant text-xs">...</span>
-                  <button className="w-9 h-9 flex items-center justify-center rounded-lg border border-outline-variant/30 text-on-surface-variant hover:border-primary hover:text-primary transition-all text-xs font-bold">
-                    8
-                  </button>
-                  <button
-                    onClick={() => setCurrentPage(currentPage + 1)}
-                    className="w-9 h-9 flex items-center justify-center rounded-lg border border-outline-variant/30 text-on-surface-variant hover:border-primary hover:text-primary transition-all"
-                  >
-                    <span className="material-symbols-outlined text-sm">chevron_right</span>
-                  </button>
-                </div>
+              <div className="mt-8 flex flex-col items-center gap-2">
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={8}
+                  onPageChange={setCurrentPage}
+                />
                 <p className="text-xs text-on-surface-variant">
                   Showing {totalCount} of 32 premium services
                 </p>

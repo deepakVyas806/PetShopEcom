@@ -4,6 +4,7 @@ import Link from "next/link";
 import useShoppingCart from "./ShoppingCartContainer.hook";
 import CartItemRow from "./Components/CartItemRow";
 import { fmt } from "@/lib/currency";
+import PageHeader from "@/components/common/PageHeader";
 
 export default function ShoppingCartContainer() {
   const {
@@ -51,12 +52,14 @@ export default function ShoppingCartContainer() {
       <main className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-6 min-h-[calc(100vh-128px)]">
 
         {/* Page header */}
-        <div className="flex items-center gap-3 mb-5">
-          <h1 className="text-sm font-extrabold text-on-surface tracking-tight">Shopping Cart</h1>
-          {cartCount > 0 && (
-            <span className="bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-full">{cartCount} item{cartCount > 1 ? "s" : ""}</span>
-          )}
-        </div>
+        <PageHeader
+          breadcrumbs={[
+            { label: "Home", href: "/" },
+            { label: "Shopping Cart" },
+          ]}
+          title="Shopping Cart"
+          subtitle={cartCount > 0 ? `${cartCount} item${cartCount > 1 ? "s" : ""} in your cart` : "Your cart is empty"}
+        />
 
         {cart.length > 0 ? (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">

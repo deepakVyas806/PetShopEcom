@@ -3,6 +3,7 @@
 import useOrdersContainer from "./OrdersContainer.hook";
 import OrdersHeader from "./Components/OrdersHeader";
 import OrderCard    from "./Components/OrderCard";
+import Pagination   from "@/components/common/Pagination";
 
 export default function OrdersContainer() {
   const {
@@ -37,11 +38,11 @@ export default function OrdersContainer() {
         </div>
       )}
 
-      <div className="mt-8 text-center">
-        <button className="px-8 py-2.5 border border-outline-variant text-primary text-xs font-semibold rounded-xl hover:bg-primary-container/10 transition-all cursor-pointer bg-transparent">
-          Load Past Orders
-        </button>
-      </div>
+      <Pagination
+        variant="load-more"
+        hasMore={true}
+        label="Load Past Orders"
+      />
     </div>
   );
 }

@@ -10,9 +10,9 @@ const NAV_ITEMS = [
   { icon: "receipt_long",         label: "My Orders",        href: "/orders"   },
   { icon: "local_shipping",       label: "Track Order",      href: "/track-order" },
   { icon: "favorite",             label: "Wishlist",         href: "/wishlist" },
-  { icon: "calendar_today",       label: "Appointments",     href: "#"          },
-  { icon: "location_on",          label: "Saved Addresses",  href: "#"          },
-  { icon: "payments",             label: "Payment Methods",  href: "#"          },
+  { icon: "calendar_today",       label: "Appointments",     href: "/appointments" },
+  { icon: "location_on",          label: "Saved Addresses",  href: "/saved-addresses" },
+  { icon: "payments",             label: "Payment Methods",  href: "/payment-methods" },
   { icon: "notifications_active", label: "Notifications",    href: "/notifications" },
 ];
 
