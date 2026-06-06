@@ -95,6 +95,9 @@ export const ORDER = {
   },
 };
 
-export default function useTrackOrderContainer() {
-  return { order: ORDER };
+// orderId is available for future API integration — currently uses mock data
+export default function useTrackOrderContainer(orderId) {
+  // TODO: fetch real order by orderId when backend is ready
+  const order = { ...ORDER, id: orderId || ORDER.id };
+  return { order };
 }

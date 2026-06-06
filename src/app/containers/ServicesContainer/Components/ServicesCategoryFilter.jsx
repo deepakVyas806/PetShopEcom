@@ -18,7 +18,7 @@ export default function ServicesCategoryFilter({ categories, activeCategory, onC
                 : "text-on-surface-variant hover:text-primary hover:bg-white/60"
             }`}
           >
-            <span className="material-symbols-outlined leading-none" style={{ fontSize: 13 }}>{cat.icon}</span>
+            <cat.Icon size={13} className="leading-none" weight="regular" />
             {cat.label}
           </button>
         );

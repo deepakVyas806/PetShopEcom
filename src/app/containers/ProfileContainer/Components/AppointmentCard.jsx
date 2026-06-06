@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-
-const GLASS = "bg-white/80 backdrop-blur-xl border border-[#F3E8FF] rounded-xl shadow-sm";
+import { Card, Badge, Button, SectionHeader } from "@/components/ui";
+import { IconCalendar, IconEdit, IconCancel, IconChevronRight } from "@/lib/icons";
 
 const APPOINTMENT = {
   day: "24", month: "OCT",
@@ -17,15 +17,14 @@ export default function AppointmentCard() {
   const apt = APPOINTMENT;
 
   return (
-    <div className={`${GLASS} p-4`}>
+    <Card>
       {/* Header */}
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <span className="material-symbols-outlined text-primary text-base">calendar_today</span>
-          <h2 className="text-xs font-bold text-on-surface">Next Appointment</h2>
-        </div>
-        <Link href="/services/book" className="text-[10px] text-primary font-semibold hover:underline">Book New</Link>
-      </div>
+      <SectionHeader
+        title="Next Appointment"
+        icon={<IconCalendar size={16} weight="regular" />}
+        action={<Link href="/services/book" className="text-[10px] text-primary font-semibold hover:underline">Book New</Link>}
+        className="mb-3"
+      />
 
       {/* Appointment row */}
       <div className="flex items-center gap-3 bg-surface-container-low p-3 rounded-xl border border-outline-variant/20">
@@ -45,22 +44,22 @@ export default function AppointmentCard() {
 
         {/* Status + arrow */}
         <div className="flex items-center gap-1 shrink-0">
-          <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-green-100 text-green-700">{apt.status}</span>
-          <span className="material-symbols-outlined text-on-surface-variant text-sm">chevron_right</span>
+          <Badge variant="success">{apt.status}</Badge>
+          <IconChevronRight size={14} className="text-on-surface-variant" weight="bold" />
         </div>
       </div>
 
       {/* Quick actions */}
       <div className="flex gap-2 mt-3">
-        <button className="flex-1 py-1.5 bg-primary/5 border border-primary/20 rounded-lg text-[10px] font-semibold text-primary flex items-center justify-center gap-1 hover:bg-primary/10 transition-all cursor-pointer outline-none border-0">
-          <span className="material-symbols-outlined text-xs">edit_calendar</span>
+        <Button variant="ghost" size="sm" className="flex-1 py-1.5">
+          <IconEdit size={12} weight="bold" />
           Reschedule
-        </button>
-        <button className="flex-1 py-1.5 bg-surface-container-low border border-outline-variant/20 rounded-lg text-[10px] font-semibold text-error/70 flex items-center justify-center gap-1 hover:bg-error/5 transition-all cursor-pointer outline-none border-0">
-          <span className="material-symbols-outlined text-xs">cancel</span>
+        </Button>
+        <Button variant="danger" size="sm" className="flex-1 py-1.5">
+          <IconCancel size={12} weight="bold" />
           Cancel
-        </button>
+        </Button>
       </div>
-    </div>
+    </Card>
   );
 }

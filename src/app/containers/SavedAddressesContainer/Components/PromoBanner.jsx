@@ -1,5 +1,7 @@
 "use client";
 
+import { IconArrowRight } from "@/lib/icons";
+
 export default function PromoBanner() {
   return (
     <section className="mt-5 rounded-2xl overflow-hidden relative min-h-[160px] flex items-center">
@@ -26,7 +28,7 @@ export default function PromoBanner() {
         </p>
         <button className="inline-flex items-center gap-1.5 bg-white text-primary text-xs font-bold px-4 py-2 rounded-full hover:shadow-lg transition-all active:scale-95 border-none cursor-pointer">
           <span className="w-4 h-4 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-            <span className="material-symbols-outlined leading-none text-primary" style={{ fontSize: 11 }}>arrow_forward</span>
+            <IconArrowRight size={11} className="text-primary" weight="bold" />
           </span>
           Learn more
         </button>

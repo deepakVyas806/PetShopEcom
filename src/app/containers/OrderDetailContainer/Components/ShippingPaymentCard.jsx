@@ -1,5 +1,7 @@
 "use client";
 
+import { IconLocation, IconMoney } from "@/lib/icons";
+
 export default function ShippingPaymentCard({ shipping, payment }) {
   return (
     <section
@@ -9,7 +11,7 @@ export default function ShippingPaymentCard({ shipping, payment }) {
       {/* Shipping address */}
       <div>
         <div className="flex items-center gap-2 mb-2 text-primary">
-          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>location_on</span>
+          <IconLocation size={16} weight="regular" />
           <h3 className="text-[10px] font-bold uppercase tracking-wider">Shipping Address</h3>
         </div>
         <p className="text-xs text-on-surface leading-relaxed whitespace-pre-line">
@@ -22,7 +24,7 @@ export default function ShippingPaymentCard({ shipping, payment }) {
       {/* Payment method */}
       <div>
         <div className="flex items-center gap-2 mb-2 text-primary">
-          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>payments</span>
+          <IconMoney size={16} weight="regular" />
           <h3 className="text-[10px] font-bold uppercase tracking-wider">Payment Method</h3>
         </div>
         <div className="flex items-center gap-3">

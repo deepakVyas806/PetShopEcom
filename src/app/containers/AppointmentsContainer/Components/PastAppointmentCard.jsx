@@ -1,12 +1,15 @@
 "use client";
 
+import { IconReorder, IconInfo } from "@/lib/icons";
+
 const STATUS_CFG = {
-  completed: { bg: "bg-green-100", text: "text-green-700", label: "Completed", icon: "replay" },
-  cancelled: { bg: "bg-error/10",  text: "text-error",     label: "Cancelled", icon: "info"   },
+  completed: { bg: "bg-green-100", text: "text-green-700", label: "Completed", Icon: IconReorder },
+  cancelled: { bg: "bg-error/10",  text: "text-error",     label: "Cancelled", Icon: IconInfo   },
 };
 
 export default function PastAppointmentCard({ appt }) {
   const cfg = STATUS_CFG[appt.status] ?? STATUS_CFG.completed;
+  const CfgIcon = cfg.Icon;
 
   return (
     <div className="flex items-center gap-3 px-4 py-3 rounded-2xl border border-outline-variant/25 bg-surface-container-lowest/70 hover:bg-surface-container-lowest transition-colors duration-200">
@@ -37,9 +40,7 @@ export default function PastAppointmentCard({ appt }) {
         className="w-8 h-8 rounded-full border border-primary/30 text-primary flex items-center justify-center hover:bg-primary/5 hover:border-primary/60 transition-all cursor-pointer bg-transparent flex-shrink-0"
         title={cfg.label === "Completed" ? "Rebook" : "View notes"}
       >
-        <span className="material-symbols-outlined leading-none" style={{ fontSize: 15 }}>
-          {cfg.icon}
-        </span>
+        <CfgIcon size={15} weight="regular" />
       </button>
     </div>
   );

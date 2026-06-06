@@ -1,6 +1,7 @@
 "use client";
 
 import { fmt } from "@/lib/currency";
+import { IconRefresh } from "@/lib/icons";
 
 export default function OrderDetailItems({ items }) {
   return (
@@ -12,7 +13,7 @@ export default function OrderDetailItems({ items }) {
       <div className="px-5 py-3 border-b border-outline-variant/20 flex items-center justify-between">
         <h2 className="text-xs font-bold text-on-surface">Order Items ({items.length})</h2>
         <button className="text-xs text-primary font-medium hover:underline flex items-center gap-1 bg-transparent border-none cursor-pointer p-0">
-          <span className="material-symbols-outlined leading-none" style={{ fontSize: 15 }}>refresh</span>
+          <IconRefresh size={15} weight="bold" />
           Reorder All
         </button>
       </div>

@@ -5,6 +5,7 @@ import useShoppingCart from "./ShoppingCartContainer.hook";
 import CartItemRow from "./Components/CartItemRow";
 import { fmt } from "@/lib/currency";
 import PageHeader from "@/components/common/PageHeader";
+import { IconCheckCircle, IconArrowLeft, IconTag, IconCalendar, IconLock, IconShipping, IconArrowRight, IconStar, IconBag, IconPaw } from "@/lib/icons";
 
 export default function ShoppingCartContainer() {
   const {
@@ -36,7 +37,7 @@ export default function ShoppingCartContainer() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
           <div className="bg-white dark:bg-surface-container-lowest p-6 rounded-2xl border border-outline-variant/30 shadow-2xl max-w-sm w-full text-center space-y-4">
             <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto text-green-600">
-              <span className="material-symbols-outlined text-3xl">check_circle</span>
+              <IconCheckCircle size={36} weight="fill" />
             </div>
             <h3 className="text-sm font-bold text-on-surface">Order Placed!</h3>
             <p className="text-xs text-on-surface-variant leading-relaxed">
@@ -78,7 +79,7 @@ export default function ShoppingCartContainer() {
               {/* Continue shopping link */}
               <div className="pt-1">
                 <Link href="/marketplace" className="inline-flex items-center gap-1 text-xs text-primary font-semibold hover:underline transition-all">
-                  <span className="material-symbols-outlined text-sm">arrow_back</span>
+                  <IconArrowLeft size={16} weight="bold" />
                   Continue Shopping
                 </Link>
               </div>
@@ -137,7 +138,7 @@ export default function ShoppingCartContainer() {
                     {appliedCode && (
                       <div className="flex justify-between text-green-600 font-bold">
                         <span className="flex items-center gap-1">
-                          <span className="material-symbols-outlined text-[11px]">local_offer</span>
+                          <IconTag size={11} weight="regular" />
                           {appliedCode}
                           <button onClick={removePromoCode} className="text-error text-[9px] hover:underline border-none bg-transparent cursor-pointer p-0">✕</button>
                         </span>
@@ -178,7 +179,7 @@ export default function ShoppingCartContainer() {
 
                   {/* Estimated delivery note */}
                   <div className="flex items-center gap-1.5 bg-primary/5 rounded-lg px-3 py-2">
-                    <span className="material-symbols-outlined text-primary text-sm">calendar_today</span>
+                    <IconCalendar size={16} className="text-primary" weight="regular" />
                     <span className="text-[10px] text-on-surface font-medium">Estimated delivery: <strong>3–5 business days</strong></span>
                   </div>
 
@@ -187,20 +188,20 @@ export default function ShoppingCartContainer() {
                     onClick={handleProceedToCheckout}
                     className="w-full py-2.5 rounded-xl bg-primary text-on-primary font-bold text-xs shadow-md hover:shadow-lg hover:brightness-105 active:scale-[0.99] transition-all cursor-pointer border-none outline-none flex items-center justify-center gap-2"
                   >
-                    <span className="material-symbols-outlined text-sm">lock</span>
+                    <IconLock size={16} weight="bold" />
                     Proceed to Checkout
-                    <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                    <IconArrowRight size={16} weight="bold" />
                   </button>
 
                   {/* Trust signals */}
                   <div className="grid grid-cols-3 gap-2 pt-1">
                     {[
-                      { icon: "lock", label: "SSL Secure" },
-                      { icon: "local_shipping", label: "Free Ship" },
-                      { icon: "assignment_return", label: "Easy Returns" },
-                    ].map(({ icon, label }) => (
+                      { Icon: IconLock,      label: "SSL Secure" },
+                      { Icon: IconShipping,  label: "Free Ship" },
+                      { Icon: IconArrowLeft, label: "Easy Returns" },
+                    ].map(({ Icon, label }) => (
                       <div key={label} className="flex flex-col items-center gap-0.5 text-center">
-                        <span className="material-symbols-outlined text-primary text-base">{icon}</span>
+                        <Icon size={18} className="text-primary" weight="regular" />
                         <span className="text-[9px] text-on-surface-variant font-medium">{label}</span>
                       </div>
                     ))}
@@ -212,7 +213,7 @@ export default function ShoppingCartContainer() {
               {/* Loyalty box */}
               {rewardsPoints > 0 && (
                 <div className="bg-tertiary-fixed border border-tertiary-fixed-dim rounded-xl p-3 flex items-center gap-2.5">
-                  <span className="material-symbols-outlined text-primary text-xl shrink-0">loyalty</span>
+                  <IconStar size={20} className="text-primary shrink-0" weight="fill" />
                   <div>
                     <p className="text-[10px] font-bold text-on-tertiary-fixed">Earn {rewardsPoints} reward points</p>
                     <p className="text-[9px] text-on-tertiary-fixed-variant mt-0.5">Join artPet Rewards to save on future orders!</p>
@@ -227,8 +228,8 @@ export default function ShoppingCartContainer() {
             <div className="w-24 h-24 relative">
               <div className="absolute inset-0 bg-primary/5 rounded-full blur-2xl" />
               <div className="relative w-full h-full flex items-center justify-center">
-                <span className="material-symbols-outlined text-[64px] text-primary/20">shopping_basket</span>
-                <span className="material-symbols-outlined absolute -bottom-1 -right-1 text-2xl text-primary animate-bounce">pets</span>
+                <IconBag size={64} className="text-primary/20" weight="duotone" />
+                <IconPaw size={24} className="absolute -bottom-1 -right-1 text-primary animate-bounce" weight="fill" />
               </div>
             </div>
             <div className="space-y-1">

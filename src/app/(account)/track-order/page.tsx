@@ -1,7 +1,6 @@
-import TrackOrderContainer from "@/app/containers/TrackOrderContainer/TrackOrderContainer";
+import { redirect } from "next/navigation";
 
-export const metadata = { title: "Track Your Order | artPetShop" };
-
-export default function TrackOrderPage() {
-  return <TrackOrderContainer />;
+// Track order always requires an order ID — redirect bare visits to orders list
+export default function TrackOrderIndexPage() {
+  redirect("/orders");
 }

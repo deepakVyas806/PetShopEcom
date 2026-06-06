@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import useCheckoutContainer from "./CheckoutContainer.hook";
 import { fmt } from "@/lib/currency";
+import { Card, Button, FormField } from "@/components/ui";
+import { IconCheck, IconUser, IconShipping, IconClock, IconArrowRight, IconArrowLeft, IconLock, IconCard, IconQR, IconWallet, IconMoney, IconLocation, IconShield, IconDownload, IconSupport } from "@/lib/icons";
 
 function StepNav({ steps, activeStep }) {
   return (
@@ -17,7 +19,7 @@ function StepNav({ steps, activeStep }) {
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
                 isDone ? "bg-tertiary text-on-tertiary" : isActive ? "bg-primary text-on-primary" : "bg-surface-container-high text-on-surface-variant"
               }`}>
-                {isDone ? <span className="material-symbols-outlined text-sm">check</span> : step}
+                {isDone ? <IconCheck size={16} weight="bold" /> : step}
               </div>
               <span className={`text-xs whitespace-nowrap ${isActive ? "font-bold text-primary" : isDone ? "font-bold text-tertiary" : "font-medium text-on-surface-variant"}`}>
                 {label}
@@ -32,12 +34,7 @@ function StepNav({ steps, activeStep }) {
 }
 
 function CheckoutInput({ label, placeholder, type = "text" }) {
-  return (
-    <div className="space-y-1">
-      <label className="text-[10px] text-on-surface-variant ml-1">{label}</label>
-      <input className="w-full bg-surface-container-low border border-transparent rounded-lg focus:border-primary focus:ring-0 text-xs py-2.5 px-3 text-on-surface placeholder:text-on-surface-variant/50" placeholder={placeholder} type={type} />
-    </div>
-  );
+  return <FormField label={label} placeholder={placeholder} type={type} />;
 }
 
 /* ── Service mode: Contact step ── */
@@ -45,32 +42,30 @@ function ContactStep({ goToStep }) {
   return (
     <section className="space-y-3">
       <div className="flex items-center gap-2">
-        <span className="material-symbols-outlined text-primary text-base">person</span>
+        <IconUser size={18} className="text-primary" weight="regular" />
         <h2 className="text-sm font-semibold text-on-surface">Your contact details</h2>
       </div>
 
-      <div className="bg-white/80 dark:bg-surface-container-lowest/80 backdrop-blur-xl border border-[#F3E8FF] rounded-xl p-4 space-y-3">
+      <Card className="space-y-3">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <CheckoutInput label="First Name" placeholder="e.g. Alex" />
           <CheckoutInput label="Last Name" placeholder="e.g. Riverton" />
         </div>
         <CheckoutInput label="Phone Number" placeholder="+1 (555) 000-0000" type="tel" />
         <CheckoutInput label="Email Address" placeholder="you@example.com" type="email" />
-        <div className="space-y-1">
-          <label className="text-[10px] text-on-surface-variant ml-1">Special Instructions (optional)</label>
-          <textarea
-            rows={2}
-            placeholder="Any special needs for your pet..."
-            className="w-full bg-surface-container-low border border-transparent rounded-lg focus:border-primary focus:ring-0 text-xs py-2.5 px-3 text-on-surface placeholder:text-on-surface-variant/50 resize-none"
-          />
-        </div>
-      </div>
+        <FormField
+          label="Special Instructions (optional)"
+          multiline
+          rows={2}
+          placeholder="Any special needs for your pet..."
+        />
+      </Card>
 
       <div className="flex justify-end pt-1">
-        <button onClick={() => goToStep(2)} className="bg-primary text-on-primary px-5 py-2 rounded-full text-xs font-semibold hover:shadow-md transition-all active:scale-95 flex items-center gap-1.5">
+        <Button onClick={() => goToStep(2)}>
           Continue to Payment
-          <span className="material-symbols-outlined text-sm">arrow_forward</span>
-        </button>
+          <IconArrowRight size={16} weight="bold" />
+        </Button>
       </div>
     </section>
   );
@@ -81,7 +76,7 @@ function ShippingStep({ goToStep }) {
   return (
     <section className="space-y-3">
       <div className="flex items-center gap-2">
-        <span className="material-symbols-outlined text-primary text-base">local_shipping</span>
+        <IconShipping size={18} className="text-primary" weight="regular" />
         <h2 className="text-sm font-semibold text-on-surface">Delivery address</h2>
       </div>
 
@@ -92,7 +87,7 @@ function ShippingStep({ goToStep }) {
           <div className="p-3 rounded-xl border border-primary bg-primary/5 shadow-sm peer-checked:shadow-md transition-all">
             <div className="flex justify-between items-start mb-1.5">
               <span className="bg-primary/10 text-primary px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide">Home</span>
-              <span className="material-symbols-outlined text-primary text-sm">check_circle</span>
+              <IconCheck size={16} className="text-primary" weight="bold" />
             </div>
             <p className="font-bold text-on-surface text-xs">Alex Riverton</p>
             <p className="text-[10px] text-on-surface-variant mt-1 leading-relaxed">124 Golden Retriever Lane,<br />West Hills, CA 90210</p>
@@ -100,13 +95,13 @@ function ShippingStep({ goToStep }) {
           </div>
         </label>
         <button className="p-3 rounded-xl border-2 border-dashed border-outline-variant hover:bg-surface-container-low transition-all flex flex-col items-center justify-center gap-1.5 group min-h-[96px]">
-          <span className="material-symbols-outlined text-outline group-hover:text-primary transition-colors text-xl">add_location_alt</span>
+          <IconLocation size={20} className="text-outline group-hover:text-primary transition-colors" weight="regular" />
           <span className="text-[10px] font-medium text-on-surface-variant group-hover:text-primary">Add New Address</span>
         </button>
       </div>
 
       {/* New address form */}
-      <div className="bg-white/80 dark:bg-surface-container-lowest/80 backdrop-blur-xl border border-[#F3E8FF] rounded-xl p-4 space-y-3">
+      <Card className="space-y-3">
         <p className="text-[10px] font-semibold text-on-surface-variant uppercase tracking-wider">Or fill in manually</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <CheckoutInput label="First Name" placeholder="e.g. Alex" />
@@ -118,37 +113,37 @@ function ShippingStep({ goToStep }) {
           <CheckoutInput label="ZIP / Post Code" placeholder="e.g. 90210" />
         </div>
         <CheckoutInput label="Phone Number" placeholder="+1 (555) 000-0000" type="tel" />
-      </div>
+      </Card>
 
       <div className="flex justify-end pt-1">
-        <button onClick={() => goToStep(2)} className="bg-primary text-on-primary px-5 py-2 rounded-full text-xs font-semibold hover:shadow-md transition-all active:scale-95 flex items-center gap-1.5">
+        <Button onClick={() => goToStep(2)}>
           Continue to Delivery
-          <span className="material-symbols-outlined text-sm">arrow_forward</span>
-        </button>
+          <IconArrowRight size={16} weight="bold" />
+        </Button>
       </div>
     </section>
   );
 }
 
 const DELIVERY_OPTIONS = [
-  { icon: "local_shipping",  title: "Standard Shipping", sub: "3–5 business days", price: "FREE",   checked: true  },
-  { icon: "rocket_launch",   title: "Express Delivery",  sub: "1–2 business days", price: fmt(12.99), checked: false },
-  { icon: "schedule",        title: "Same Day",          sub: "Order before 12 PM", price: fmt(19.99), checked: false },
+  { Icon: IconShipping, title: "Standard Shipping", sub: "3–5 business days", price: "FREE",   checked: true  },
+  { Icon: IconArrowRight, title: "Express Delivery",  sub: "1–2 business days", price: fmt(12.99), checked: false },
+  { Icon: IconClock, title: "Same Day",          sub: "Order before 12 PM", price: fmt(19.99), checked: false },
 ];
 
 function DeliveryStep({ goToStep }) {
   return (
     <section className="space-y-3">
       <div className="flex items-center gap-2">
-        <span className="material-symbols-outlined text-primary text-base">speed</span>
+        <IconShipping size={18} className="text-primary" weight="regular" />
         <h2 className="text-sm font-semibold text-on-surface">Choose delivery speed</h2>
       </div>
 
       <div className="space-y-2">
-        {DELIVERY_OPTIONS.map(({ icon, title, sub, price, checked }) => (
+        {DELIVERY_OPTIONS.map(({ Icon, title, sub, price, checked }) => (
           <label key={title} className="flex items-center gap-3 p-3 rounded-xl border border-outline-variant bg-surface cursor-pointer hover:border-primary/50 transition-all">
             <input defaultChecked={checked} className="accent-primary w-4 h-4 shrink-0" name="delivery" type="radio" />
-            <span className="material-symbols-outlined text-on-surface-variant text-base shrink-0">{icon}</span>
+            <Icon size={18} className="text-on-surface-variant shrink-0" weight="regular" />
             <div className="flex-grow min-w-0">
               <span className="font-bold text-on-surface text-xs">{title}</span>
               <p className="text-[10px] text-on-surface-variant">{sub}</p>
@@ -159,22 +154,22 @@ function DeliveryStep({ goToStep }) {
       </div>
 
       <div className="flex justify-between pt-1">
-        <button onClick={() => goToStep(1)} className="text-on-surface-variant px-4 py-2 text-xs font-medium flex items-center gap-1.5 hover:text-primary transition-colors">
-          <span className="material-symbols-outlined text-sm">arrow_back</span> Back
-        </button>
-        <button onClick={() => goToStep(3)} className="bg-primary text-on-primary px-5 py-2 rounded-full text-xs font-semibold hover:shadow-md transition-all active:scale-95 flex items-center gap-1.5">
-          Continue to Payment <span className="material-symbols-outlined text-sm">arrow_forward</span>
-        </button>
+        <Button variant="ghost" onClick={() => goToStep(1)}>
+          <IconArrowLeft size={16} weight="bold" /> Back
+        </Button>
+        <Button onClick={() => goToStep(3)}>
+          Continue to Payment <IconArrowRight size={16} weight="bold" />
+        </Button>
       </div>
     </section>
   );
 }
 
 const PAYMENT_METHODS = [
-  { id: "card",  label: "Card",        icon: "credit_card",    sub: "Credit / Debit" },
-  { id: "upi",   label: "UPI",         icon: "qr_code_scanner", sub: "Any UPI app"    },
-  { id: "wallet",label: "Wallets",     icon: "account_balance_wallet", sub: "Razorpay / Paytm" },
-  { id: "cod",   label: "Cash",        icon: "payments",       sub: "Pay on delivery" },
+  { id: "card",  label: "Card",    Icon: IconCard,   sub: "Credit / Debit" },
+  { id: "upi",   label: "UPI",     Icon: IconQR,     sub: "Any UPI app"    },
+  { id: "wallet",label: "Wallets", Icon: IconWallet, sub: "Razorpay / Paytm" },
+  { id: "cod",   label: "Cash",    Icon: IconMoney,  sub: "Pay on delivery" },
 ];
 
 function PaymentStep({ goToStep, handlePay, total, isService }) {
@@ -184,7 +179,7 @@ function PaymentStep({ goToStep, handlePay, total, isService }) {
   return (
     <section className="space-y-4">
       <div className="flex items-center gap-2">
-        <span className="material-symbols-outlined text-primary text-base">lock</span>
+        <IconLock size={18} className="text-primary" weight="regular" />
         <h2 className="text-sm font-semibold text-on-surface">Secure Payment</h2>
       </div>
 
@@ -200,9 +195,7 @@ function PaymentStep({ goToStep, handlePay, total, isService }) {
                 : "border-outline-variant bg-surface hover:border-primary/40"
             }`}
           >
-            <span className={`material-symbols-outlined text-xl ${method === m.id ? "text-primary" : "text-on-surface-variant"}`}>
-              {m.icon}
-            </span>
+            <m.Icon size={20} className={method === m.id ? "text-primary" : "text-on-surface-variant"} weight="regular" />
             <span className={`text-[10px] font-bold leading-tight ${method === m.id ? "text-primary" : "text-on-surface"}`}>{m.label}</span>
             <span className="text-[9px] text-on-surface-variant leading-tight hidden sm:block">{m.sub}</span>
           </button>
@@ -211,7 +204,7 @@ function PaymentStep({ goToStep, handlePay, total, isService }) {
 
       {/* Card fields */}
       {method === "card" && (
-        <div className="bg-white/80 dark:bg-surface-container-lowest/80 border border-[#F3E8FF] rounded-xl p-4 space-y-3">
+        <Card className="space-y-3">
           <div className="space-y-1">
             <label className="text-[10px] text-on-surface-variant ml-1">Card Number</label>
             <div className="relative">
@@ -220,36 +213,24 @@ function PaymentStep({ goToStep, handlePay, total, isService }) {
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1">
-              <label className="text-[10px] text-on-surface-variant ml-1">Expiry</label>
-              <input className="w-full bg-surface-container-low border border-transparent rounded-lg focus:border-primary focus:ring-0 text-xs py-2.5 px-3 text-on-surface" placeholder="MM / YY" />
-            </div>
-            <div className="space-y-1">
-              <label className="text-[10px] text-on-surface-variant ml-1">CVV</label>
-              <input className="w-full bg-surface-container-low border border-transparent rounded-lg focus:border-primary focus:ring-0 text-xs py-2.5 px-3 text-on-surface" placeholder="•••" type="password" />
-            </div>
+            <FormField label="Expiry" placeholder="MM / YY" />
+            <FormField label="CVV" placeholder="•••" type="password" />
           </div>
-          <div className="space-y-1">
-            <label className="text-[10px] text-on-surface-variant ml-1">Name on Card</label>
-            <input className="w-full bg-surface-container-low border border-transparent rounded-lg focus:border-primary focus:ring-0 text-xs py-2.5 px-3 text-on-surface" placeholder="As printed on card" />
-          </div>
-        </div>
+          <FormField label="Name on Card" placeholder="As printed on card" />
+        </Card>
       )}
 
       {/* UPI */}
       {method === "upi" && (
-        <div className="bg-white/80 border border-[#F3E8FF] rounded-xl p-4 space-y-3">
-          <div className="space-y-1">
-            <label className="text-[10px] text-on-surface-variant ml-1">UPI ID</label>
-            <input className="w-full bg-surface-container-low border border-transparent rounded-lg focus:border-primary focus:ring-0 text-xs py-2.5 px-3 text-on-surface" placeholder="yourname@upi" />
-          </div>
+        <Card className="space-y-3">
+          <FormField label="UPI ID" placeholder="yourname@upi" />
           <p className="text-[10px] text-on-surface-variant">You'll receive a payment request on your UPI app.</p>
-        </div>
+        </Card>
       )}
 
       {/* Wallets */}
       {method === "wallet" && (
-        <div className="bg-white/80 border border-[#F3E8FF] rounded-xl p-4 space-y-3">
+        <Card>
           <div className="grid grid-cols-3 gap-2">
             {["Paytm", "PhonePe", "Razorpay"].map((w) => (
               <label key={w} className="flex flex-col items-center gap-1 p-2.5 rounded-lg border border-outline-variant cursor-pointer hover:border-primary transition-all">
@@ -258,28 +239,28 @@ function PaymentStep({ goToStep, handlePay, total, isService }) {
               </label>
             ))}
           </div>
-        </div>
+        </Card>
       )}
 
       {/* Cash on Delivery */}
       {method === "cod" && (
-        <div className="bg-white/80 border border-[#F3E8FF] rounded-xl p-4 flex items-start gap-3">
-          <span className="material-symbols-outlined text-primary text-xl mt-0.5">payments</span>
+        <Card className="flex items-start gap-3">
+          <IconMoney size={20} className="text-primary mt-0.5" weight="regular" />
           <div>
             <p className="text-xs font-bold text-on-surface">Cash on Delivery</p>
             <p className="text-[10px] text-on-surface-variant mt-0.5 leading-relaxed">Pay in cash when your order is delivered. No online transaction needed.</p>
           </div>
-        </div>
+        </Card>
       )}
 
       <div className="flex justify-between items-center pt-2">
-        <button onClick={() => goToStep(backStep)} className="text-on-surface-variant px-4 py-2 text-xs font-medium flex items-center gap-1.5 hover:text-primary transition-colors">
-          <span className="material-symbols-outlined text-sm">arrow_back</span> Back
-        </button>
-        <button onClick={handlePay} className="bg-primary text-on-primary px-6 py-2.5 rounded-full text-xs font-bold hover:shadow-lg transition-all active:scale-95 flex items-center gap-2 shadow-md">
-          <span className="material-symbols-outlined text-sm">lock</span>
+        <Button variant="ghost" onClick={() => goToStep(backStep)}>
+          <IconArrowLeft size={16} weight="bold" /> Back
+        </Button>
+        <Button onClick={handlePay} className="px-6 py-2.5 shadow-md">
+          <IconLock size={16} weight="bold" />
           {method === "cod" ? "Place Order" : `Pay ${fmt(total)}`}
-        </button>
+        </Button>
       </div>
     </section>
   );
@@ -289,7 +270,7 @@ function PaymentStep({ goToStep, handlePay, total, isService }) {
 function OrderSummary({ isService, service, bookingDate, bookingTime, cartItems, subtotal, shipping, tax, total, couponCode, setCouponCode }) {
   return (
     <aside className="lg:col-span-4 space-y-4">
-      <div className="bg-white/80 dark:bg-surface-container-lowest/80 backdrop-blur-xl border border-[#F3E8FF] dark:border-outline-variant/20 rounded-2xl p-4 sticky top-24 shadow-sm">
+      <Card className="sticky top-24">
         <h3 className="text-sm font-semibold text-on-surface mb-4 border-b border-outline-variant/20 pb-2">
           {isService ? "Appointment Summary" : "Order Summary"}
         </h3>
@@ -363,11 +344,11 @@ function OrderSummary({ isService, service, bookingDate, bookingTime, cartItems,
         </div>
 
         <div className="mt-6 flex items-center justify-center gap-4 opacity-50 grayscale hover:grayscale-0 transition-all">
-          <span className="material-symbols-outlined text-sm">verified_user</span>
-          <span className="material-symbols-outlined text-sm">payments</span>
-          <span className="material-symbols-outlined text-sm">shield</span>
+          <IconShield size={16} weight="regular" />
+          <IconMoney size={16} weight="regular" />
+          <IconLock size={16} weight="regular" />
         </div>
-      </div>
+      </Card>
     </aside>
   );
 }

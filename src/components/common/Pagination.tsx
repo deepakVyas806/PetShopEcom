@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { IconChevronDown, IconChevronLeft, IconChevronRight } from "@/lib/icons";
 
 /* ─── Types ──────────────────────────────────────────────────────────────────── */
 interface PaginationProps {
@@ -62,9 +63,7 @@ export default function Pagination({
             </>
           ) : (
             <>
-              <span className="material-symbols-outlined leading-none" style={{ fontSize: 15 }}>
-                expand_more
-              </span>
+              <IconChevronDown size={15} className="leading-none" weight="regular" />
               {label}
             </>
           )}
@@ -90,7 +89,7 @@ export default function Pagination({
         className={cn(btnBase, "border-outline-variant text-on-surface-variant hover:border-primary hover:text-primary disabled:opacity-40 disabled:cursor-not-allowed bg-transparent")}
         aria-label="Previous page"
       >
-        <span className="material-symbols-outlined leading-none" style={{ fontSize: 16 }}>chevron_left</span>
+        <IconChevronLeft size={16} className="leading-none" weight="regular" />
       </button>
 
       {/* Page numbers */}
@@ -123,7 +122,7 @@ export default function Pagination({
         className={cn(btnBase, "border-outline-variant text-on-surface-variant hover:border-primary hover:text-primary disabled:opacity-40 disabled:cursor-not-allowed bg-transparent")}
         aria-label="Next page"
       >
-        <span className="material-symbols-outlined leading-none" style={{ fontSize: 16 }}>chevron_right</span>
+        <IconChevronRight size={16} className="leading-none" weight="regular" />
       </button>
     </div>
   );

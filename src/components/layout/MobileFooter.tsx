@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Home, ShoppingBag, Calendar, Clock } from "lucide-react";
+import { IconHome, IconBag, IconCalendar, IconClock } from "@/lib/icons";
 import { useAuth } from "@/context/AuthContext";
 
 export default function MobileFooter() {
@@ -21,10 +21,10 @@ export default function MobileFooter() {
   };
 
   const tabs = [
-    { label: "Home",  href: "/",           icon: <Home      className="w-5 h-5" />, guarded: false },
-    { label: "Shop",  href: "/marketplace", icon: <ShoppingBag className="w-5 h-5" />, guarded: false },
-    { label: "Book",  href: "/services/book", icon: <Calendar  className="w-5 h-5" />, guarded: false },
-    { label: "Orders",href: "/orders",      icon: <Clock     className="w-5 h-5" />, guarded: true  },
+    { label: "Home",  href: "/",           icon: <IconHome    size={20} weight="bold" />, guarded: false },
+    { label: "Shop",  href: "/marketplace", icon: <IconBag    size={20} weight="bold" />, guarded: false },
+    { label: "Services", href: "/services", icon: <IconCalendar size={20} weight="bold" />, guarded: false },
+    { label: "Orders",href: "/orders",      icon: <IconClock  size={20} weight="bold" />, guarded: true  },
   ];
 
   return (

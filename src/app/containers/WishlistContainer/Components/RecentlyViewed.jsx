@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import ProductCard from "@/components/common/ProductCard";
 import { useStore } from "@/context/StoreContext";
+import { IconChevronLeft, IconChevronRight } from "@/lib/icons";
 
 export default function RecentlyViewed({ items }) {
   const { addToCart } = useStore();
@@ -20,13 +21,13 @@ export default function RecentlyViewed({ items }) {
             onClick={() => scroll(-1)}
             className="p-1 border border-outline-variant rounded-full hover:bg-surface-variant transition-colors cursor-pointer bg-transparent"
           >
-            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>chevron_left</span>
+            <IconChevronLeft size={16} weight="bold" />
           </button>
           <button
             onClick={() => scroll(1)}
             className="p-1 border border-outline-variant rounded-full hover:bg-surface-variant transition-colors cursor-pointer bg-transparent"
           >
-            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>chevron_right</span>
+            <IconChevronRight size={16} weight="bold" />
           </button>
         </div>
       </div>

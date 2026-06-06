@@ -1,6 +1,7 @@
 import React from "react";
 import { siteConfig } from "@/config/site";
-import { Hexagon, PawPrint } from "lucide-react";
+import { IconHexagon } from "@/lib/icons";
+import { PawPrint } from "lucide-react";
 
 interface BrandLogoProps {
   className?: string;
@@ -17,7 +18,7 @@ export default function BrandLogo({
     return (
       <div className={`flex items-center gap-2 select-none text-left ${className}`}>
         <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-brand-primary to-brand-secondary flex items-center justify-center text-white shadow">
-          <Hexagon className="w-4 h-4 text-brand-secondary fill-brand-secondary/10 animate-pulse" />
+          <IconHexagon className="w-4 h-4 text-brand-secondary fill-brand-secondary/10 animate-pulse" />
         </div>
         {showText && (
           <div className="flex flex-col">
@@ -37,7 +38,7 @@ export default function BrandLogo({
   return (
     <div className={`flex items-center gap-2.5 select-none py-1 text-left ${className}`}>
       <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-brand-secondary to-brand-primary flex items-center justify-center text-white shadow-lg shadow-purple-950/40 shrink-0">
-        <PawPrint className="w-4.5 h-4.5 text-white" />
+        <PawPrint className="w-4 h-4 text-white" />
       </div>
       {showText && (
         <div className="flex flex-col">

@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { IconHome, IconReceipt, IconHeart, IconBell, IconUser, IconSliders, IconLogout } from "@/lib/icons";
 
 const NAV = [
-  { icon: "dashboard",     label: "Dashboard",     href: "/"         },
-  { icon: "receipt_long",  label: "Orders",         href: "/orders"   },
-  { icon: "favorite",      label: "Wishlist",       href: "/wishlist"  },
-  { icon: "notifications", label: "Subscriptions",  href: "#"          },
-  { icon: "person",        label: "Profile",        href: "/profile"  },
+  { Icon: IconHome,    label: "Dashboard",     href: "/"         },
+  { Icon: IconReceipt, label: "Orders",         href: "/orders"   },
+  { Icon: IconHeart,   label: "Wishlist",       href: "/wishlist"  },
+  { Icon: IconBell,    label: "Subscriptions",  href: "#"          },
+  { Icon: IconUser,    label: "Profile",        href: "/profile"  },
 ];
 
 export default function OrdersSidebar({ logout }) {
@@ -21,7 +22,7 @@ export default function OrdersSidebar({ logout }) {
         <p className="text-xs text-on-surface-variant">Manage your pet's happiness</p>
       </div>
 
-      {NAV.map(({ icon, label, href }) => {
+      {NAV.map(({ Icon, label, href }) => {
         const isActive = pathname === href;
         return (
           <Link
@@ -33,7 +34,7 @@ export default function OrdersSidebar({ logout }) {
                 : "text-on-surface-variant hover:bg-surface-container-high hover:translate-x-0.5"
             }`}
           >
-            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>{icon}</span>
+            <Icon size={18} weight={isActive ? "fill" : "regular"} />
             {label}
           </Link>
         );
@@ -44,14 +45,14 @@ export default function OrdersSidebar({ logout }) {
           href="#"
           className="flex items-center gap-3 px-4 py-2.5 rounded-xl mx-1 text-on-surface-variant hover:bg-surface-container-high hover:translate-x-0.5 transition-all text-xs font-medium"
         >
-          <span className="material-symbols-outlined" style={{ fontSize: 18 }}>settings</span>
+          <IconSliders size={18} weight="regular" />
           Settings
         </Link>
         <button
           onClick={logout}
           className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl mx-1 text-error hover:bg-error-container/20 hover:translate-x-0.5 transition-all text-xs font-medium cursor-pointer bg-transparent border-none"
         >
-          <span className="material-symbols-outlined" style={{ fontSize: 18 }}>logout</span>
+          <IconLogout size={18} weight="regular" />
           Logout
         </button>
       </div>

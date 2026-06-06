@@ -2,6 +2,7 @@
 
 import { useStore } from "@/context/StoreContext";
 import { fmt } from "@/lib/currency";
+import { IconCheckCircle, IconCartSimple } from "@/lib/icons";
 
 const BUNDLE_ITEMS = [
   "Artisan Ceramic Bowl",
@@ -50,7 +51,7 @@ export default function BundlePromo() {
             <ul className="space-y-1">
               {BUNDLE_ITEMS.map((item) => (
                 <li key={item} className="flex items-center gap-1.5 text-xs text-on-surface-variant">
-                  <span className="material-symbols-outlined text-primary" style={{ fontSize: 13 }}>check_circle</span>
+                  <IconCheckCircle size={13} className="text-primary" weight="regular" />
                   {item}
                 </li>
               ))}
@@ -70,7 +71,7 @@ export default function BundlePromo() {
               onClick={handleAddBundle}
               className="w-fit bg-primary text-on-primary hover:brightness-105 py-2 px-4 rounded-full text-xs font-semibold hover:shadow-md transition-all active:scale-95 flex items-center gap-1.5 border-none cursor-pointer"
             >
-              <span className="material-symbols-outlined leading-none" style={{ fontSize: 14 }}>add_shopping_cart</span>
+              <IconCartSimple size={14} className="leading-none" weight="bold" />
               Add Bundle to Cart
             </button>
           </div>

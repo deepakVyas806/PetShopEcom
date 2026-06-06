@@ -9,7 +9,6 @@ const glassCard = {
   border: "1px solid #F3E8FF",
 };
 
-
 function RatingBar({ star, pct, animated }) {
   return (
     <div className="flex items-center gap-3">
@@ -28,7 +27,7 @@ function RatingBar({ star, pct, animated }) {
   );
 }
 
-export default function RatingSummary({ product }) {
+export default function RatingSummary({ product, onWriteReview }) {
   const [animated, setAnimated] = useState(false);
 
   useEffect(() => {
@@ -37,7 +36,7 @@ export default function RatingSummary({ product }) {
   }, []);
 
   return (
-    <div className="p-4 rounded-xl sticky top-24 space-y-4" style={glassCard}>
+    <div className="p-4 rounded-xl space-y-4" style={glassCard}>
       <h2 className="text-sm font-bold text-on-surface">Customer Reviews</h2>
 
       {/* Star distribution */}
@@ -52,6 +51,7 @@ export default function RatingSummary({ product }) {
         <p className="text-xs font-semibold text-on-surface">Review this product</p>
         <p className="text-xs text-on-surface-variant">Share your thoughts with other pet owners</p>
         <button
+          onClick={onWriteReview}
           className="w-full py-2.5 rounded-full bg-primary text-on-primary text-xs font-bold shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all border-none cursor-pointer"
         >
           Write a Review

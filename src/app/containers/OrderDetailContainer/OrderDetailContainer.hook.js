@@ -57,6 +57,8 @@ const ORDER = {
   total: 124.50,
 };
 
-export default function useOrderDetailContainer() {
-  return { order: ORDER };
+// orderId available for real API integration — currently uses mock data
+export default function useOrderDetailContainer(orderId) {
+  const order = { ...ORDER, id: orderId || ORDER.id };
+  return { order };
 }

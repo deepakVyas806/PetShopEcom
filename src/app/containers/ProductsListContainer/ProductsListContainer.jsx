@@ -2,6 +2,7 @@
 
 import React from "react";
 import useProductsList from "./ProductsListContainer.hook";
+import { IconSearchOff } from "@/lib/icons";
 import BreadcrumbsToolbar from "./Components/BreadcrumbsToolbar";
 import SidebarFilters from "./Components/SidebarFilters";
 import ProductCard from "./Components/ProductCard";
@@ -23,6 +24,7 @@ export default function ProductsListContainer() {
     sortBy,
     setSortBy,
     searchQuery,
+    setSearchQuery,
     currentPage,
     setCurrentPage,
     mobileFiltersOpen,
@@ -44,6 +46,7 @@ export default function ProductsListContainer() {
           sortBy={sortBy}
           setSortBy={setSortBy}
           onOpenMobileFilters={() => setMobileFiltersOpen(true)}
+          onListSearch={setSearchQuery}
         />
 
         {/* Core Layout Split */}
@@ -87,7 +90,7 @@ export default function ProductsListContainer() {
               </>
             ) : (
               <div className="w-full py-16 text-center bg-surface-container-lowest border border-outline-variant/20 rounded-xl p-5 shadow-inner">
-                <span className="material-symbols-outlined text-primary text-4xl mb-3">search_off</span>
+                <IconSearchOff size={36} className="text-primary mb-3" weight="duotone" />
                 <h3 className="text-xs uppercase tracking-wider font-bold text-on-surface mb-1.5">No Products Found</h3>
                 <p className="text-[11px] text-on-surface-variant max-w-xs mx-auto leading-relaxed">
                   We couldn't find any products matching your active filters. Try adjusting your search query, price limit, or selecting different categories.

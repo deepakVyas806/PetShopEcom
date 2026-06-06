@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { fmt } from "@/lib/currency";
+import { Card, Button, SectionHeader } from "@/components/ui";
+import { IconCheckCircle, IconPackage, IconShipping, IconHome, IconCheck, IconCopy, IconLocation, IconDownload, IconCard, IconSupport } from "@/lib/icons";
 
 const ORDER_ITEMS = [
   {
@@ -20,13 +22,12 @@ const ORDER_ITEMS = [
 ];
 
 const TIMELINE = [
-  { label: "Ordered",   note: "Oct 24, 10:30 AM", icon: "check_circle",    done: true  },
-  { label: "Packed",    note: "Est. today",        icon: "package_2",       done: true  },
-  { label: "Shipped",   note: "Pending",           icon: "local_shipping",  done: false },
-  { label: "Delivered", note: "Est. Oct 27",       icon: "home_pin",        done: false },
+  { label: "Ordered",   note: "Oct 24, 10:30 AM", Icon: IconCheckCircle, done: true  },
+  { label: "Packed",    note: "Est. today",        Icon: IconPackage,     done: true  },
+  { label: "Shipped",   note: "Pending",           Icon: IconShipping,    done: false },
+  { label: "Delivered", note: "Est. Oct 27",       Icon: IconHome,        done: false },
 ];
 
-const GLASS = "bg-white/80 dark:bg-surface-container-lowest/80 backdrop-blur-xl border border-[#F3E8FF] dark:border-outline-variant/20 rounded-xl shadow-sm";
 
 /* ── Confetti ── */
 function ConfettiLayer() {
@@ -62,7 +63,7 @@ function Hero({ orderId, onCopy, copied }) {
     <div className="text-center py-6 px-4">
       {/* Icon */}
       <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
-        <span className="material-symbols-outlined text-primary text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+        <IconCheckCircle size={36} className="text-primary" weight="fill" />
       </div>
 
       <h1 className="text-lg md:text-2xl font-extrabold text-on-surface tracking-tight mb-1">Order Confirmed!</h1>
@@ -78,9 +79,7 @@ function Hero({ orderId, onCopy, copied }) {
       >
         <span className="text-[10px] text-on-surface-variant">Order</span>
         <span className="font-bold text-on-surface text-xs">{orderId}</span>
-        <span className="material-symbols-outlined text-sm text-on-surface-variant hover:text-primary transition-colors">
-          {copied ? "check" : "content_copy"}
-        </span>
+        {copied ? <IconCheck size={16} className="text-on-surface-variant hover:text-primary transition-colors" weight="bold" /> : <IconCopy size={16} className="text-on-surface-variant hover:text-primary transition-colors" weight="regular" />}
       </button>
     </div>
   );
@@ -92,11 +91,8 @@ function Timeline() {
   const progressPct = ((doneCount - 1) / (TIMELINE.length - 1)) * 100;
 
   return (
-    <div className={`${GLASS} p-4`}>
-      <div className="flex items-center gap-2 mb-4">
-        <span className="material-symbols-outlined text-primary text-base">local_shipping</span>
-        <h2 className="text-xs font-bold text-on-surface">Delivery Timeline</h2>
-      </div>
+    <Card>
+      <SectionHeader title="Delivery Timeline" icon={<IconShipping size={16} weight="regular" />} className="mb-4" />
 
       {/* Desktop: horizontal */}
       <div className="hidden sm:block relative">
@@ -107,7 +103,7 @@ function Timeline() {
           {TIMELINE.map((step) => (
             <div key={step.label} className="flex flex-col items-center gap-1.5 w-1/4">
               <div className={`w-8 h-8 rounded-full flex items-center justify-center ring-4 ring-background shadow-sm transition-all ${step.done ? "bg-primary text-white" : "bg-surface-variant text-outline"}`}>
-                <span className="material-symbols-outlined text-sm" style={step.done ? { fontVariationSettings: "'FILL' 1" } : {}}>{step.icon}</span>
+                <step.Icon size={16} weight={step.done ? "fill" : "regular"} />
               </div>
               <p className={`text-[10px] font-semibold ${step.done ? "text-on-surface" : "text-on-surface-variant"}`}>{step.label}</p>
               <p className="text-[9px] text-on-surface-variant text-center">{step.note}</p>
@@ -122,7 +118,7 @@ function Timeline() {
           <div key={step.label} className="flex gap-3">
             <div className="flex flex-col items-center">
               <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 ${step.done ? "bg-primary text-white" : "bg-surface-variant text-outline"}`}>
-                <span className="material-symbols-outlined text-xs" style={step.done ? { fontVariationSettings: "'FILL' 1" } : {}}>{step.icon}</span>
+                <step.Icon size={14} weight={step.done ? "fill" : "regular"} />
               </div>
               {i < TIMELINE.length - 1 && (
                 <div className={`w-0.5 flex-1 min-h-[24px] ${step.done ? "bg-primary" : "bg-surface-variant"}`} />
@@ -135,15 +131,15 @@ function Timeline() {
           </div>
         ))}
       </div>
-    </div>
+    </Card>
   );
 }
 
 /* ── Order Items ── */
 function OrderItems() {
   return (
-    <div className={`${GLASS} p-4`}>
-      <h2 className="text-xs font-bold text-on-surface mb-3">Order Items</h2>
+    <Card>
+      <SectionHeader title="Order Items" className="mb-3" />
       <div className="space-y-3">
         {ORDER_ITEMS.map((item) => (
           <div key={item.name} className="flex items-center gap-3 group">
@@ -158,7 +154,7 @@ function OrderItems() {
           </div>
         ))}
       </div>
-    </div>
+    </Card>
   );
 }
 
@@ -168,8 +164,8 @@ function SummaryPanel() {
     <aside className="lg:col-span-4 space-y-3">
 
       {/* Order Summary */}
-      <div className={`${GLASS} p-4`}>
-        <h3 className="text-xs font-bold text-on-surface mb-3 pb-2 border-b border-outline-variant/20">Order Summary</h3>
+      <Card>
+        <SectionHeader title="Order Summary" className="mb-3 pb-2 border-b border-outline-variant/20" />
         <div className="space-y-2">
           {[
             ["Subtotal", fmt(69.98), false],
@@ -189,31 +185,25 @@ function SummaryPanel() {
 
         {/* Actions */}
         <div className="mt-4 space-y-2">
-          <Link
-            href="/orders"
-            className="w-full py-2 bg-primary text-on-primary rounded-full text-xs font-bold shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-1.5"
-          >
-            <span className="material-symbols-outlined text-sm">location_on</span>
+          <Button href="/orders" fullWidth>
+            <IconLocation size={16} weight="regular" />
             Track My Order
-          </Link>
-          <button className="w-full py-2 bg-secondary-container text-on-secondary-container rounded-full text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-surface-container-high transition-all cursor-pointer border-none outline-none">
-            <span className="material-symbols-outlined text-sm">download</span>
+          </Button>
+          <Button variant="secondary" fullWidth>
+            <IconDownload size={16} weight="regular" />
             Download Invoice
-          </button>
-          <Link
-            href="/marketplace"
-            className="block text-center w-full py-2 text-primary text-xs font-semibold hover:bg-primary/5 rounded-full transition-all"
-          >
+          </Button>
+          <Button variant="ghost" href="/marketplace" fullWidth>
             Continue Shopping
-          </Link>
+          </Button>
         </div>
-      </div>
+      </Card>
 
       {/* Delivery Address */}
-      <div className={`${GLASS} p-4`}>
-        <h3 className="text-xs font-bold text-on-surface mb-3">Delivery Address</h3>
+      <Card>
+        <SectionHeader title="Delivery Address" className="mb-3" />
         <div className="flex gap-2.5">
-          <span className="material-symbols-outlined text-primary text-base shrink-0 mt-0.5">location_on</span>
+          <IconLocation size={18} className="text-primary shrink-0 mt-0.5" weight="regular" />
           <div className="text-xs text-on-surface-variant space-y-0.5">
             <p className="font-bold text-on-surface">Alex Parker</p>
             <p>4256 Westview Terrace</p>
@@ -221,24 +211,24 @@ function SummaryPanel() {
             <p className="mt-1 text-[10px]">+1 (555) 098-1234</p>
           </div>
         </div>
-      </div>
+      </Card>
 
       {/* Payment method */}
-      <div className={`${GLASS} p-4`}>
-        <h3 className="text-xs font-bold text-on-surface mb-3">Payment</h3>
+      <Card>
+        <SectionHeader title="Payment" className="mb-3" />
         <div className="flex items-center gap-2.5">
-          <span className="material-symbols-outlined text-primary text-base">credit_card</span>
+          <IconCard size={18} className="text-primary" weight="regular" />
           <div>
             <p className="text-xs font-semibold text-on-surface">Credit Card</p>
             <p className="text-[10px] text-on-surface-variant">•••• •••• •••• 4242</p>
           </div>
         </div>
-      </div>
+      </Card>
 
       {/* Support */}
       <div className="bg-primary/5 rounded-xl p-3 border border-primary/10 flex items-center gap-3">
         <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
-          <span className="material-symbols-outlined text-base">support_agent</span>
+          <IconSupport size={18} weight="regular" />
         </div>
         <div>
           <p className="text-xs font-semibold text-on-surface">Need help?</p>

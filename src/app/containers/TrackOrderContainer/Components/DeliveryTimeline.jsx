@@ -1,5 +1,14 @@
 "use client";
 
+import { IconChart, IconCheck, IconShipping, IconNavigate, IconPackage } from "@/lib/icons";
+
+const MILESTONE_ICON_MAP = {
+  check:         IconCheck,
+  local_shipping:IconShipping,
+  near_me:       IconNavigate,
+  inventory_2:   IconPackage,
+};
+
 const CIRCLE = {
   done:    "bg-primary-container text-on-primary-container w-8 h-8",
   active:  "bg-primary text-on-primary w-9 h-9 ring-4 ring-primary/20 shadow-md",
@@ -10,7 +19,7 @@ export default function DeliveryTimeline({ milestones, carrier, trackingNumber }
   return (
     <section className="bg-surface-container-lowest rounded-xl border border-outline-variant/30 p-4 shadow-sm">
       <h2 className="text-xs font-bold mb-4 flex items-center gap-2 text-on-surface">
-        <span className="material-symbols-outlined text-primary text-base">analytics</span>
+        <IconChart size={16} className="text-primary" weight="regular" />
         Delivery Progress
       </h2>
 
@@ -20,12 +29,7 @@ export default function DeliveryTimeline({ milestones, carrier, trackingNumber }
         {milestones.map((m) => (
           <div key={m.id} className={`relative ${m.status === "pending" ? "opacity-40" : ""}`}>
             <div className={`absolute -left-9 top-0 rounded-full flex items-center justify-center z-10 ${CIRCLE[m.status]}`}>
-              <span
-                className="material-symbols-outlined leading-none"
-                style={{ fontSize: 15, fontVariationSettings: m.iconFill ? "'FILL' 1" : "'FILL' 0" }}
-              >
-                {m.icon}
-              </span>
+              {(() => { const MI = MILESTONE_ICON_MAP[m.icon] ?? IconCheck; return <MI size={15} weight={m.iconFill ? "fill" : "regular"} />; })()}
             </div>
             <div className="pt-0.5">
               <h3 className={`text-xs font-bold ${m.status === "active" ? "text-primary" : "text-on-surface"}`}>

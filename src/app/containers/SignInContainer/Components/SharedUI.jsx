@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { IconCancel } from "@/lib/icons";
 
 export function Field({
   id, label, type = "text", placeholder, value, onChange,
@@ -33,9 +34,7 @@ export function Field({
 export function ErrorBanner({ message }) {
   return (
     <div className="flex items-center gap-2 p-2.5 rounded-xl bg-error-container/50 border border-error/20">
-      <span className="material-symbols-outlined text-error flex-shrink-0" style={{ fontSize: 16 }}>
-        error
-      </span>
+      <IconCancel size={16} className="text-error flex-shrink-0" weight="fill" />
       <p className="text-xs text-on-error-container font-medium">{message}</p>
     </div>
   );

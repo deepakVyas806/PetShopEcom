@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { fmt } from "@/lib/currency";
+import { IconStar, IconClock, IconInfo } from "@/lib/icons";
 
 export default function ServiceCard({ service }) {
   return (
@@ -20,12 +21,7 @@ export default function ServiceCard({ service }) {
           </span>
         )}
         <div className="absolute bottom-3 right-3 flex items-center gap-1 bg-white/90 backdrop-blur px-2 py-1 rounded-lg text-primary text-xs font-bold shadow-sm">
-          <span
-            className="material-symbols-outlined text-[13px]"
-            style={{ fontVariationSettings: "'FILL' 1" }}
-          >
-            star
-          </span>
+          <IconStar size={13} weight="fill" />
           {service.rating} ({service.reviewCount})
         </div>
       </Link>
@@ -39,7 +35,7 @@ export default function ServiceCard({ service }) {
               <h3 className="text-sm font-bold text-on-surface mb-0.5">{service.title}</h3>
             </Link>
             <p className="text-xs text-on-surface-variant flex items-center gap-1">
-              <span className="material-symbols-outlined text-xs">schedule</span>
+              <IconClock size={12} weight="regular" />
               {service.duration}
             </p>
           </div>
@@ -64,7 +60,7 @@ export default function ServiceCard({ service }) {
             href={`/services/${service.id}`}
             className="w-9 h-9 flex items-center justify-center bg-secondary-container text-primary rounded-full hover:bg-primary hover:text-white transition-all shrink-0"
           >
-            <span className="material-symbols-outlined text-base">info</span>
+            <IconInfo size={18} weight="regular" />
           </Link>
         </div>
       </div>

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import React from "react";
+import { IconChevronRight } from "@/lib/icons";
 
 interface Crumb {
   label: string;
@@ -68,12 +69,7 @@ export default function PageHeader({
             {breadcrumbs.map((crumb, i) => (
               <React.Fragment key={i}>
                 {i > 0 && (
-                  <span
-                    className="material-symbols-outlined leading-none text-outline-variant"
-                    style={{ fontSize: 14 }}
-                  >
-                    chevron_right
-                  </span>
+                  <IconChevronRight size={14} className="leading-none text-outline-variant" weight="regular" />
                 )}
                 {crumb.href ? (
                   <Link href={crumb.href} className="hover:text-primary transition-colors">
@@ -109,14 +105,12 @@ export default function PageHeader({
 
 /* ─── Internal: circular icon wrapper for action button ─────────────────────── */
 function CircleIcon({ icon }: { icon: string }) {
+  // Display a simple "+" for common "add" actions, otherwise nothing
+  const label = icon === "add" || icon.startsWith("add_") ? "+" : null;
+  if (!label) return null;
   return (
-    <span className="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
-      <span
-        className="material-symbols-outlined leading-none text-white"
-        style={{ fontSize: 12 }}
-      >
-        {icon}
-      </span>
+    <span className="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 text-white text-xs font-bold leading-none">
+      {label}
     </span>
   );
 }

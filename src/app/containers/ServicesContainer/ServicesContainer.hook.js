@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { IconInfinity, IconGroom, IconMedical, IconTraining, IconHome } from "@/lib/icons";
 
 const SERVICES = [
   {
@@ -66,11 +67,11 @@ const SERVICES = [
 ];
 
 export const CATEGORIES = [
-  { key: "all", label: "All Services", icon: "all_inclusive" },
-  { key: "grooming", label: "Grooming", icon: "content_cut" },
-  { key: "veterinary", label: "Veterinary", icon: "medical_services" },
-  { key: "training", label: "Training", icon: "psychology" },
-  { key: "sitting", label: "Pet Sitting", icon: "night_shelter" },
+  { key: "all",        label: "All Services", Icon: IconInfinity },
+  { key: "grooming",   label: "Grooming",     Icon: IconGroom    },
+  { key: "veterinary", label: "Veterinary",   Icon: IconMedical  },
+  { key: "training",   label: "Training",     Icon: IconTraining },
+  { key: "sitting",    label: "Pet Sitting",  Icon: IconHome     },
 ];
 
 export default function useServices() {
@@ -78,6 +79,7 @@ export default function useServices() {
   const [selectedPetTypes, setSelectedPetTypes] = useState([]);
   const [priceRange, setPriceRange] = useState(500);
   const [location, setLocation] = useState("");
+  const [inlineSearch, setInlineSearch] = useState("");
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -98,6 +100,10 @@ export default function useServices() {
     if (activeCategory !== "all" && s.category !== activeCategory) return false;
     if (selectedPetTypes.length > 0 && !selectedPetTypes.some((t) => s.petTypes.includes(t))) return false;
     if (parseFloat(s.price) > priceRange) return false;
+    if (inlineSearch.trim()) {
+      const q = inlineSearch.toLowerCase();
+      if (!s.title.toLowerCase().includes(q) && !s.description.toLowerCase().includes(q)) return false;
+    }
     return true;
   });
 
@@ -106,6 +112,8 @@ export default function useServices() {
     services,
     totalCount: services.length,
     activeCategory,
+    inlineSearch,
+    setInlineSearch,
     setActiveCategory,
     selectedPetTypes,
     handlePetTypeChange,

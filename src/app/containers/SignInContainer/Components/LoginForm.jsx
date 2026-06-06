@@ -5,8 +5,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { Field, ErrorBanner, SubmitButton } from "./SharedUI";
+import { IconMail, IconEye, IconEyeOff } from "@/lib/icons";
 
-export default function LoginForm({ onForgot }) {
+export default function LoginForm({ onForgot, onSignup }) {
   const router = useRouter();
   const { login, loading, error, clearError } = useAuth();
 
@@ -32,12 +33,7 @@ export default function LoginForm({ onForgot }) {
         value={email}
         onChange={(v) => { setEmail(v); clearError(); }}
       >
-        <span
-          className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none"
-          style={{ fontSize: 18 }}
-        >
-          mail
-        </span>
+        <IconMail size={18} className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none" weight="regular" />
       </Field>
 
       <Field
@@ -63,9 +59,7 @@ export default function LoginForm({ onForgot }) {
           onClick={() => setShowPw(!showPw)}
           className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary bg-transparent border-none cursor-pointer p-0"
         >
-          <span className="material-symbols-outlined leading-none" style={{ fontSize: 18 }}>
-            {showPw ? "visibility_off" : "visibility"}
-          </span>
+          {showPw ? <IconEyeOff size={18} className="leading-none" weight="regular" /> : <IconEye size={18} className="leading-none" weight="regular" />}
         </button>
       </Field>
 
@@ -97,9 +91,9 @@ export default function LoginForm({ onForgot }) {
       {/* Sign up link */}
       <p className="text-center text-xs text-on-surface-variant pt-1">
         Don't have an account?{" "}
-        <Link href="/signin?view=signup" className="text-primary font-semibold hover:underline">
+        <button type="button" onClick={onSignup} className="text-primary font-semibold hover:underline bg-transparent border-none cursor-pointer p-0">
           Create one free
-        </Link>
+        </button>
       </p>
     </form>
   );

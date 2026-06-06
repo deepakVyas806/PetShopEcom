@@ -1,5 +1,6 @@
 "use client";
 
+import { IconChevronLeft, IconChevronRight, IconSun, IconMoon, IconArrowRight } from "@/lib/icons";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import useBookAppointment, { TIME_SLOTS } from "./BookAppointmentContainer.hook";
@@ -58,11 +59,11 @@ export default function BookAppointmentContainer() {
                 </div>
                 <div className="flex items-center gap-2">
                   <button onClick={prevMonth} className="p-1.5 rounded-full hover:bg-secondary-container/30 transition-colors cursor-pointer border-none outline-none">
-                    <span className="material-symbols-outlined text-base">chevron_left</span>
+                    <IconChevronLeft size={16} weight="bold" />
                   </button>
                   <span className="text-sm font-bold text-on-surface min-w-[130px] text-center">{monthLabel}</span>
                   <button onClick={nextMonth} className="p-1.5 rounded-full hover:bg-secondary-container/30 transition-colors cursor-pointer border-none outline-none">
-                    <span className="material-symbols-outlined text-base">chevron_right</span>
+                    <IconChevronRight size={16} weight="bold" />
                   </button>
                 </div>
               </div>
@@ -123,7 +124,7 @@ export default function BookAppointmentContainer() {
                 {Object.entries(TIME_SLOTS).map(([key, group]) => (
                   <div key={key}>
                     <div className="flex items-center gap-2 mb-3">
-                      <span className="material-symbols-outlined text-primary text-base">{group.icon}</span>
+                      {group.icon === "bedtime" ? <IconMoon size={16} className="text-primary" weight="regular" /> : <IconSun size={16} className="text-primary" weight="regular" />}
                       <span className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">{group.label}</span>
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
@@ -231,7 +232,7 @@ export default function BookAppointmentContainer() {
                   className="w-full py-2.5 bg-primary text-white text-xs font-bold rounded-lg shadow-md hover:shadow-primary/30 hover:-translate-y-0.5 transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:translate-y-0 cursor-pointer border-none outline-none flex items-center justify-center gap-2"
                 >
                   Proceed to Checkout
-                  <span className="material-symbols-outlined text-base">arrow_forward</span>
+                  <IconArrowRight size={16} weight="bold" />
                 </button>
               </div>
             </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { IconArrowRight } from "@/lib/icons";
 
 const STAGES = [
   {
@@ -30,7 +31,7 @@ export default function LifeStageSection() {
         <h2 className="text-sm font-bold text-on-surface">Shop by Life Stage</h2>
         <p className="text-xs text-on-surface-variant mt-0.5">Tailored nutrition for every chapter of their life</p>
       </div>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
         {STAGES.map(({ label, sub, href, image }) => (
           <Link key={label} href={href} className="group relative overflow-hidden rounded-xl shadow-sm hover:shadow-md transition-all">
             <div className="aspect-[4/3] overflow-hidden">
@@ -44,7 +45,7 @@ export default function LifeStageSection() {
               <h3 className="text-white text-xs font-bold leading-tight">{label}</h3>
               <div className="flex items-center justify-between mt-0.5">
                 <p className="text-white/75 text-[10px]">{sub}</p>
-                <span className="material-symbols-outlined text-white/80 group-hover:translate-x-0.5 transition-transform" style={{ fontSize: 14 }}>arrow_forward</span>
+                <IconArrowRight size={14} className="text-white/80 group-hover:translate-x-0.5 transition-transform" weight="regular" />
               </div>
             </div>
           </Link>

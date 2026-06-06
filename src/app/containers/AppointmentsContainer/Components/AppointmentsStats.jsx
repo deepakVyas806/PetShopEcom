@@ -1,5 +1,13 @@
 "use client";
 
+import { IconCalendar, IconPaw, IconStar } from "@/lib/icons";
+
+const ICON_MAP = {
+  calendar_today:    IconCalendar,
+  pets:              IconPaw,
+  workspace_premium: IconStar,
+};
+
 const glass = {
   background: "rgba(255,255,255,0.85)",
   backdropFilter: "blur(14px)",
@@ -13,12 +21,7 @@ function StatCard({ icon, iconBg, iconClr, label, value }) {
     <div className="flex items-center gap-3 p-4 rounded-2xl" style={glass}>
       {/* Circular icon */}
       <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${iconBg}`}>
-        <span
-          className={`material-symbols-outlined leading-none ${iconClr}`}
-          style={{ fontSize: 18, fontVariationSettings: "'FILL' 1" }}
-        >
-          {icon}
-        </span>
+        {(() => { const IC = ICON_MAP[icon] ?? IconCalendar; return <IC size={18} className={iconClr} weight="fill" />; })()}
       </div>
       <div className="min-w-0">
         <p className="text-xs text-on-surface-variant font-medium leading-none mb-1">{label}</p>

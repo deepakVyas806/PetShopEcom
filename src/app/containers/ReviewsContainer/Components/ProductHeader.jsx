@@ -3,6 +3,7 @@
 import Link from "next/link";
 import StarRating from "./StarRating";
 import PageHeader from "@/components/common/PageHeader";
+import { IconChevronRight } from "@/lib/icons";
 
 export default function ProductHeader({ product }) {
   return (
@@ -35,7 +36,7 @@ export default function ProductHeader({ product }) {
             <span className="text-outline-variant/60">·</span>
             <Link href="/reviews" className="text-xs text-primary font-semibold hover:underline flex items-center gap-0.5">
               See all reviews
-              <span className="material-symbols-outlined leading-none" style={{ fontSize: 13 }}>chevron_right</span>
+              <IconChevronRight size={13} className="leading-none" weight="regular" />
             </Link>
           </div>
         </div>

@@ -1,7 +1,6 @@
-import OrderDetailContainer from "@/app/containers/OrderDetailContainer/OrderDetailContainer";
+import { redirect } from "next/navigation";
 
-export const metadata = { title: "Order Details | artPetShop" };
-
-export default function OrderDetailPage() {
-  return <OrderDetailContainer />;
+// Order detail always requires an order ID — redirect bare visits to orders list
+export default function OrderDetailIndexPage() {
+  redirect("/orders");
 }

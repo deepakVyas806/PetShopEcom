@@ -2,15 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { IconUser, IconReceipt, IconCalendar, IconHeart, IconLocation, IconMoney, IconBellActive, IconLogout } from "@/lib/icons";
 
 const NAV_ITEMS = [
-  { icon: "person",              label: "My Profile",       href: "/profile",  fill: true  },
-  { icon: "receipt_long",        label: "Orders",           href: "/orders"                },
-  { icon: "calendar_today",      label: "Appointments",     href: "#"                      },
-  { icon: "favorite",            label: "Wishlist",         href: "/wishlist"              },
-  { icon: "location_on",         label: "Saved Addresses",  href: "#"                      },
-  { icon: "payments",            label: "Payment Methods",  href: "#"                      },
-  { icon: "notifications_active",label: "Notifications",    href: "#"                      },
+  { Icon: IconUser,        label: "My Profile",       href: "/profile",  fill: true  },
+  { Icon: IconReceipt,     label: "Orders",           href: "/orders"                },
+  { Icon: IconCalendar,    label: "Appointments",     href: "#"                      },
+  { Icon: IconHeart,       label: "Wishlist",         href: "/wishlist"              },
+  { Icon: IconLocation,    label: "Saved Addresses",  href: "#"                      },
+  { Icon: IconMoney,       label: "Payment Methods",  href: "#"                      },
+  { Icon: IconBellActive,  label: "Notifications",    href: "#"                      },
 ];
 
 export default function ProfileSidebar({ logout }) {
@@ -28,7 +29,7 @@ export default function ProfileSidebar({ logout }) {
 
         {/* Nav links */}
         <nav className="flex-1 space-y-0.5 overflow-y-auto">
-          {NAV_ITEMS.map(({ icon, label, href, fill }) => {
+          {NAV_ITEMS.map(({ Icon, label, href, fill }) => {
             const isActive = pathname === href;
             return (
               <Link
@@ -40,12 +41,7 @@ export default function ProfileSidebar({ logout }) {
                     : "text-on-surface-variant hover:bg-surface-container-low"
                 }`}
               >
-                <span
-                  className="material-symbols-outlined flex-shrink-0"
-                  style={isActive && fill ? { fontVariationSettings: "'FILL' 1" } : {}}
-                >
-                  {icon}
-                </span>
+                <Icon size={18} className="flex-shrink-0" weight={isActive && fill ? "fill" : "regular"} />
                 {label}
               </Link>
             );
@@ -58,7 +54,7 @@ export default function ProfileSidebar({ logout }) {
             onClick={logout}
             className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-error hover:bg-error/5 transition-colors duration-200 text-sm font-medium cursor-pointer bg-transparent border-none"
           >
-            <span className="material-symbols-outlined">logout</span>
+            <IconLogout size={18} weight="regular" />
             Logout
           </button>
         </div>

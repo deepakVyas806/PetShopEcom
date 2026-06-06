@@ -3,43 +3,25 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import CartButton from "./CartButton";
+import { IconHeart } from "@/lib/icons";
 import { fmt } from "@/lib/currency";
-
-function StarRow({ rating }) {
-  return (
-    <div className="flex text-yellow-400">
-      {[1, 2, 3, 4, 5].map((i) => {
-        const filled = rating >= i;
-        const half   = !filled && rating >= i - 0.5;
-        return (
-          <span
-            key={i}
-            className="material-symbols-outlined leading-none"
-            style={{ fontSize: 10, fontVariationSettings: filled || half ? "'FILL' 1" : "'FILL' 0" }}
-          >
-            {half ? "star_half" : "star"}
-          </span>
-        );
-      })}
-    </div>
-  );
-}
+import StarRating from "@/app/containers/ReviewsContainer/Components/StarRating";
+import { Badge, DiscountBadge } from "@/components/ui";
 
 function Badges({ badge, badges }) {
   const list =
     badges?.length > 0
       ? badges
       : badge
-      ? [{ label: badge, cls: badge.toLowerCase().includes("sale") ? "bg-primary text-white" : "bg-secondary text-white" }]
+      ? [{ label: badge, variant: badge.toLowerCase().includes("sale") ? "primary" : "secondary" }]
       : [];
   if (!list.length) return null;
   return (
     <div className="absolute top-2 left-2 flex flex-col gap-1 z-10">
-      {list.map(({ label, cls, dot, dotCls }) => (
-        <span key={label} className={cn("text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm flex items-center gap-1", cls)}>
-          {dot && <span className={cn("w-1 h-1 rounded-full flex-shrink-0", dotCls)} />}
+      {list.map(({ label, variant = "secondary", dot }) => (
+        <Badge key={label} variant={variant} dot={dot} className="shadow-sm">
           {label}
-        </span>
+        </Badge>
       ))}
     </div>
   );
@@ -98,12 +80,7 @@ export default function ProductCard({
             className="absolute top-2 right-2 p-1.5 bg-white/80 backdrop-blur shadow-sm rounded-full text-primary hover:bg-primary hover:text-white transition-colors duration-200 cursor-pointer active:scale-95 flex items-center justify-center border-none outline-none z-10"
             title={isFavorite ? "Remove from Wishlist" : "Add to Wishlist"}
           >
-            <span
-              className="material-symbols-outlined"
-              style={{ fontSize: 15, fontVariationSettings: isFavorite ? "'FILL' 1" : "'FILL' 0" }}
-            >
-              favorite
-            </span>
+            <IconHeart size={15} weight={isFavorite ? "fill" : "regular"} />
           </button>
         ) : null}
       </div>
@@ -113,7 +90,7 @@ export default function ProductCard({
 
         {product.rating != null && (
           <div className="flex items-center gap-1 mb-1 select-none">
-            <StarRow rating={product.rating} />
+            <StarRating rating={product.rating} size={10} />
             {product.reviewsCount != null && (
               <span className="text-[10px] text-on-surface-variant">({product.reviewsCount})</span>
             )}

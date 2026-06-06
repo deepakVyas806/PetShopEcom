@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { IconStar, IconBag } from "@/lib/icons";
 
 export default function HeroSection() {
   return (
@@ -22,7 +23,7 @@ export default function HeroSection() {
       <div className="absolute inset-0 flex items-center px-4 md:px-margin-desktop">
         <div className="max-w-sm text-white space-y-3">
           <span className="inline-flex items-center gap-1.5 bg-white/15 backdrop-blur-sm text-white text-[10px] font-bold px-3 py-1 rounded-full border border-white/20 uppercase tracking-wider">
-            <span className="material-symbols-outlined leading-none" style={{ fontSize: 12, fontVariationSettings: "'FILL' 1" }}>star</span>
+            <IconStar size={12} className="leading-none" weight="fill" />
             Premium Pet Care
           </span>
 
@@ -39,7 +40,7 @@ export default function HeroSection() {
               href="/marketplace"
               className="inline-flex items-center gap-1.5 bg-primary text-white px-5 py-2 rounded-full text-xs font-bold hover:brightness-110 active:scale-95 transition-all shadow-md"
             >
-              <span className="material-symbols-outlined leading-none" style={{ fontSize: 14 }}>shopping_bag</span>
+              <IconBag size={14} className="leading-none" weight="bold" />
               Shop Now
             </Link>
             <Link

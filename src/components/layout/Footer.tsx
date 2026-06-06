@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Globe, Camera, Video, Send, ShieldAlert } from "lucide-react";
+import { IconGlobe, IconCamera, IconVideo, IconSend, IconShield } from "@/lib/icons";
 import { useStore } from "@/context/StoreContext";
 import BrandLogo from "@/components/common/BrandLogo";
 
@@ -45,14 +45,32 @@ export default function Footer() {
             Redefining pet care through artful design and uncompromising quality.
           </p>
           <div className="flex gap-3 pt-1">
-            <a href="#" className="text-black hover:text-primary transition-colors" aria-label="Website">
-              <Globe className="w-4 h-4" />
+            <a
+              href="https://artpetshop.in"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-black hover:text-primary transition-colors"
+              aria-label="Official Website"
+            >
+              <IconGlobe size={16} weight="regular" />
             </a>
-            <a href="#" className="text-black hover:text-primary transition-colors" aria-label="Camera Feed">
-              <Camera className="w-4 h-4" />
+            <a
+              href="https://instagram.com/artpetshop"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-black hover:text-primary transition-colors"
+              aria-label="Instagram"
+            >
+              <IconCamera size={16} weight="regular" />
             </a>
-            <a href="#" className="text-black hover:text-primary transition-colors" aria-label="Video Channel">
-              <Video className="w-4 h-4" />
+            <a
+              href="https://youtube.com/@artpetshop"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-black hover:text-primary transition-colors"
+              aria-label="YouTube"
+            >
+              <IconVideo size={16} weight="regular" />
             </a>
           </div>
         </div>
@@ -97,7 +115,7 @@ export default function Footer() {
               className="bg-primary text-white p-2 rounded-lg hover:bg-primary-container transition-colors cursor-pointer"
               aria-label="Subscribe"
             >
-              <Send className="w-4 h-4" />
+              <IconSend size={16} weight="bold" />
             </button>
           </div>
         </div>
@@ -109,7 +127,7 @@ export default function Footer() {
         <div className="max-w-[1280px] mx-auto px-4 md:px-10 pb-4">
           <div className="p-3 rounded-lg bg-primary-container/10 border border-primary/20 text-left max-w-lg mx-auto">
             <h4 className="text-[10px] font-black uppercase text-primary tracking-wider mb-2 flex items-center gap-1">
-              <ShieldAlert className="w-3.5 h-3.5" />
+              <IconShield size={14} weight="bold" />
               <span>Admin Shortcuts</span>
             </h4>
             <div className="flex flex-wrap gap-4 text-xs">

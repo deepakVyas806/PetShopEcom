@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import StarRating from "./StarRating";
+import { IconThumbUp, IconFlag } from "@/lib/icons";
 
 const glassCard = {
   background: "rgba(255,255,255,0.8)",
@@ -75,22 +76,17 @@ export default function ReviewCard({ review, helpfulCount, isVoted, onHelpful })
             isVoted ? "text-primary" : "text-on-surface-variant hover:text-primary"
           )}
         >
-          <span
-            className="material-symbols-outlined leading-none"
-            style={{
-              fontSize: 16,
-              fontVariationSettings: isVoted ? "'FILL' 1" : "'FILL' 0",
-              transition: "transform 0.15s",
-              transform: isVoted ? "scale(1.2)" : "scale(1)",
-            }}
-          >
-            thumb_up
-          </span>
+          <IconThumbUp
+            size={16}
+            className="leading-none"
+            weight={isVoted ? "fill" : "regular"}
+            style={{ transition: "transform 0.15s", transform: isVoted ? "scale(1.2)" : "scale(1)" }}
+          />
           Helpful ({helpfulCount})
         </button>
 
         <button className="flex items-center gap-1.5 text-xs text-on-surface-variant hover:text-error transition-colors bg-transparent border-none cursor-pointer p-0">
-          <span className="material-symbols-outlined leading-none" style={{ fontSize: 16 }}>flag</span>
+          <IconFlag size={16} className="leading-none" weight="regular" />
           Report
         </button>
       </div>

@@ -1,11 +1,13 @@
 "use client";
 
+import { IconShield } from "@/lib/icons";
+
 export default function SecurityBanner() {
   return (
     <div className="mt-5 p-5 bg-primary/5 rounded-2xl border border-primary/10 flex flex-col sm:flex-row gap-4 items-start">
       {/* Circular shield icon */}
       <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
-        <span className="material-symbols-outlined text-on-primary leading-none" style={{ fontSize: 18 }}>shield</span>
+        <IconShield size={18} className="text-on-primary" weight="bold" />
       </div>
 
       <div className="min-w-0">

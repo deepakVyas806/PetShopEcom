@@ -1,11 +1,39 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
+import {
+  IconChevronRight, IconClock, IconLocation, IconPaw, IconCalendar,
+  IconVerified, IconShield, IconFolderUser, IconCalendarCheck,
+  IconTraining, IconHeart, IconStar, IconCheckCircle, IconMedical,
+  IconEco, IconSupport, IconChecklist, IconUser,
+} from "@/lib/icons";
+
+const PERK_ICON_MAP = {
+  verified:        IconVerified,
+  pets:            IconPaw,
+  eco:             IconEco,
+  receipt_long:    IconChecklist,
+  medical_services:IconMedical,
+  verified_user:   IconVerified,
+  folder_shared:   IconFolderUser,
+  event_repeat:    IconCalendarCheck,
+  school:          IconTraining,
+  favorite:        IconHeart,
+  bar_chart:       IconStar,
+  home:            IconLocation,
+  shield_person:   IconShield,
+  location_on:     IconLocation,
+  health_and_safety:IconShield,
+  support_agent:   IconSupport,
+  check_circle:    IconCheckCircle,
+};
 import useServiceDetails from "./ServiceDetailsContainer.hook";
 import { fmt } from "@/lib/currency";
 import ReviewCard from "@/app/containers/ReviewsContainer/Components/ReviewCard";
 import RatingSummary from "@/app/containers/ReviewsContainer/Components/RatingSummary";
 import StarRating from "@/app/containers/ReviewsContainer/Components/StarRating";
+import InlineReviewForm from "@/components/common/InlineReviewForm";
 
 export default function ServiceDetailsContainer({ serviceId }) {
   const {
@@ -15,11 +43,32 @@ export default function ServiceDetailsContainer({ serviceId }) {
     setActiveImage,
     activeTab,
     setActiveTab,
-    reviews,
-    helpfulCounts,
+    reviews: baseReviews,
+    helpfulCounts: baseHelpfulCounts,
     votedIds,
     toggleHelpful,
   } = useServiceDetails(serviceId);
+
+  const [reviewFormOpen, setReviewFormOpen] = useState(false);
+  const [reviews, setReviews] = useState(null);
+  const [extraHelpful, setExtraHelpful] = useState({});
+
+  const displayReviews = reviews ?? baseReviews;
+  const helpfulCounts = { ...baseHelpfulCounts, ...extraHelpful };
+
+  const handleSubmitReview = ({ rating, title, body }) => {
+    const newReview = {
+      id: `sr-${Date.now()}`,
+      name: "You", initials: "YO",
+      avatarBg: "bg-purple-100", avatarFg: "text-purple-700",
+      rating, verified: true,
+      date: new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }),
+      title, body, photos: [],
+    };
+    setReviews((prev) => [newReview, ...(prev ?? baseReviews)]);
+    setExtraHelpful((c) => ({ ...c, [newReview.id]: 0 }));
+    setReviewFormOpen(false);
+  };
 
   const TABS = ["Overview", "What to Expect", "Policies"];
 
@@ -49,11 +98,11 @@ export default function ServiceDetailsContainer({ serviceId }) {
         {/* Breadcrumbs */}
         <nav className="flex items-center flex-wrap gap-1.5 text-on-surface-variant mb-stack-md text-xs select-none">
           <Link href="/" className="hover:text-primary transition-colors">Home</Link>
-          <span className="material-symbols-outlined text-[14px]">chevron_right</span>
+          <IconChevronRight size={14} weight="bold" />
           <Link href="/services" className="hover:text-primary transition-colors">Services</Link>
-          <span className="material-symbols-outlined text-[14px]">chevron_right</span>
+          <IconChevronRight size={14} weight="bold" />
           <span className="capitalize text-on-surface-variant">{service.category}</span>
-          <span className="material-symbols-outlined text-[14px]">chevron_right</span>
+          <IconChevronRight size={14} weight="bold" />
           <span className="text-primary font-bold truncate max-w-[200px] sm:max-w-xs">{service.title}</span>
         </nav>
 
@@ -115,7 +164,7 @@ export default function ServiceDetailsContainer({ serviceId }) {
                 </Link>
                 <span className="text-outline-variant/60">·</span>
                 <span className="text-xs text-on-surface-variant flex items-center gap-1">
-                  <span className="material-symbols-outlined text-xs">schedule</span>
+                  <IconClock size={12} weight="regular" />
                   {service.duration}
                 </span>
               </div>
@@ -140,13 +189,13 @@ export default function ServiceDetailsContainer({ serviceId }) {
               {/* Key highlights */}
               <div className="grid grid-cols-2 gap-2">
                 {[
-                  { icon: "schedule",       label: service.duration          },
-                  { icon: "location_on",    label: "artPetShop Studio"       },
-                  { icon: "pets",           label: "All breeds welcome"      },
-                  { icon: "event_available",label: "Mon – Sat, 9 AM – 5 PM"  },
-                ].map(({ icon, label }) => (
+                  { Icon: IconClock,         label: service.duration          },
+                  { Icon: IconLocation,      label: "artPetShop Studio"       },
+                  { Icon: IconPaw,           label: "All breeds welcome"      },
+                  { Icon: IconCalendarCheck, label: "Mon – Sat, 9 AM – 5 PM"  },
+                ].map(({ Icon, label }) => (
                   <div key={label} className="flex items-center gap-1.5">
-                    <span className="material-symbols-outlined text-primary text-sm shrink-0">{icon}</span>
+                    <Icon size={14} className="text-primary shrink-0" weight="regular" />
                     <span className="text-[10px] text-on-surface-variant leading-tight">{label}</span>
                   </div>
                 ))}
@@ -157,23 +206,24 @@ export default function ServiceDetailsContainer({ serviceId }) {
                 href={`/services/book?serviceId=${service.id}`}
                 className="w-full h-10 rounded-full font-bold text-xs bg-primary text-on-primary hover:brightness-105 active:scale-95 transition-all flex items-center justify-center gap-1.5 hover:shadow-md"
               >
-                <span className="material-symbols-outlined leading-none" style={{ fontSize: 16 }}>calendar_today</span>
+                <IconCalendar size={16} weight="bold" />
                 Book Now
               </Link>
             </div>
 
             {/* Perks Grid */}
             <div className="grid grid-cols-2 gap-3">
-              {service.perks.map((perk) => (
-                <div key={perk} className="flex items-center gap-2.5 p-3 bg-white dark:bg-surface-container-lowest rounded-xl border border-outline-variant/30 shadow-xs">
-                  <div className="bg-primary/10 p-1.5 rounded-full flex items-center justify-center">
-                    <span className="material-symbols-outlined text-primary text-base">
-                      {PERK_ICONS[perk] || "check_circle"}
-                    </span>
+              {service.perks.map((perk) => {
+                const PerkIC = PERK_ICON_MAP[PERK_ICONS[perk]] ?? IconCheckCircle;
+                return (
+                  <div key={perk} className="flex items-center gap-2.5 p-3 bg-white dark:bg-surface-container-lowest rounded-xl border border-outline-variant/30 shadow-xs">
+                    <div className="bg-primary/10 p-1.5 rounded-full flex items-center justify-center">
+                      <PerkIC size={16} className="text-primary" weight="regular" />
+                    </div>
+                    <span className="font-bold text-xs text-on-surface leading-tight">{perk}</span>
                   </div>
-                  <span className="font-bold text-xs text-on-surface leading-tight">{perk}</span>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>
@@ -181,14 +231,14 @@ export default function ServiceDetailsContainer({ serviceId }) {
         {/* What's Included */}
         <section className="mt-8">
           <h2 className="text-xs font-bold mb-3 flex items-center gap-1.5 text-on-surface">
-            <span className="material-symbols-outlined text-primary text-base">checklist</span>
+            <IconChecklist size={16} className="text-primary" weight="regular" />
             What's Included
           </h2>
           <div className="bg-surface-container/50 p-4 rounded-xl border border-outline-variant/20">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {service.included.map((item) => (
                 <div key={item} className="flex items-center gap-2.5">
-                  <span className="material-symbols-outlined text-green-600 text-base flex-shrink-0">check_circle</span>
+                  <IconCheckCircle size={16} className="text-green-600 flex-shrink-0" weight="fill" />
                   <span className="text-xs text-on-surface">{item}</span>
                 </div>
               ))}
@@ -263,12 +313,12 @@ export default function ServiceDetailsContainer({ serviceId }) {
               <h3 className="text-xs font-bold text-on-surface">Why Choose Us</h3>
               <ul className="space-y-2.5">
                 {[
-                  { icon: "star", title: "5-Star Rated Professionals", desc: "Every expert is vetted, trained, and holds industry certifications." },
-                  { icon: "favorite", title: "Pet-First Philosophy", desc: "Sessions are paced entirely around your pet's comfort — never rushed." },
-                  { icon: "shield", title: "Fully Insured & Safe", desc: "All services are covered under our comprehensive pet-care liability policy." },
-                ].map(({ icon, title, desc }) => (
+                  { Icon: IconStar,   title: "5-Star Rated Professionals", desc: "Every expert is vetted, trained, and holds industry certifications." },
+                  { Icon: IconHeart,  title: "Pet-First Philosophy", desc: "Sessions are paced entirely around your pet's comfort — never rushed." },
+                  { Icon: IconShield, title: "Fully Insured & Safe", desc: "All services are covered under our comprehensive pet-care liability policy." },
+                ].map(({ Icon, title, desc }) => (
                   <li key={title} className="flex items-start gap-2.5">
-                    <span className="material-symbols-outlined text-green-600 mt-0.5 text-base">{icon}</span>
+                    <Icon size={16} className="text-green-600 mt-0.5" weight="regular" />
                     <div>
                       <h4 className="font-bold text-xs text-on-surface">{title}</h4>
                       <p className="text-on-surface-variant text-[11px] leading-relaxed">{desc}</p>
@@ -287,10 +337,24 @@ export default function ServiceDetailsContainer({ serviceId }) {
               <h2 className="text-xs font-bold text-on-surface">Customer Stories</h2>
               <p className="text-on-surface-variant text-xs">See what other pet parents are saying</p>
             </div>
-            <button className="bg-white dark:bg-surface-container-lowest border-2 border-primary text-primary font-bold text-xs px-4 py-1.5 rounded-full hover:bg-primary/5 active:scale-95 transition-all cursor-pointer">
-              Write a Review
+            <button
+              onClick={() => setReviewFormOpen((o) => !o)}
+              className="bg-white dark:bg-surface-container-lowest border-2 border-primary text-primary font-bold text-xs px-4 py-1.5 rounded-full hover:bg-primary/5 active:scale-95 transition-all cursor-pointer"
+            >
+              {reviewFormOpen ? "Cancel" : "Write a Review"}
             </button>
           </div>
+
+          {/* Inline review form — shared component, primary-colour stars */}
+          {reviewFormOpen && (
+            <div className="mb-5">
+              <InlineReviewForm
+                onSubmit={handleSubmitReview}
+                onCancel={() => setReviewFormOpen(false)}
+                context="service"
+              />
+            </div>
+          )}
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
             {/* Rating summary sidebar */}
@@ -300,11 +364,11 @@ export default function ServiceDetailsContainer({ serviceId }) {
 
             {/* Review cards */}
             <div className="lg:col-span-8 space-y-4">
-              {reviews.map((review) => (
+              {displayReviews.map((review) => (
                 <ReviewCard
                   key={review.id}
                   review={review}
-                  helpfulCount={helpfulCounts[review.id]}
+                  helpfulCount={helpfulCounts[review.id] ?? 0}
                   isVoted={votedIds.has(review.id)}
                   onHelpful={() => toggleHelpful(review.id)}
                 />
@@ -316,7 +380,7 @@ export default function ServiceDetailsContainer({ serviceId }) {
                   className="text-primary font-bold text-xs hover:underline flex items-center gap-0.5"
                 >
                   View All Reviews
-                  <span className="material-symbols-outlined leading-none" style={{ fontSize: 16 }}>chevron_right</span>
+                  <IconChevronRight size={16} weight="bold" />
                 </Link>
               </div>
             </div>

@@ -1,54 +1,37 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { IconBell, IconShipping, IconTag, IconUser } from "@/lib/icons";
 
 const FILTERS = [
-  { key: "all",        icon: "notifications",  label: "All Notifications" },
-  { key: "orders",     icon: "local_shipping", label: "Orders"            },
-  { key: "promotions", icon: "sell",           label: "Promotions"        },
-  { key: "account",    icon: "account_circle", label: "Account"           },
+  { key: "all",        Icon: IconBell,     label: "All" },
+  { key: "orders",     Icon: IconShipping, label: "Orders" },
+  { key: "promotions", Icon: IconTag,      label: "Promotions" },
+  { key: "account",    Icon: IconUser,     label: "Account" },
 ];
 
 export default function NotificationsFilter({ activeFilter, onFilter }) {
   return (
-    <aside className="w-full lg:w-56 shrink-0">
-      {/* Category buttons */}
-      <div className="flex flex-row lg:flex-col gap-1.5 overflow-x-auto pb-3 lg:pb-0 no-scrollbar">
-        {FILTERS.map(({ key, icon, label }) => {
-          const isActive = activeFilter === key;
-          return (
-            <button
-              key={key}
-              onClick={() => onFilter(key)}
-              className={cn(
-                "flex items-center gap-2.5 px-3 py-2.5 rounded-xl w-full text-left transition-all cursor-pointer border-none text-xs font-medium whitespace-nowrap",
-                isActive
-                  ? "bg-primary-container text-on-primary-container"
-                  : "text-on-surface-variant hover:bg-surface-container"
-              )}
-            >
-              <span
-                className="material-symbols-outlined leading-none flex-shrink-0"
-                style={{ fontSize: 16 }}
-              >
-                {icon}
-              </span>
-              {label}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* ArtRewards promo card — desktop only */}
-      <div className="hidden lg:block mt-5 p-4 rounded-2xl bg-primary/5 border border-primary/10">
-        <h4 className="text-xs font-bold text-primary mb-1">Join ArtRewards</h4>
-        <p className="text-xs text-on-surface-variant mb-3 leading-relaxed">
-          Earn paw-points for every notification you engage with.
-        </p>
-        <button className="w-full py-2 bg-primary text-on-primary rounded-lg text-xs font-semibold hover:shadow-md transition-all cursor-pointer border-none">
-          Learn More
-        </button>
-      </div>
-    </aside>
+    <div
+      className="flex gap-1 overflow-x-auto bg-surface-container-low rounded-xl p-1 border border-outline-variant/20"
+      style={{ scrollbarWidth: "none" }}
+    >
+      {FILTERS.map(({ key, Icon, label }) => {
+        const isActive = activeFilter === key;
+        return (
+          <button
+            key={key}
+            onClick={() => onFilter(key)}
+            className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition-all duration-200 select-none active:scale-95 cursor-pointer border-none outline-none flex-shrink-0 ${
+              isActive
+                ? "bg-primary text-white shadow-sm"
+                : "text-on-surface-variant hover:text-primary hover:bg-white/60"
+            }`}
+          >
+            <Icon size={13} weight="regular" />
+            {label}
+          </button>
+        );
+      })}
+    </div>
   );
 }

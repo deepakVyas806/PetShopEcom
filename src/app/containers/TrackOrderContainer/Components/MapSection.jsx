@@ -1,5 +1,7 @@
 "use client";
 
+import { IconNavigate } from "@/lib/icons";
+
 export default function MapSection({ driver }) {
   return (
     <div className="rounded-xl overflow-hidden border border-outline-variant/30 shadow-sm h-64 relative group">
@@ -23,7 +25,7 @@ export default function MapSection({ driver }) {
         style={{ background: "rgba(255,255,255,0.85)", backdropFilter: "blur(10px)" }}
       >
         <div className="w-9 h-9 bg-primary rounded-full flex items-center justify-center text-white flex-shrink-0">
-          <span className="material-symbols-outlined" style={{ fontSize: 18 }}>person_pin_circle</span>
+          <IconNavigate size={18} weight="fill" />
         </div>
         <div>
           <p className="text-[10px] font-bold text-primary uppercase tracking-wider">

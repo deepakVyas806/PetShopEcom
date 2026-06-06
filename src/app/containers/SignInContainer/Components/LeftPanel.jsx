@@ -46,7 +46,7 @@ export default function LeftPanel() {
       </div>
 
       <div className="absolute top-8 left-8">
-        <span className="text-sm font-bold text-white tracking-tight">artPetShop</span>
+        <span className="text-sm font-black text-white tracking-tight">artPetShop</span>
       </div>
     </section>
   );

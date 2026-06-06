@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { cn } from "@/lib/utils";
 import { Field, ErrorBanner, SubmitButton } from "./SharedUI";
+import { IconUser, IconEye, IconEyeOff, IconPaw, IconCheck } from "@/lib/icons";
 
 function calcStrength(pw) {
   let s = 0;
@@ -23,13 +24,13 @@ const STRENGTH_META = [
 ];
 
 const PET_OPTIONS = [
-  { value: "dogs",  label: "Dogs",  icon: "pets"         },
-  { value: "cats",  label: "Cats",  icon: "pets"         },
-  { value: "birds", label: "Birds", icon: "flutter_dash" },
-  { value: "fish",  label: "Fish",  icon: "set_meal"     },
+  { value: "dogs",  label: "Dogs",  Icon: IconPaw },
+  { value: "cats",  label: "Cats",  Icon: IconPaw },
+  { value: "birds", label: "Birds", Icon: IconPaw },
+  { value: "fish",  label: "Fish",  Icon: IconPaw },
 ];
 
-export default function SignupForm() {
+export default function SignupForm({ onLogin }) {
   const { signup, loading, error, clearError } = useAuth();
 
   const [name,       setName]       = useState("");
@@ -62,9 +63,7 @@ export default function SignupForm() {
       {/* Full name */}
       <Field id="s-name" label="Full Name" placeholder="Your full name"
         value={name} onChange={(v) => { setName(v); clearError(); }}>
-        <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none" style={{ fontSize: 18 }}>
-          person
-        </span>
+        <IconUser size={18} className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none" weight="regular" />
       </Field>
 
       {/* Email + mobile */}
@@ -87,9 +86,7 @@ export default function SignupForm() {
           />
           <button type="button" tabIndex={-1} onClick={() => setShowPw(!showPw)}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary bg-transparent border-none cursor-pointer p-0">
-            <span className="material-symbols-outlined leading-none" style={{ fontSize: 18 }}>
-              {showPw ? "visibility_off" : "visibility"}
-            </span>
+            {showPw ? <IconEyeOff size={18} weight="regular" /> : <IconEye size={18} weight="regular" />}
           </button>
         </div>
         {/* Strength bars */}
@@ -129,7 +126,7 @@ export default function SignupForm() {
           Pets <span className="font-normal text-on-surface-variant/60">(optional)</span>
         </p>
         <div className="flex flex-wrap gap-1.5">
-          {PET_OPTIONS.map(({ value, label, icon }) => {
+          {PET_OPTIONS.map(({ value, label, Icon }) => {
             const active = petPrefs.includes(value);
             return (
               <button key={value} type="button" onClick={() => togglePet(value)}
@@ -138,7 +135,7 @@ export default function SignupForm() {
                   active ? "bg-primary text-on-primary border-primary"
                          : "border-outline-variant bg-transparent hover:bg-primary/5 text-on-surface"
                 )}>
-                <span className="material-symbols-outlined leading-none" style={{ fontSize: 14 }}>{icon}</span>
+                <Icon size={14} weight="regular" />
                 {label}
               </button>
             );
@@ -155,9 +152,7 @@ export default function SignupForm() {
             agreed ? "bg-primary border-primary" : "border-outline-variant bg-surface"
           )}>
             {agreed && (
-              <span className="material-symbols-outlined text-on-primary font-bold leading-none" style={{ fontSize: 10 }}>
-                check
-              </span>
+              <IconCheck size={10} weight="bold" className="text-on-primary" />
             )}
           </div>
         </button>
@@ -174,9 +169,9 @@ export default function SignupForm() {
       {/* Sign in link */}
       <p className="text-center text-xs text-on-surface-variant pt-1">
         Already have an account?{" "}
-        <Link href="/signin" className="text-primary font-semibold hover:underline">
+        <button type="button" onClick={onLogin} className="text-primary font-semibold hover:underline bg-transparent border-none cursor-pointer p-0">
           Sign in
-        </Link>
+        </button>
       </p>
     </form>
   );

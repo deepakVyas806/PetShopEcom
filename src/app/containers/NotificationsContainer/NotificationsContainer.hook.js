@@ -12,7 +12,7 @@ const INITIAL = [
     time:     "2 hours ago",
     read:     false,
     actions:  [
-      { label: "View Order",    variant: "primary",   href: "/order-detail" },
+      { label: "View Order",    variant: "primary",   href: "/order-detail/APS-123" },
       { label: "Track Courier", variant: "secondary", href: "/track-order"  },
     ],
   },

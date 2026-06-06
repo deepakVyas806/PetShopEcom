@@ -1,6 +1,7 @@
 "use client";
 
 import PageHeader from "@/components/common/PageHeader";
+import { IconSearch } from "@/lib/icons";
 
 export default function OrdersHeader({ searchQuery, onSearch }) {
   return (
@@ -14,12 +15,7 @@ export default function OrdersHeader({ searchQuery, onSearch }) {
       subtitle="Track and manage your purchases."
     >
       <div className="relative">
-        <span
-          className="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none"
-          style={{ fontSize: 15 }}
-        >
-          search
-        </span>
+        <IconSearch size={15} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none" weight="regular" />
         <input
           type="text"
           value={searchQuery}

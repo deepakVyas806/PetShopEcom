@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import ProductCard from "@/components/common/ProductCard";
+import { IconDelete, IconCalendar, IconCartSimple, IconCheck } from "@/lib/icons";
 
 /* ─── Badge config ───────────────────────────────────────────────────────────── */
 function buildBadges(badge, stock) {
@@ -25,7 +26,7 @@ function DeleteButton({ onClick }) {
       className="p-2 bg-white/80 backdrop-blur-sm hover:bg-red-50 text-error rounded-full transition-colors shadow-sm border-none cursor-pointer"
       aria-label="Remove from wishlist"
     >
-      <span className="material-symbols-outlined" style={{ fontSize: 18 }}>delete</span>
+      <IconDelete size={18} weight="regular" />
     </button>
   );
 }
@@ -45,7 +46,7 @@ function WishlistCTA({ item, isMoving, onMoveToCart }) {
   if (item.itemType === "service") {
     return (
       <button className="p-2 rounded-lg bg-primary text-on-primary hover:bg-primary-container transition-all border-none cursor-pointer flex items-center gap-1 text-xs font-medium px-3">
-        <span className="material-symbols-outlined leading-none" style={{ fontSize: 14 }}>calendar_today</span>
+        <IconCalendar size={14} className="leading-none" weight="regular" />
         Book
       </button>
     );
@@ -61,9 +62,7 @@ function WishlistCTA({ item, isMoving, onMoveToCart }) {
           : "bg-primary-container text-on-primary-container hover:bg-primary hover:text-on-primary"
       )}
     >
-      <span className="material-symbols-outlined leading-none" style={{ fontSize: 14 }}>
-        {isMoving ? "check" : "add_shopping_cart"}
-      </span>
+      {isMoving ? <IconCheck size={14} weight="bold" /> : <IconCartSimple size={14} weight="bold" />}
       {isMoving ? "Added!" : "Move to Cart"}
     </button>
   );

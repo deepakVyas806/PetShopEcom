@@ -1,5 +1,7 @@
 "use client";
 
+import { IconPaw } from "@/lib/icons";
+
 export default function DeliveryPartner({ carrier }) {
   return (
     <section className="bg-tertiary-container text-on-tertiary-container rounded-xl p-4 border border-outline-variant/20 shadow-sm relative overflow-hidden">
@@ -12,12 +14,7 @@ export default function DeliveryPartner({ carrier }) {
             </p>
             <h2 className="text-sm font-bold">{carrier}</h2>
           </div>
-          <span
-            className="material-symbols-outlined opacity-30"
-            style={{ fontSize: 36 }}
-          >
-            pets
-          </span>
+          <IconPaw size={36} className="opacity-30" weight="regular" />
         </div>
 
         <p className="text-xs leading-relaxed mb-4 opacity-80">

@@ -1,9 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import StarRating from "@/app/containers/ReviewsContainer/Components/StarRating";
 import { fmt } from "@/lib/currency";
-
+import { StockBadge, DiscountBadge, Button } from "@/components/ui";
+import { IconClose, IconCartSimple, IconBookmark, IconExternalLink } from "@/lib/icons";
 export default function CartItemRow({ item, onUpdateQuantity, onRemoveItem }) {
   const { product, quantity } = item;
   const lineTotal    = product.price * quantity;
@@ -11,6 +13,27 @@ export default function CartItemRow({ item, onUpdateQuantity, onRemoveItem }) {
   const discountPct  = hasDiscount
     ? Math.round(((product.mrp - product.price) / product.mrp) * 100)
     : 0;
+
+  const [saved, setSaved] = useState(false);
+
+  const handleSaveForLater = () => {
+    // Add to wishlist (re-uses addToCart on a conceptual "wishlist" store key)
+    // For now we store saved items in localStorage under "petshop_wishlist"
+    try {
+      const existing = JSON.parse(localStorage.getItem("petshop_wishlist") || "[]");
+      const alreadyIn = existing.some((p) => p.id === product.id);
+      if (!alreadyIn) {
+        localStorage.setItem("petshop_wishlist", JSON.stringify([...existing, product]));
+      }
+    } catch {
+      // silently ignore
+    }
+    // Remove from cart
+    onRemoveItem(product.id);
+    // Show feedback
+    setSaved(true);
+    setTimeout(() => setSaved(false), 1500);
+  };
 
   return (
     <div className="bg-white/80 dark:bg-surface-container-lowest border border-[#F3E8FF] dark:border-outline-variant/10 rounded-xl overflow-hidden hover:shadow-[0_4px_20px_rgba(124,58,237,0.08)] transition-all duration-300 group">
@@ -29,8 +52,8 @@ export default function CartItemRow({ item, onUpdateQuantity, onRemoveItem }) {
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
           {hasDiscount && (
-            <span className="absolute top-1.5 left-1.5 bg-error text-white text-[9px] font-black px-1.5 py-0.5 rounded-full leading-none">
-              -{discountPct}%
+            <span className="absolute top-1.5 left-1.5">
+              <DiscountBadge pct={discountPct} />
             </span>
           )}
         </Link>
@@ -62,17 +85,14 @@ export default function CartItemRow({ item, onUpdateQuantity, onRemoveItem }) {
               type="button"
               title="Remove"
             >
-              <span className="material-symbols-outlined" style={{ fontSize: 15 }}>close</span>
+              <IconClose size={15} weight="regular" />
             </button>
           </div>
 
           {/* Middle: rating + stock + delivery */}
           <div className="flex items-center flex-wrap gap-x-2 gap-y-0.5 mt-1.5">
             <StarRating rating={product.rating || 4.5} size={10} />
-            <span className="flex items-center gap-0.5 text-[9px] font-semibold text-green-600">
-              <span className="material-symbols-outlined leading-none" style={{ fontSize: 10, fontVariationSettings: "'FILL' 1" }}>check_circle</span>
-              In Stock
-            </span>
+            <StockBadge inStock={true} />
             <span className="text-[9px] text-on-surface-variant">· Free delivery</span>
           </div>
 
@@ -100,7 +120,7 @@ export default function CartItemRow({ item, onUpdateQuantity, onRemoveItem }) {
                 type="button"
               >
                 {quantity === 1
-                  ? <span className="material-symbols-outlined text-error leading-none" style={{ fontSize: 13 }}>remove_shopping_cart</span>
+                  ? <IconCartSimple size={13} className="text-error leading-none" weight="regular" />
                   : <span className="text-primary text-sm font-bold leading-none">−</span>
                 }
               </button>
@@ -122,21 +142,21 @@ export default function CartItemRow({ item, onUpdateQuantity, onRemoveItem }) {
 
       {/* Bottom strip — save for later */}
       <div className="border-t border-outline-variant/10 px-3 py-1.5 flex items-center gap-4">
-        <button
-          className="flex items-center gap-1 text-[10px] font-semibold text-on-surface-variant hover:text-primary transition-colors cursor-pointer border-none outline-none bg-transparent"
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleSaveForLater}
           type="button"
+          className={saved ? "text-primary" : ""}
         >
-          <span className="material-symbols-outlined leading-none" style={{ fontSize: 12 }}>bookmark_add</span>
-          Save for later
-        </button>
+          <IconBookmark size={12} className="leading-none" weight={saved ? "fill" : "regular"} />
+          {saved ? "Saved!" : "Save for later"}
+        </Button>
         <span className="text-outline-variant/30 text-xs">|</span>
-        <Link
-          href={`/marketplace/${product.id}`}
-          className="flex items-center gap-1 text-[10px] font-semibold text-on-surface-variant hover:text-primary transition-colors"
-        >
-          <span className="material-symbols-outlined leading-none" style={{ fontSize: 12 }}>open_in_new</span>
+        <Button variant="ghost" size="sm" href={`/marketplace/${product.id}`}>
+          <IconExternalLink size={12} className="leading-none" weight="regular" />
           View product
-        </Link>
+        </Button>
       </div>
 
     </div>

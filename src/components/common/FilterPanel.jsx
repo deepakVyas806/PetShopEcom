@@ -1,5 +1,7 @@
 "use client";
 
+import { IconFilter, IconLocation, IconStar } from "@/lib/icons";
+
 const PET_TYPES = [
   { key: "dogs",       label: "Dogs"       },
   { key: "cats",       label: "Cats"       },
@@ -62,7 +64,7 @@ export default function FilterPanel({
       {/* Header */}
       <div className="flex items-center justify-between">
         <h3 className="text-xs font-bold text-on-surface flex items-center gap-1.5">
-          <span className="material-symbols-outlined text-primary" style={{ fontSize: 15 }}>filter_list</span>
+          <IconFilter size={15} className="text-primary" weight="regular" />
           Filters
         </h3>
         {activeCount > 0 && (
@@ -134,9 +136,7 @@ export default function FilterPanel({
             <div>
               <SectionLabel>Location</SectionLabel>
               <div className="relative">
-                <span className="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-on-surface-variant" style={{ fontSize: 14 }}>
-                  location_on
-                </span>
+                <IconLocation size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-on-surface-variant" weight="regular" />
                 <input
                   type="text"
                   value={location}
@@ -192,9 +192,9 @@ export default function FilterPanel({
             />
             <div className="flex text-yellow-400">
               {[...Array(4)].map((_, i) => (
-                <span key={i} className="material-symbols-outlined leading-none" style={{ fontSize: 11, fontVariationSettings: "'FILL' 1" }}>star</span>
+                <IconStar key={i} size={11} className="leading-none" weight="fill" />
               ))}
-              <span className="material-symbols-outlined leading-none" style={{ fontSize: 11 }}>star</span>
+              <IconStar size={11} className="leading-none" weight="regular" />
             </div>
             <span className="text-xs text-on-surface-variant">& Up</span>
           </label>

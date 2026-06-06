@@ -1,5 +1,7 @@
 "use client";
 
+import { IconCheckCircle, IconDelete, IconEdit } from "@/lib/icons";
+
 const glass = {
   background: "rgba(255,255,255,0.88)",
   backdropFilter: "blur(14px)",
@@ -23,7 +25,7 @@ export default function PaymentCard({ card, onSetDefault, onDelete }) {
           </span>
           {isDefault && (
             <span className="inline-flex items-center gap-1 bg-green-100 text-green-700 text-xs font-semibold px-2 py-0.5 rounded-full w-fit">
-              <span className="material-symbols-outlined leading-none" style={{ fontSize: 11, fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+              <IconCheckCircle size={11} weight="fill" />
               Default
             </span>
           )}
@@ -71,13 +73,13 @@ export default function PaymentCard({ card, onSetDefault, onDelete }) {
           className="w-7 h-7 rounded-full bg-surface-container-high hover:bg-error/10 hover:text-error text-on-surface-variant flex items-center justify-center transition-all cursor-pointer border-none"
           title="Delete"
         >
-          <span className="material-symbols-outlined leading-none" style={{ fontSize: 14 }}>delete</span>
+          <IconDelete size={14} weight="bold" />
         </button>
         <button
           className="w-7 h-7 rounded-full bg-surface-container-high hover:bg-primary/10 hover:text-primary text-on-surface-variant flex items-center justify-center transition-all cursor-pointer border-none"
           title="Edit"
         >
-          <span className="material-symbols-outlined leading-none" style={{ fontSize: 14 }}>edit</span>
+          <IconEdit size={14} weight="bold" />
         </button>
       </div>
     </div>

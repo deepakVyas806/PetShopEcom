@@ -1,5 +1,7 @@
 "use client";
 
+import { IconStar } from "@/lib/icons";
+
 const REVIEWS = [
   {
     text:   "The quality of the organic food is unmatched. Cooper's coat has never looked better! Truly premium care.",
@@ -49,7 +51,7 @@ export default function Testimonials() {
         </div>
 
         {/* Grid — 2 cols on mobile, 4 on lg, no scroll */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {REVIEWS.map(({ text, name, pet, avatar, bg, fg }) => (
             <div
               key={name}
@@ -60,8 +62,7 @@ export default function Testimonials() {
                 <span className={`text-2xl font-serif leading-none ${fg} opacity-40 select-none`}>"</span>
                 <div className="flex">
                   {[1,2,3,4,5].map((i) => (
-                    <span key={i} className="material-symbols-outlined text-primary leading-none"
-                      style={{ fontSize: 11, fontVariationSettings: "'FILL' 1" }}>star</span>
+                    <IconStar key={i} size={11} className="text-primary leading-none" weight="fill" />
                   ))}
                 </div>
               </div>

@@ -12,9 +12,7 @@
  */
 
 import { cn } from "@/lib/utils";
-
-const ICON = "add_shopping_cart";
-const ICON_ADDED = "check";
+import { IconCartSimple, IconCheck } from "@/lib/icons";
 
 /* ─── Colours ───────────────────────────────────────────────────────────────── */
 const BASE_CLR  = "bg-primary-container text-on-primary-container hover:bg-primary hover:text-on-primary";
@@ -51,12 +49,10 @@ export default function CartButton({
           : "px-4 py-2 rounded-full text-xs font-semibold"
       )}
     >
-      <span
-        className="material-symbols-outlined leading-none flex-shrink-0"
-        style={{ fontSize: iconSize }}
-      >
-        {isAdded ? ICON_ADDED : ICON}
-      </span>
+      {isAdded
+        ? <IconCheck size={iconSize} weight="bold" className="leading-none flex-shrink-0" />
+        : <IconCartSimple size={iconSize} weight="bold" className="leading-none flex-shrink-0" />
+      }
       {variant === "pill" && (
         <span>{isAdded ? "Added!" : label}</span>
       )}

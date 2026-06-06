@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { IconChevronLeft, IconChevronRight } from "@/lib/icons";
 
 export default function NotificationsPagination({ total = 3 }) {
   const [current, setCurrent] = useState(1);
@@ -14,7 +15,7 @@ export default function NotificationsPagination({ total = 3 }) {
           disabled={current === 1}
           className="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant hover:bg-primary-fixed transition-colors disabled:opacity-40 cursor-pointer bg-transparent"
         >
-          <span className="material-symbols-outlined leading-none" style={{ fontSize: 16 }}>chevron_left</span>
+          <IconChevronLeft size={16} className="leading-none" weight="regular" />
         </button>
 
         {Array.from({ length: total }, (_, i) => i + 1).map((page) => (
@@ -37,7 +38,7 @@ export default function NotificationsPagination({ total = 3 }) {
           disabled={current === total}
           className="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant hover:bg-primary-fixed transition-colors disabled:opacity-40 cursor-pointer bg-transparent"
         >
-          <span className="material-symbols-outlined leading-none" style={{ fontSize: 16 }}>chevron_right</span>
+          <IconChevronRight size={16} className="leading-none" weight="regular" />
         </button>
       </nav>
     </div>

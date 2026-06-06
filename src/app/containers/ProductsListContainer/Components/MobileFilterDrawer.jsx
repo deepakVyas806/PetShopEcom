@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import FilterPanel from "@/components/common/FilterPanel";
+import { IconClose } from "@/lib/icons";
 
 export default function MobileFilterDrawer({
   isOpen,
@@ -34,7 +35,7 @@ export default function MobileFilterDrawer({
             className="p-1 rounded-full text-on-surface-variant hover:text-primary hover:bg-primary/5 cursor-pointer border-none outline-none flex items-center justify-center"
             aria-label="Close filters"
           >
-            <span className="material-symbols-outlined text-base">close</span>
+            <IconClose size={16} weight="regular" />
           </button>
         </div>
 

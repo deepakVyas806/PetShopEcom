@@ -1,13 +1,15 @@
 "use client";
 
+import { IconMail, IconPhone, IconPaw, IconLocation, IconEdit, IconShield } from "@/lib/icons";
+
 const GLASS = "bg-white/80 backdrop-blur-xl border border-[#F3E8FF] rounded-xl shadow-sm overflow-hidden";
 
-function Field({ icon, label, value }) {
+function Field({ Icon, label, value }) {
   return (
     <div>
       <p className="text-[9px] font-bold text-outline uppercase tracking-wider mb-0.5">{label}</p>
       <div className="flex items-center gap-2">
-        <span className="material-symbols-outlined text-on-surface-variant leading-none" style={{ fontSize: 14 }}>{icon}</span>
+        <Icon size={14} className="text-on-surface-variant leading-none" weight="regular" />
         <span className="text-xs text-on-surface truncate">{value}</span>
       </div>
     </div>
@@ -16,10 +18,10 @@ function Field({ icon, label, value }) {
 
 export default function PersonalInfoCard({ user }) {
   const fields = [
-    { icon: "mail",         label: "Email",     value: user?.email || "name@example.com" },
-    { icon: "phone_iphone", label: "Mobile",    value: "+1 (555) 123-4567"               },
-    { icon: "pets",         label: "Pet Type",  value: "Dogs · Golden Retriever"          },
-    { icon: "location_on",  label: "Location",  value: "San Francisco, CA"               },
+    { Icon: IconMail,     label: "Email",     value: user?.email || "name@example.com" },
+    { Icon: IconPhone,    label: "Mobile",    value: "+1 (555) 123-4567"               },
+    { Icon: IconPaw,      label: "Pet Type",  value: "Dogs · Golden Retriever"          },
+    { Icon: IconLocation, label: "Location",  value: "San Francisco, CA"               },
   ];
 
   return (
@@ -50,13 +52,13 @@ export default function PersonalInfoCard({ user }) {
                 className="absolute -bottom-1 -right-1 bg-primary text-white p-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity border-none cursor-pointer flex items-center justify-center"
                 aria-label="Edit photo"
               >
-                <span className="material-symbols-outlined" style={{ fontSize: 12 }}>edit</span>
+                <IconEdit size={12} weight="regular" />
               </button>
             </div>
             <div className="mb-1">
               <h1 className="text-xs font-bold text-on-surface leading-tight">{user?.name || "User"}</h1>
               <p className="text-[10px] text-on-surface-variant flex items-center gap-1 mt-0.5">
-                <span className="material-symbols-outlined text-primary leading-none" style={{ fontSize: 12, fontVariationSettings: "'FILL' 1" }}>verified</span>
+                <IconShield size={12} className="text-primary leading-none" weight="fill" />
                 Premium Member · 2024
               </p>
             </div>
@@ -64,14 +66,14 @@ export default function PersonalInfoCard({ user }) {
 
           {/* Edit button */}
           <button className="bg-primary text-white px-4 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 hover:shadow-md transition-all active:scale-95 border-none cursor-pointer self-start sm:self-auto">
-            <span className="material-symbols-outlined leading-none" style={{ fontSize: 14 }}>edit</span>
+            <IconEdit size={14} className="leading-none" weight="regular" />
             Edit Profile
           </button>
         </div>
 
         {/* Fields */}
         <div className="mt-4 pt-3 border-t border-outline-variant/20 grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {fields.map((f) => <Field key={f.label} {...f} />)}
+          {fields.map((f) => <Field key={f.label} Icon={f.Icon} label={f.label} value={f.value} />)}
         </div>
       </div>
     </section>

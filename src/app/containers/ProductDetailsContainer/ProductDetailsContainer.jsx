@@ -3,10 +3,12 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import useProductDetails from "./ProductDetailsContainer.hook";
+import { IconChevronRight, IconShipping, IconCartSimple, IconDelete, IconRemove, IconAdd, IconShield, IconEco, IconBag, IconCheckCircle, IconChevronDown } from "@/lib/icons";
 import { fmt } from "@/lib/currency";
 import ReviewCard from "@/app/containers/ReviewsContainer/Components/ReviewCard";
 import RatingSummary from "@/app/containers/ReviewsContainer/Components/RatingSummary";
 import StarRating from "@/app/containers/ReviewsContainer/Components/StarRating";
+import InlineReviewForm from "@/components/common/InlineReviewForm";
 
 const PRODUCT_RATING_DISTRIBUTION = [
   { star: "5", pct: 72 },
@@ -88,6 +90,23 @@ export default function ProductDetailsContainer({ productId }) {
   const [helpfulCounts, setHelpfulCounts] = useState({ pr1: 17, pr2: 9, pr3: 24 });
   const [votedIds, setVotedIds] = useState(new Set());
 
+  const [reviewFormOpen, setReviewFormOpen] = useState(false);
+  const [reviews, setReviews] = useState(PRODUCT_REVIEWS);
+
+  const handleSubmitReview = ({ rating, title, body }) => {
+    const newReview = {
+      id: `pr-${Date.now()}`,
+      name: "You", initials: "YO",
+      avatarBg: "bg-purple-100", avatarFg: "text-purple-700",
+      rating, verified: true,
+      date: new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }),
+      title, body, photos: [],
+    };
+    setReviews((prev) => [newReview, ...prev]);
+    setHelpfulCounts((c) => ({ ...c, [newReview.id]: 0 }));
+    setReviewFormOpen(false);
+  };
+
   const toggleHelpful = (id) => {
     const isVoted = votedIds.has(id);
     setVotedIds((prev) => {
@@ -122,13 +141,13 @@ export default function ProductDetailsContainer({ productId }) {
           <Link href="/" className="hover:text-primary transition-colors">
             Home
           </Link>
-          <span className="material-symbols-outlined text-[14px]">chevron_right</span>
+          <IconChevronRight size={14} weight="regular" />
           <Link href="/marketplace" className="hover:text-primary transition-colors">
             Shop
           </Link>
-          <span className="material-symbols-outlined text-[14px]">chevron_right</span>
+          <IconChevronRight size={14} weight="regular" />
           <span className="capitalize">{product.category || "Dogs"}</span>
-          <span className="material-symbols-outlined text-[14px]">chevron_right</span>
+          <IconChevronRight size={14} weight="regular" />
           <span className="text-primary font-bold truncate max-w-[200px] sm:max-w-xs">{product.name}</span>
         </nav>
 
@@ -197,9 +216,7 @@ export default function ProductDetailsContainer({ productId }) {
                   className="text-xs text-primary font-semibold hover:underline flex items-center gap-0.5"
                 >
                   See all reviews
-                  <span className="material-symbols-outlined leading-none" style={{ fontSize: 14 }}>
-                    chevron_right
-                  </span>
+                  <IconChevronRight size={14} className="leading-none" weight="regular" />
                 </Link>
               </div>
             </div>
@@ -224,7 +241,7 @@ export default function ProductDetailsContainer({ productId }) {
 
               {/* Delivery Estimation */}
               <div className="flex items-center space-x-2 text-on-surface-variant text-xs">
-                <span className="material-symbols-outlined text-green-600 text-base">local_shipping</span>
+                <IconShipping size={18} className="text-green-600" weight="regular" />
                 <span>
                   Estimated Delivery: <span className="text-on-surface font-bold">{getDeliveryDateString()}</span>
                 </span>
@@ -273,16 +290,14 @@ export default function ProductDetailsContainer({ productId }) {
                           : "text-on-surface-variant hover:bg-surface-container-low"
                       }`}
                     >
-                      <span className="material-symbols-outlined text-sm">
-                        {quantity === 1 ? "delete" : "remove"}
-                      </span>
+                      {quantity === 1 ? <IconDelete size={16} weight="regular" /> : <IconRemove size={16} weight="regular" />}
                     </button>
                     <span className="font-bold text-on-surface w-6 text-center text-xs">{quantity}</span>
                     <button
                       onClick={() => { incrementQuantity(); handleAddToCart(); }}
                       className="px-3 h-full hover:bg-surface-container-low transition-colors cursor-pointer border-none outline-none text-on-surface-variant flex items-center justify-center"
                     >
-                      <span className="material-symbols-outlined text-sm">add</span>
+                      <IconAdd size={16} weight="regular" />
                     </button>
                   </div>
                 ) : (
@@ -291,7 +306,7 @@ export default function ProductDetailsContainer({ productId }) {
                     onClick={() => { handleAddToCart(); setInCart(true); }}
                     className="flex-1 h-9 rounded-full font-semibold text-xs transition-all active:scale-95 cursor-pointer flex items-center justify-center gap-1.5 border-none hover:shadow-md bg-primary-container text-on-primary-container hover:bg-primary hover:text-on-primary"
                   >
-                    <span className="material-symbols-outlined leading-none" style={{ fontSize: 16 }}>add_shopping_cart</span>
+                    <IconCartSimple size={16} className="leading-none" weight="bold" />
                     Add to Cart
                   </button>
                 )}
@@ -310,13 +325,13 @@ export default function ProductDetailsContainer({ productId }) {
             <div className="grid grid-cols-2 gap-3">
               <div className="flex items-center space-x-2.5 p-3 bg-white dark:bg-surface-container-lowest rounded-xl border border-outline-variant/30 shadow-xs">
                 <div className="bg-primary/10 p-1.5 rounded-full flex items-center justify-center">
-                  <span className="material-symbols-outlined text-primary text-base">verified</span>
+                  <IconShield size={18} className="text-primary" weight="regular" />
                 </div>
                 <span className="font-bold text-xs text-on-surface">Grain-Free</span>
               </div>
               <div className="flex items-center space-x-2.5 p-3 bg-white dark:bg-surface-container-lowest rounded-xl border border-outline-variant/30 shadow-xs">
                 <div className="bg-primary/10 p-1.5 rounded-full flex items-center justify-center">
-                  <span className="material-symbols-outlined text-primary text-base">eco</span>
+                  <IconEco size={18} className="text-primary" weight="regular" />
                 </div>
                 <span className="font-bold text-xs text-on-surface">100% Organic</span>
               </div>
@@ -328,7 +343,7 @@ export default function ProductDetailsContainer({ productId }) {
         {/* Frequently Bought Together Bundle */}
         <section className="mt-8">
           <h2 className="text-xs font-bold mb-3 flex items-center gap-1.5 text-on-surface">
-            <span className="material-symbols-outlined text-primary text-base">shopping_basket</span>
+            <IconBag size={18} className="text-primary" weight="regular" />
             Frequently Bought Together
           </h2>
 
@@ -347,7 +362,7 @@ export default function ProductDetailsContainer({ productId }) {
                 </div>
               </div>
               
-              <span className="material-symbols-outlined text-outline text-xl font-bold">add</span>
+              <IconAdd size={20} className="text-outline font-bold" weight="bold" />
               
               {/* Product Card 2: Supplement Bundle Sibling */}
               <div
@@ -362,18 +377,14 @@ export default function ProductDetailsContainer({ productId }) {
                   src={bundleItems[0].image}
                 />
                 <div className="absolute top-1.5 right-1.5">
-                  <span className={`material-symbols-outlined text-base ${
-                    checkedBundleItems.bundle_supp ? "text-primary fill-1" : "text-outline-variant/60"
-                  }`}>
-                    {checkedBundleItems.bundle_supp ? "check_circle" : "radio_button_unchecked"}
-                  </span>
+                  <IconCheckCircle size={18} weight={checkedBundleItems.bundle_supp ? "fill" : "regular"} className={checkedBundleItems.bundle_supp ? "text-primary" : "text-outline-variant/60"} />
                 </div>
                 <div className="absolute bottom-1.5 left-1.5 right-1.5 text-center bg-black/60 text-white text-[9px] rounded py-0.5 font-bold">
                   +{fmt(bundleItems[0].price)}
                 </div>
               </div>
 
-              <span className="material-symbols-outlined text-outline text-xl font-bold">add</span>
+              <IconAdd size={20} className="text-outline font-bold" weight="bold" />
 
               {/* Product Card 3: Bowl Bundle Sibling */}
               <div
@@ -388,11 +399,7 @@ export default function ProductDetailsContainer({ productId }) {
                   src={bundleItems[1].image}
                 />
                 <div className="absolute top-1.5 right-1.5">
-                  <span className={`material-symbols-outlined text-base ${
-                    checkedBundleItems.bundle_bowl ? "text-primary fill-1" : "text-outline-variant/60"
-                  }`}>
-                    {checkedBundleItems.bundle_bowl ? "check_circle" : "radio_button_unchecked"}
-                  </span>
+                  <IconCheckCircle size={18} weight={checkedBundleItems.bundle_bowl ? "fill" : "regular"} className={checkedBundleItems.bundle_bowl ? "text-primary" : "text-outline-variant/60"} />
                 </div>
                 <div className="absolute bottom-1.5 left-1.5 right-1.5 text-center bg-black/60 text-white text-[9px] rounded py-0.5 font-bold">
                   +{fmt(bundleItems[1].price)}
@@ -517,21 +524,21 @@ export default function ProductDetailsContainer({ productId }) {
               <h3 className="text-xs font-bold text-on-surface">Key Benefits</h3>
               <ul className="space-y-2.5">
                 <li className="flex items-start gap-2.5">
-                  <span className="material-symbols-outlined text-green-600 mt-0.5 text-base">check_circle</span>
+                  <IconCheckCircle size={18} className="text-green-600 mt-0.5" weight="regular" />
                   <div>
                     <h4 className="font-bold text-xs text-on-surface">Shiny Coat &amp; Healthy Skin</h4>
                     <p className="text-on-surface-variant text-[11px] leading-relaxed">High concentration of active Omega-3 fatty acids for structural fur and skin glow.</p>
                   </div>
                 </li>
                 <li className="flex items-start gap-2.5">
-                  <span className="material-symbols-outlined text-green-600 mt-0.5 text-base">check_circle</span>
+                  <IconCheckCircle size={18} className="text-green-600 mt-0.5" weight="regular" />
                   <div>
                     <h4 className="font-bold text-xs text-on-surface">Digestive Support</h4>
                     <p className="text-on-surface-variant text-[11px] leading-relaxed">Infused with prebiotic vegetable fibers from clean kale and green field spinach.</p>
                   </div>
                 </li>
                 <li className="flex items-start gap-2.5">
-                  <span className="material-symbols-outlined text-green-600 mt-0.5 text-base">check_circle</span>
+                  <IconCheckCircle size={18} className="text-green-600 mt-0.5" weight="regular" />
                   <div>
                     <h4 className="font-bold text-xs text-on-surface">Immune Boosting</h4>
                     <p className="text-on-surface-variant text-[11px] leading-relaxed">Packed with antioxidants from fresh organic berries and leafy vegetables.</p>
@@ -550,10 +557,24 @@ export default function ProductDetailsContainer({ productId }) {
               <h2 className="text-xs font-bold text-on-surface">Community Stories</h2>
               <p className="text-on-surface-variant text-xs">See what other pet parents are saying</p>
             </div>
-            <button className="bg-white dark:bg-surface-container-lowest border-2 border-primary text-primary font-bold text-xs px-4 py-1.5 rounded-full hover:bg-primary/5 active:scale-95 transition-all cursor-pointer self-start sm:self-auto">
-              Write a Review
+            <button
+              onClick={() => setReviewFormOpen((o) => !o)}
+              className="bg-white dark:bg-surface-container-lowest border-2 border-primary text-primary font-bold text-xs px-4 py-1.5 rounded-full hover:bg-primary/5 active:scale-95 transition-all cursor-pointer self-start sm:self-auto"
+            >
+              {reviewFormOpen ? "Cancel" : "Write a Review"}
             </button>
           </div>
+
+          {/* Inline review form — shared component, primary-colour stars */}
+          {reviewFormOpen && (
+            <div className="mb-5">
+              <InlineReviewForm
+                onSubmit={handleSubmitReview}
+                onCancel={() => setReviewFormOpen(false)}
+                context="product"
+              />
+            </div>
+          )}
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
             <aside className="lg:col-span-4">
@@ -561,11 +582,11 @@ export default function ProductDetailsContainer({ productId }) {
             </aside>
 
             <div className="lg:col-span-8 space-y-4">
-              {PRODUCT_REVIEWS.map((review) => (
+              {reviews.map((review) => (
                 <ReviewCard
                   key={review.id}
                   review={review}
-                  helpfulCount={helpfulCounts[review.id]}
+                  helpfulCount={helpfulCounts[review.id] ?? 0}
                   isVoted={votedIds.has(review.id)}
                   onHelpful={() => toggleHelpful(review.id)}
                 />
@@ -574,7 +595,7 @@ export default function ProductDetailsContainer({ productId }) {
               <div className="flex justify-center pt-2">
                 <Link href="/reviews" className="text-primary font-bold text-xs hover:underline flex items-center gap-0.5">
                   View All Reviews
-                  <span className="material-symbols-outlined leading-none" style={{ fontSize: 16 }}>chevron_right</span>
+                  <IconChevronRight size={16} className="leading-none" weight="regular" />
                 </Link>
               </div>
             </div>

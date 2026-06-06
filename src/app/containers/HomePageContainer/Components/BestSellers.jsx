@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import ProductCard from "@/components/common/ProductCard";
+import { IconArrowRight } from "@/lib/icons";
 
 export default function BestSellers({
   premiumShowcase,
@@ -21,11 +22,11 @@ export default function BestSellers({
             href="/marketplace"
             className="inline-flex items-center gap-0.5 text-xs text-primary font-semibold hover:underline mt-1"
           >
-            View All <span className="material-symbols-outlined leading-none" style={{ fontSize: 13 }}>arrow_forward</span>
+            View All <IconArrowRight size={13} className="leading-none" weight="regular" />
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
           {premiumShowcase.map((product) => (
             <ProductCard
               key={product.id}

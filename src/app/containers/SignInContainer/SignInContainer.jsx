@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import useSignInContainer from "./SignInContainer.hook";
+import { IconShield, IconLock, IconPaw } from "@/lib/icons";
 import LeftPanel     from "./Components/LeftPanel";
 import SocialButtons from "./Components/SocialButtons";
 import LoginForm     from "./Components/LoginForm";
@@ -27,7 +28,7 @@ export default function SignInContainer() {
 
         {/* Mobile brand */}
         <div className="md:hidden w-full max-w-sm mb-5 flex justify-center">
-          <span className="text-sm font-bold text-primary tracking-tight">artPetShop</span>
+          <span className="text-sm font-black text-primary tracking-tight">artPetShop</span>
         </div>
 
         {/* Card */}
@@ -42,14 +43,14 @@ export default function SignInContainer() {
         >
           {/* Tab toggle (hidden on forgot-password) */}
           {view !== "forgot-password" && (
-            <div className="flex bg-surface-container rounded-xl p-0.5 mb-4">
+            <div className="flex bg-surface-container rounded-lg p-0.5 mb-4">
               {["login", "signup"].map((v) => (
                 <button
                   key={v}
                   type="button"
                   onClick={() => setView(v)}
                   className={cn(
-                    "flex-1 py-2 rounded-[10px] text-xs font-semibold transition-all cursor-pointer border-none",
+                    "flex-1 py-2 rounded-md text-xs font-semibold transition-all cursor-pointer border-none",
                     view === v
                       ? "bg-surface shadow-sm text-on-surface"
                       : "bg-transparent text-on-surface-variant hover:text-on-surface"
@@ -71,20 +72,20 @@ export default function SignInContainer() {
           {view !== "forgot-password" && <SocialButtons />}
 
           {/* Form area */}
-          {view === "login"            && <LoginForm  onForgot={() => setView("forgot-password")} />}
-          {view === "signup"           && <SignupForm />}
+          {view === "login"            && <LoginForm  onForgot={() => setView("forgot-password")} onSignup={() => setView("signup")} />}
+          {view === "signup"           && <SignupForm onLogin={() => setView("login")} />}
           {view === "forgot-password"  && <ForgotForm onBack={() => setView("login")} />}
         </div>
 
         {/* Trust strip */}
         <div className="mt-5 flex justify-center gap-6 opacity-50">
           {[
-            { icon: "verified", label: "Secure"    },
-            { icon: "lock",     label: "Encrypted" },
-            { icon: "pets",     label: "Pet-First" },
-          ].map(({ icon, label }) => (
+            { Icon: IconShield, label: "Secure"    },
+            { Icon: IconLock,   label: "Encrypted" },
+            { Icon: IconPaw,    label: "Pet-First" },
+          ].map(({ Icon, label }) => (
             <div key={label} className="flex flex-col items-center gap-0.5">
-              <span className="material-symbols-outlined text-on-surface-variant" style={{ fontSize: 16 }}>{icon}</span>
+              <Icon size={16} className="text-on-surface-variant" weight="regular" />
               <span className="text-[10px] uppercase tracking-wider text-on-surface-variant">{label}</span>
             </div>
           ))}

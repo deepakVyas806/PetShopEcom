@@ -2,6 +2,7 @@
 
 import React from "react";
 import { fmt } from "@/lib/currency";
+import { IconShipping, IconShield, IconStar } from "@/lib/icons";
 
 export default function OrderSummary({
   cartCount,
@@ -113,11 +114,11 @@ export default function OrderSummary({
         {/* Trust symbols list */}
         <div className="pt-2 border-t border-outline-variant/10 flex flex-col gap-2 text-[10px] text-on-surface-variant font-medium">
           <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-primary text-sm">local_shipping</span>
+            <IconShipping size={14} className="text-primary" weight="regular" />
             <span>Fast, tracked delivery on all orders</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-primary text-sm">verified_user</span>
+            <IconShield size={14} className="text-primary" weight="regular" />
             <span>Secure SSL encrypted checkout</span>
           </div>
         </div>
@@ -127,7 +128,7 @@ export default function OrderSummary({
       {/* Loyalty box */}
       {rewardsPoints > 0 && (
         <div className="mt-4 bg-tertiary-fixed border border-tertiary-fixed-dim rounded-xl p-3.5 flex items-center gap-3">
-          <span className="material-symbols-outlined text-primary text-2xl">loyalty</span>
+          <IconStar size={24} className="text-primary" weight="fill" />
           <div>
             <p className="text-[11px] text-on-tertiary-fixed font-bold leading-none">
               Earn {rewardsPoints} points

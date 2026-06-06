@@ -4,16 +4,16 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { cn } from "@/lib/utils";
+import { IconUser, IconReceipt, IconHeart, IconCalendar, IconLocation, IconMoney, IconBell, IconLogout } from "@/lib/icons";
 
 const NAV_ITEMS = [
-  { icon: "person",               label: "My Profile",       href: "/profile"  },
-  { icon: "receipt_long",         label: "My Orders",        href: "/orders"   },
-  { icon: "local_shipping",       label: "Track Order",      href: "/track-order" },
-  { icon: "favorite",             label: "Wishlist",         href: "/wishlist" },
-  { icon: "calendar_today",       label: "Appointments",     href: "/appointments" },
-  { icon: "location_on",          label: "Saved Addresses",  href: "/saved-addresses" },
-  { icon: "payments",             label: "Payment Methods",  href: "/payment-methods" },
-  { icon: "notifications_active", label: "Notifications",    href: "/notifications" },
+  { Icon: IconUser,     label: "My Profile",       href: "/profile"          },
+  { Icon: IconReceipt,  label: "My Orders",        href: "/orders"           },
+  { Icon: IconHeart,    label: "Wishlist",         href: "/wishlist"         },
+  { Icon: IconCalendar, label: "Appointments",     href: "/appointments"     },
+  { Icon: IconLocation, label: "Saved Addresses",  href: "/saved-addresses"  },
+  { Icon: IconMoney,    label: "Payment Methods",  href: "/payment-methods"  },
+  { Icon: IconBell,     label: "Notifications",    href: "/notifications"    },
 ];
 
 export default function AccountSidebar() {
@@ -37,7 +37,7 @@ export default function AccountSidebar() {
 
         {/* Nav links */}
         <nav className="space-y-0.5">
-          {NAV_ITEMS.map(({ icon, label, href }) => {
+          {NAV_ITEMS.map(({ Icon, label, href }) => {
             const isActive = pathname === href;
             return (
               <Link
@@ -50,15 +50,7 @@ export default function AccountSidebar() {
                     : "text-on-surface-variant hover:bg-surface-container-high hover:translate-x-0.5"
                 )}
               >
-                <span
-                  className="material-symbols-outlined flex-shrink-0 leading-none"
-                  style={{
-                    fontSize: 16,
-                    fontVariationSettings: isActive ? "'FILL' 1" : "'FILL' 0",
-                  }}
-                >
-                  {icon}
-                </span>
+                <Icon size={16} weight={isActive ? "fill" : "regular"} className="flex-shrink-0 leading-none" />
                 <span className="truncate">{label}</span>
               </Link>
             );
@@ -71,9 +63,7 @@ export default function AccountSidebar() {
             onClick={logout}
             className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-error hover:bg-error/5 hover:translate-x-0.5 transition-all cursor-pointer bg-transparent border-none"
           >
-            <span className="material-symbols-outlined leading-none flex-shrink-0" style={{ fontSize: 16 }}>
-              logout
-            </span>
+            <IconLogout size={16} className="leading-none flex-shrink-0" weight="regular" />
             Sign Out
           </button>
         </div>

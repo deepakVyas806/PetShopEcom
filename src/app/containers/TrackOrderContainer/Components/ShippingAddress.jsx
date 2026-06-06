@@ -1,10 +1,12 @@
 "use client";
 
+import { IconHomePin, IconPhone } from "@/lib/icons";
+
 export default function ShippingAddress({ address }) {
   return (
     <section className="bg-surface-container-low rounded-xl p-4 border border-outline-variant/20">
       <div className="flex items-center gap-2 mb-3">
-        <span className="material-symbols-outlined text-primary" style={{ fontSize: 18 }}>home_pin</span>
+        <IconHomePin size={18} className="text-primary" weight="bold" />
         <h2 className="text-sm font-bold text-on-surface">Shipping Address</h2>
       </div>
 
@@ -14,7 +16,7 @@ export default function ShippingAddress({ address }) {
         <p>{address.line2}</p>
         <p>{address.country}</p>
         <p className="flex items-center gap-1.5 mt-2 text-on-surface">
-          <span className="material-symbols-outlined" style={{ fontSize: 14 }}>call</span>
+          <IconPhone size={14} weight="regular" />
           {address.phone}
         </p>
       </div>

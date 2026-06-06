@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import PageHeader from "@/components/common/PageHeader";
+import { IconDownload, IconShipping } from "@/lib/icons";
 
 export default function OrderDetailHeader({ order }) {
   return (
@@ -20,14 +21,14 @@ export default function OrderDetailHeader({ order }) {
         {order.statusLabel}
       </div>
       <button className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-outline-variant rounded-full text-xs font-medium text-on-surface-variant hover:bg-surface-container transition-colors cursor-pointer bg-transparent">
-        <span className="material-symbols-outlined leading-none" style={{ fontSize: 14 }}>download</span>
+        <IconDownload size={14} weight="bold" />
         Invoice
       </button>
       <Link
-        href="/track-order"
+        href={`/track-order/${order.id}`}
         className="inline-flex items-center gap-1.5 bg-primary text-on-primary px-3 py-1.5 rounded-full text-xs font-semibold hover:shadow-md hover:brightness-105 transition-all"
       >
-        <span className="material-symbols-outlined leading-none" style={{ fontSize: 14 }}>local_shipping</span>
+        <IconShipping size={14} weight="bold" />
         Track
       </Link>
     </PageHeader>

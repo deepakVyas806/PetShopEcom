@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { IconArrowRight } from "@/lib/icons";
 
 const SERVICES = [
   {
@@ -28,7 +29,7 @@ export default function ServicesSection() {
         <h2 className="text-sm font-bold text-on-surface">Our Services</h2>
         <p className="text-xs text-on-surface-variant mt-0.5">Expert care tailored to your pet's needs</p>
         <Link href="/services" className="inline-flex items-center gap-0.5 text-xs text-primary font-semibold hover:underline mt-1">
-          View All <span className="material-symbols-outlined leading-none" style={{ fontSize: 13 }}>arrow_forward</span>
+          View All <IconArrowRight size={13} className="leading-none" weight="regular" />
         </Link>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">

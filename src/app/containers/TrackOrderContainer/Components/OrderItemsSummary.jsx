@@ -1,13 +1,14 @@
 "use client";
 
 import { fmt } from "@/lib/currency";
+import { IconBag } from "@/lib/icons";
 
 export default function OrderItemsSummary({ items, subtotal, shipping, total }) {
   return (
     <section className="bg-surface-container-lowest rounded-xl border border-outline-variant/30 overflow-hidden shadow-sm">
       {/* Header */}
       <div className="p-4 border-b border-outline-variant/20 flex items-center gap-2">
-        <span className="material-symbols-outlined text-primary" style={{ fontSize: 18 }}>shopping_bag</span>
+        <IconBag size={18} className="text-primary" weight="bold" />
         <h2 className="text-sm font-bold text-on-surface">
           Order Items ({items.length})
         </h2>

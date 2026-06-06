@@ -1,6 +1,7 @@
 "use client";
 
 import useOrdersContainer from "./OrdersContainer.hook";
+import { IconReceipt } from "@/lib/icons";
 import OrdersHeader from "./Components/OrdersHeader";
 import OrderCard    from "./Components/OrderCard";
 import Pagination   from "@/components/common/Pagination";
@@ -31,9 +32,7 @@ export default function OrdersContainer() {
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center py-16 text-center gap-3">
-          <span className="material-symbols-outlined text-outline" style={{ fontSize: 40 }}>
-            receipt_long
-          </span>
+          <IconReceipt size={40} className="text-outline" weight="duotone" />
           <p className="text-xs text-on-surface-variant">No orders match your search.</p>
         </div>
       )}

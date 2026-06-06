@@ -1,5 +1,13 @@
 "use client";
 
+import { IconStar, IconEdit, IconDelete, IconCheck, IconPhone, IconLocation, IconHome } from "@/lib/icons";
+
+const ADDRESS_ICON_MAP = {
+  location_on: IconLocation,
+  home:        IconHome,
+  business:    IconLocation,
+};
+
 const glass = {
   background: "rgba(255,255,255,0.88)",
   backdropFilter: "blur(14px)",
@@ -25,7 +33,7 @@ export default function AddressCard({ address, onSetDefault, onDelete }) {
       <div className="flex items-center justify-between mb-4 relative z-10">
         {isDefault ? (
           <span className="inline-flex items-center gap-1 bg-primary/10 text-primary text-xs font-semibold px-2.5 py-1 rounded-full">
-            <span className="material-symbols-outlined leading-none" style={{ fontSize: 12, fontVariationSettings: "'FILL' 1" }}>stars</span>
+            <IconStar size={12} weight="fill" />
             Default
           </span>
         ) : (
@@ -40,14 +48,14 @@ export default function AddressCard({ address, onSetDefault, onDelete }) {
             className="w-7 h-7 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-primary/10 hover:text-primary transition-all cursor-pointer bg-transparent border-none"
             title="Edit"
           >
-            <span className="material-symbols-outlined leading-none" style={{ fontSize: 16 }}>edit</span>
+            <IconEdit size={16} weight="bold" />
           </button>
           <button
             onClick={() => onDelete(address.id)}
             className="w-7 h-7 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-error/10 hover:text-error transition-all cursor-pointer bg-transparent border-none"
             title="Delete"
           >
-            <span className="material-symbols-outlined leading-none" style={{ fontSize: 16 }}>delete</span>
+            <IconDelete size={16} weight="bold" />
           </button>
         </div>
       </div>
@@ -60,7 +68,7 @@ export default function AddressCard({ address, onSetDefault, onDelete }) {
       <div className="space-y-2.5">
         <div className="flex items-start gap-2.5">
           <span className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-            <span className="material-symbols-outlined leading-none text-primary" style={{ fontSize: 13 }}>{icon}</span>
+            {(() => { const IC = ADDRESS_ICON_MAP[icon] ?? IconLocation; return <IC size={13} className="text-primary" weight="regular" />; })()}
           </span>
           <p className="text-xs text-on-surface leading-relaxed">
             {line1}<br />{line2}<br />{country}
@@ -69,7 +77,7 @@ export default function AddressCard({ address, onSetDefault, onDelete }) {
 
         <div className="flex items-center gap-2.5">
           <span className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-            <span className="material-symbols-outlined leading-none text-primary" style={{ fontSize: 13 }}>call</span>
+            <IconPhone size={13} className="text-primary" weight="regular" />
           </span>
           <p className="text-xs text-on-surface">{phone}</p>
         </div>
@@ -81,7 +89,7 @@ export default function AddressCard({ address, onSetDefault, onDelete }) {
         {isDefault ? (
           <span className="inline-flex items-center gap-1 text-xs text-primary font-semibold">
             <span className="w-4 h-4 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-              <span className="material-symbols-outlined leading-none" style={{ fontSize: 11, fontVariationSettings: "'FILL' 1" }}>check</span>
+              <IconCheck size={11} weight="fill" />
             </span>
             Active default
           </span>

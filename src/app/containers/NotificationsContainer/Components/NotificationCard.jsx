@@ -2,6 +2,20 @@
 
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { IconShipping, IconTag, IconUser, IconBell, IconCheckCircle, IconInfo, IconWarning, IconGift, IconStar, IconPaw } from "@/lib/icons";
+
+const ICON_MAP = {
+  local_shipping: IconShipping,
+  sell:           IconTag,
+  account_circle: IconUser,
+  notifications:  IconBell,
+  check_circle:   IconCheckCircle,
+  info:           IconInfo,
+  warning:        IconWarning,
+  gift:           IconGift,
+  star:           IconStar,
+  pets:           IconPaw,
+};
 
 function ActionButton({ action }) {
   const cls =
@@ -54,7 +68,7 @@ export default function NotificationCard({ notification, onMarkRead }) {
 
       {/* Icon */}
       <div className={cn("w-10 h-10 flex-shrink-0 rounded-xl flex items-center justify-center", iconBg, iconColor)}>
-        <span className="material-symbols-outlined leading-none" style={{ fontSize: 18 }}>{icon}</span>
+        {(() => { const IC = ICON_MAP[icon] ?? IconBell; return <IC size={18} weight="regular" />; })()}
       </div>
 
       {/* Content */}

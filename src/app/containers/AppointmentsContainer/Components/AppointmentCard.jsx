@@ -1,5 +1,14 @@
 "use client";
 
+import { IconCalendar, IconClock, IconGroom, IconTraining, IconMedical, IconPaw, IconStar } from "@/lib/icons";
+
+const SERVICE_ICON_MAP = {
+  content_cut:      IconGroom,
+  school:           IconTraining,
+  medical_services: IconMedical,
+  pets:             IconPaw,
+};
+
 const glass = {
   background: "rgba(255,255,255,0.85)",
   backdropFilter: "blur(14px)",
@@ -26,12 +35,7 @@ export default function AppointmentCard({ appt }) {
         <div
           className={`absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center ring-2 ring-surface-container-lowest ${appt.serviceIconBg}`}
         >
-          <span
-            className={`material-symbols-outlined leading-none ${appt.serviceIconClr}`}
-            style={{ fontSize: 11, fontVariationSettings: "'FILL' 1" }}
-          >
-            {appt.serviceIcon}
-          </span>
+          {(() => { const SvcIcon = SERVICE_ICON_MAP[appt.serviceIcon] ?? IconStar; return <SvcIcon size={11} className={appt.serviceIconClr} weight="fill" />; })()}
         </div>
       </div>
 
@@ -47,13 +51,13 @@ export default function AppointmentCard({ appt }) {
         <div className="flex gap-3">
           <span className="flex items-center gap-1.5 text-xs text-on-surface-variant font-medium">
             <span className="w-4 h-4 rounded-full bg-surface-container flex items-center justify-center flex-shrink-0">
-              <span className="material-symbols-outlined leading-none" style={{ fontSize: 10 }}>calendar_month</span>
+              <IconCalendar size={10} weight="regular" />
             </span>
             {appt.date}
           </span>
           <span className="flex items-center gap-1.5 text-xs text-on-surface-variant font-medium">
             <span className="w-4 h-4 rounded-full bg-surface-container flex items-center justify-center flex-shrink-0">
-              <span className="material-symbols-outlined leading-none" style={{ fontSize: 10 }}>schedule</span>
+              <IconClock size={10} weight="regular" />
             </span>
             {appt.time}
           </span>

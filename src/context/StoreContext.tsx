@@ -73,6 +73,28 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [userRole, setUserRole] = useState<"guest" | "customer" | "admin">("guest");
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
 
+  // ── Cart persistence: restore from localStorage on mount ──────────────────
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("petshop_cart");
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed)) setCart(parsed);
+      }
+    } catch {
+      // ignore malformed data
+    }
+  }, []);
+
+  // ── Cart persistence: write to localStorage on every cart change ───────────
+  useEffect(() => {
+    try {
+      localStorage.setItem("petshop_cart", JSON.stringify(cart));
+    } catch {
+      // ignore storage errors (e.g. private browsing quota)
+    }
+  }, [cart]);
+
   // Load configuration items on mount
   useEffect(() => {
     setProducts(siteConfig.products);

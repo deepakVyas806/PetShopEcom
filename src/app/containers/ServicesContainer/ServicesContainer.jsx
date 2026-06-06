@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { useState, useEffect } from "react";
+import { IconFilter, IconSearch, IconClose, IconSearchOff } from "@/lib/icons";
 import useServices from "./ServicesContainer.hook";
 import FilterPanel from "@/components/common/FilterPanel";
 import ServiceCard from "./Components/ServiceCard";
@@ -24,12 +26,21 @@ export default function ServicesContainer() {
     setPriceRange,
     location,
     setLocation,
+    inlineSearch,
+    setInlineSearch,
     mobileFiltersOpen,
     setMobileFiltersOpen,
     handleReset,
     currentPage,
     setCurrentPage,
   } = useServices();
+
+  /* Local input for debounce — fires setInlineSearch after 350ms */
+  const [localQuery, setLocalQuery] = useState("");
+  useEffect(() => {
+    const t = setTimeout(() => setInlineSearch(localQuery), 350);
+    return () => clearTimeout(t);
+  }, [localQuery, setInlineSearch]);
 
   return (
     <div className="w-full bg-background text-on-background transition-colors duration-300">
@@ -58,10 +69,28 @@ export default function ServicesContainer() {
             onClick={() => setMobileFiltersOpen(true)}
             className="md:hidden flex items-center gap-1.5 px-3 py-1.5 border border-outline-variant rounded-lg bg-surface text-xs font-medium text-on-surface hover:bg-primary/5 active:scale-95 transition-all cursor-pointer"
           >
-            <span className="material-symbols-outlined leading-none" style={{ fontSize: 15 }}>filter_list</span>
+            <IconFilter size={15} className="leading-none" weight="regular" />
             Filter
           </button>
         </PageHeader>
+
+        {/* Inline debounce search — filters current service list, no navigation */}
+        <div className="mt-3 mb-4 flex items-center bg-surface-container-low rounded-full px-3 py-2 border border-outline-variant/50 focus-within:border-primary transition-colors gap-2">
+          <IconSearch size={16} className="text-on-surface-variant flex-shrink-0" weight="regular" />
+          <input
+            type="text"
+            value={localQuery}
+            onChange={(e) => setLocalQuery(e.target.value)}
+            placeholder="Filter services by name…"
+            className="bg-transparent border-none focus:ring-0 text-xs flex-1 outline-none text-on-surface placeholder:text-on-surface-variant/50 min-w-0"
+          />
+          {localQuery && (
+            <button type="button" onClick={() => setLocalQuery("")}
+              className="bg-transparent border-none cursor-pointer flex-shrink-0 text-on-surface-variant hover:text-on-surface">
+              <IconClose size={13} weight="bold" />
+            </button>
+          )}
+        </div>
 
         {/* Layout Split */}
         <div className="flex flex-col md:flex-row gap-4 md:gap-gutter">
@@ -133,7 +162,7 @@ export default function ServicesContainer() {
             </>
           ) : (
             <div className="w-full py-16 text-center bg-surface-container-lowest border border-outline-variant/20 rounded-xl p-5 shadow-inner">
-              <span className="material-symbols-outlined text-primary text-4xl mb-3">search_off</span>
+              <IconSearchOff size={36} className="text-primary mb-3" weight="duotone" />
               <h3 className="text-xs uppercase tracking-wider font-bold text-on-surface mb-1.5">
                 No Services Found
               </h3>
@@ -160,7 +189,7 @@ export default function ServicesContainer() {
                 onClick={() => setMobileFiltersOpen(false)}
                 className="p-1 rounded-full text-on-surface-variant hover:text-primary cursor-pointer border-none outline-none"
               >
-                <span className="material-symbols-outlined text-base">close</span>
+                <IconClose size={18} weight="regular" />
               </button>
             </div>
             <div
