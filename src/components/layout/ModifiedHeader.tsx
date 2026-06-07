@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import dynamic from "next/dynamic";
@@ -42,6 +43,8 @@ function IconBtn({
 export default function ModifiedHeader() {
   const pathname = usePathname();
   const { cart } = useStore();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
 
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -59,7 +62,7 @@ export default function ModifiedHeader() {
       <IconBtn href="/cart" title="Cart">
         <IconCart size={20} className="text-primary" weight="bold" />
       </IconBtn>
-      {cartCount > 0 && (
+      {mounted && cartCount > 0 && (
         <span className="absolute top-0.5 right-0.5 bg-primary text-white text-[9px] min-w-[14px] h-3.5 flex items-center justify-center rounded-full font-bold px-0.5 pointer-events-none">
           {cartCount}
         </span>

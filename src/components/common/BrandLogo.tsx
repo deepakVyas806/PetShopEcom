@@ -1,16 +1,18 @@
 import React from "react";
 import { siteConfig } from "@/config/site";
-import { IconHexagon } from "@/lib/icons";
-import { PawPrint } from "lucide-react";
+import { IconHexagon, IconPaw } from "@/lib/icons";
 
 interface BrandLogoProps {
   className?: string;
   showText?: boolean;
+  /** Override the tagline below the brand name. Defaults to theme tagline. */
+  tagline?: string;
 }
 
 export default function BrandLogo({
   className = "",
   showText = true,
+  tagline,
 }: BrandLogoProps) {
   const isKinetic = siteConfig.themeType === "kinetic";
 
@@ -38,7 +40,7 @@ export default function BrandLogo({
   return (
     <div className={`flex items-center gap-2.5 select-none py-1 text-left ${className}`}>
       <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-brand-secondary to-brand-primary flex items-center justify-center text-white shadow-lg shadow-purple-950/40 shrink-0">
-        <PawPrint className="w-4 h-4 text-white" />
+        <IconPaw weight="fill" className="w-4 h-4 text-white" />
       </div>
       {showText && (
         <div className="flex flex-col">
@@ -46,7 +48,7 @@ export default function BrandLogo({
             art<span className="text-brand-primary font-black">petshop</span>
           </span>
           <span className="text-[8.5px] uppercase font-extrabold tracking-widest text-brand-secondary leading-none mt-1">
-            Premium Care
+            {tagline ?? "Premium Care"}
           </span>
         </div>
       )}

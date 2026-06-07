@@ -65,7 +65,7 @@ export default function PageHeader({
       {/* Left: breadcrumb + title + subtitle */}
       <div className="min-w-0">
         {breadcrumbs && breadcrumbs.length > 0 && (
-          <nav className="flex items-center flex-wrap gap-1 text-xs text-on-surface-variant mb-1.5">
+          <nav className="flex items-center flex-wrap gap-1 text-xs text-on-surface-variant mb-1">
             {breadcrumbs.map((crumb, i) => (
               <React.Fragment key={i}>
                 {i > 0 && (
@@ -86,7 +86,7 @@ export default function PageHeader({
         <h1 className="text-sm font-extrabold text-on-surface tracking-tight">{title}</h1>
 
         {subtitle && (
-          <p className="text-xs text-on-surface-variant mt-0.5 leading-relaxed max-w-md">
+          <p className="text-xs text-on-surface-variant leading-relaxed max-w-md">
             {subtitle}
           </p>
         )}

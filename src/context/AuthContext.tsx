@@ -3,11 +3,17 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
 import { useStore } from "@/context/StoreContext";
 
+export type UserRole = "customer" | "admin";
+
 export interface AuthUser {
-  name: string;
-  email: string;
+  name:   string;
+  email:  string;
   avatar: string;
+  role:   UserRole;
 }
+
+/** Emails that are treated as admin — replace with real backend role check */
+const ADMIN_EMAILS = ["admin@artpetshop.in", "deepak.v@kansoftware.com"];
 
 interface SignupOpts {
   mobile?: string;
@@ -64,8 +70,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const finishLogin = (userData: AuthUser) => {
     setIsAuthenticated(true);
     setUser(userData);
-    storeLoginRef.current("customer", userData.email);
+    storeLoginRef.current(userData.role, userData.email);
     localStorage.setItem(SESSION_KEY, JSON.stringify({ user: userData }));
+    // Set role cookie so middleware can read it (httpOnly not possible client-side,
+    // but fine until real backend provides a signed cookie)
+    document.cookie = `artpet_role=${userData.role}; path=/; SameSite=Lax`;
     setError(null);
   };
 
@@ -76,13 +85,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await new Promise((r) => setTimeout(r, 1000));
       if (!email.trim() || !password.trim()) throw new Error("Please fill in all fields.");
       if (password.length < 6) throw new Error("Invalid credentials. Please try again.");
+      const role: UserRole = ADMIN_EMAILS.includes(email.toLowerCase()) ? "admin" : "customer";
       finishLogin({
         name: email
           .split("@")[0]
           .replace(/[._-]/g, " ")
           .replace(/\b\w/g, (c) => c.toUpperCase()),
         email,
-        avatar: "🐾",
+        avatar: role === "admin" ? "👑" : "🐾",
+        role,
       });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed. Please try again.");
@@ -107,7 +118,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw new Error("Please enter a valid email address.");
       if (password.length < 6)
         throw new Error("Password must be at least 6 characters.");
-      finishLogin({ name, email, avatar: "🐾" });
+      finishLogin({ name, email, avatar: "🐾", role: "customer" });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Signup failed. Please try again.");
     } finally {
@@ -119,6 +130,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsAuthenticated(false);
     setUser(null);
     localStorage.removeItem(SESSION_KEY);
+    document.cookie = "artpet_role=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
     storeLogoutRef.current();
   }, []);
 

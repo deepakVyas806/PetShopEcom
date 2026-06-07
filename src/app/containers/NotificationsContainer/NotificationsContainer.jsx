@@ -7,7 +7,7 @@ import NotificationCard           from "./Components/NotificationCard";
 import NotificationsEmpty         from "./Components/NotificationsEmpty";
 import Pagination                 from "@/components/common/Pagination";
 
-export default function NotificationsContainer() {
+export default function NotificationsContainer({ showHeader = true }) {
   const {
     filtered,
     unreadCount,
@@ -19,10 +19,12 @@ export default function NotificationsContainer() {
 
   return (
     <div className="py-2 space-y-3">
-      <NotificationsHeader
-        unreadCount={unreadCount}
-        onMarkAllRead={markAllRead}
-      />
+      {showHeader && (
+        <NotificationsHeader
+          unreadCount={unreadCount}
+          onMarkAllRead={markAllRead}
+        />
+      )}
 
       {/* 1. Join ArtRewards — full width on all screens */}
       <div className="p-4 rounded-xl bg-primary/5 border border-primary/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
