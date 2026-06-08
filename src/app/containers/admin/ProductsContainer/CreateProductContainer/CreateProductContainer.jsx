@@ -59,7 +59,8 @@ function productToForm(p) {
   };
 }
 
-export default function CreateProductContainer({ product }) {
+/** @param {{ product?: any }} props */
+export default function CreateProductContainer({ product = undefined }) {
   const router  = useRouter();
   const isEdit  = Boolean(product?.id);
 

@@ -43,7 +43,8 @@ function serviceToForm(s) {
   };
 }
 
-export default function CreateServiceContainer({ service }) {
+/** @param {{ service?: any }} props */
+export default function CreateServiceContainer({ service = undefined }) {
   const isEdit = Boolean(service?.id);
   const router = useRouter();
 
