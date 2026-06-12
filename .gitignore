@@ -59,3 +59,8 @@ desktop.ini
 
 # Claude Code internal session memory (AI assistant tooling — not project code)
 memory/
+
+# backend build output
+backend/dist/
+backend/node_modules/
+backend/.env
