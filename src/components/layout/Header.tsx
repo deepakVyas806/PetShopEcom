@@ -10,11 +10,14 @@ import {
 import { siteConfig } from "@/config/site";
 import BrandLogo from "../common/BrandLogo";
 import { useStore } from "@/context/StoreContext";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
-  const { cart, userRole, currentUser, logout } = useStore();
+  const { cart } = useStore();
+  const { user: currentUser, isAuthenticated, logout } = useAuth();
+  const userRole = currentUser?.role ?? "guest";
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [searchVal, setSearchVal] = useState("");

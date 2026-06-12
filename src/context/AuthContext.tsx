@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
 import { useStore } from "@/context/StoreContext";
+import { api } from "@/lib/api";
 
 export type UserRole = "customer" | "admin";
 
@@ -11,9 +12,6 @@ export interface AuthUser {
   avatar: string;
   role:   UserRole;
 }
-
-/** Emails that are treated as admin — replace with real backend role check */
-const ADMIN_EMAILS = ["admin@artpetshop.in", "deepak.v@kansoftware.com"];
 
 interface SignupOpts {
   mobile?: string;
@@ -38,9 +36,9 @@ const SESSION_KEY = "petshop_auth";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { login: storeLogin, logout: storeLogout } = useStore();
-  const storeLoginRef = useRef(storeLogin);
+  const storeLoginRef  = useRef(storeLogin);
   const storeLogoutRef = useRef(storeLogout);
-  storeLoginRef.current = storeLogin;
+  storeLoginRef.current  = storeLogin;
   storeLogoutRef.current = storeLogout;
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -49,16 +47,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [error,           setError]           = useState<string | null>(null);
   const [hydrated,        setHydrated]        = useState(false);
 
-  // Restore session on mount
+  // Restore session from localStorage on mount
   useEffect(() => {
     try {
-      const stored = localStorage.getItem(SESSION_KEY);
-      if (stored) {
-        const session = JSON.parse(stored) as { user: AuthUser };
+      const raw = localStorage.getItem(SESSION_KEY);
+      if (raw) {
+        const session = JSON.parse(raw) as { user: AuthUser; token?: string };
         if (session.user?.email) {
           setIsAuthenticated(true);
           setUser(session.user);
-          storeLoginRef.current("customer", session.user.email);
+          storeLoginRef.current(session.user.role ?? "customer", session.user.email);
         }
       }
     } catch {
@@ -67,13 +65,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setHydrated(true);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const finishLogin = (userData: AuthUser) => {
+  const finishLogin = (userData: AuthUser, token: string) => {
     setIsAuthenticated(true);
     setUser(userData);
     storeLoginRef.current(userData.role, userData.email);
-    localStorage.setItem(SESSION_KEY, JSON.stringify({ user: userData }));
-    // Set role cookie so middleware can read it (httpOnly not possible client-side,
-    // but fine until real backend provides a signed cookie)
+    // Store token alongside user so api.ts can pick it up
+    localStorage.setItem(SESSION_KEY, JSON.stringify({ user: userData, token }));
     document.cookie = `artpet_role=${userData.role}; path=/; SameSite=Lax`;
     setError(null);
   };
@@ -82,19 +79,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setLoading(true);
     setError(null);
     try {
-      await new Promise((r) => setTimeout(r, 1000));
-      if (!email.trim() || !password.trim()) throw new Error("Please fill in all fields.");
-      if (password.length < 6) throw new Error("Invalid credentials. Please try again.");
-      const role: UserRole = ADMIN_EMAILS.includes(email.toLowerCase()) ? "admin" : "customer";
-      finishLogin({
-        name: email
-          .split("@")[0]
-          .replace(/[._-]/g, " ")
-          .replace(/\b\w/g, (c) => c.toUpperCase()),
-        email,
-        avatar: role === "admin" ? "👑" : "🐾",
-        role,
-      });
+      const res = await api.post<{ user: any; token: string }>("/auth/login", { email, password });
+      const u: AuthUser = {
+        name:   res.user.name,
+        email:  res.user.email,
+        avatar: res.user.avatar ?? (res.user.role === "admin" ? "👑" : "🐾"),
+        role:   res.user.role,
+      };
+      finishLogin(u, res.token);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed. Please try again.");
     } finally {
@@ -102,23 +94,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const signup = async (
-    name: string,
-    email: string,
-    password: string,
-    _opts?: SignupOpts
-  ) => {
+  const signup = async (name: string, email: string, password: string, opts?: SignupOpts) => {
     setLoading(true);
     setError(null);
     try {
-      await new Promise((r) => setTimeout(r, 1200));
-      if (!name.trim() || !email.trim() || !password.trim())
-        throw new Error("Please fill in all fields.");
-      if (!/\S+@\S+\.\S+/.test(email))
-        throw new Error("Please enter a valid email address.");
-      if (password.length < 6)
-        throw new Error("Password must be at least 6 characters.");
-      finishLogin({ name, email, avatar: "🐾", role: "customer" });
+      const res = await api.post<{ user: any; token: string }>("/auth/signup", {
+        name, email, password,
+        mobile:   opts?.mobile,
+        petPrefs: opts?.petPrefs,
+      });
+      const u: AuthUser = {
+        name:   res.user.name,
+        email:  res.user.email,
+        avatar: res.user.avatar ?? "🐾",
+        role:   res.user.role,
+      };
+      finishLogin(u, res.token);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Signup failed. Please try again.");
     } finally {

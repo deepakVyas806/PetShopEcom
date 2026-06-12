@@ -1,54 +1,26 @@
-import { useState } from "react";
-
-const INITIAL = [
-  {
-    id:        "a1",
-    name:      "Alex Harrington",
-    type:      "Home",
-    label:     "Shipping & Billing",
-    icon:      "location_on",
-    line1:     "1242 Whiskers Way, Apt 4B",
-    line2:     "Los Angeles, CA 90034",
-    country:   "United States",
-    phone:     "+1 (555) 902-3421",
-    isDefault: true,
-  },
-  {
-    id:        "a2",
-    name:      "Alex Harrington",
-    type:      "Work",
-    label:     "Office Address",
-    icon:      "business",
-    line1:     "88 Creative Plaza, Suite 200",
-    line2:     "Santa Monica, CA 90401",
-    country:   "United States",
-    phone:     "+1 (555) 321-4567",
-    isDefault: false,
-  },
-  {
-    id:        "a3",
-    name:      "Eleanor Harrington",
-    type:      "Family",
-    label:     "Family Home",
-    icon:      "home",
-    line1:     "45 Maple Avenue",
-    line2:     "Portland, OR 97205",
-    country:   "United States",
-    phone:     "+1 (503) 123-9876",
-    isDefault: false,
-  },
-];
+import { useState, useEffect } from "react";
+import { api } from "@/lib/api";
 
 export default function useSavedAddressesContainer() {
-  const [addresses, setAddresses] = useState(INITIAL);
+  const [addresses, setAddresses] = useState([]);
+  const [loading,   setLoading]   = useState(true);
 
-  const setAsDefault = (id) =>
-    setAddresses((prev) =>
-      prev.map((a) => ({ ...a, isDefault: a.id === id }))
-    );
+  useEffect(() => {
+    api.get("/addresses")
+      .then(data => setAddresses(data.addresses ?? []))
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
 
-  const deleteAddress = (id) =>
-    setAddresses((prev) => prev.filter((a) => a.id !== id));
+  const setAsDefault = async (id) => {
+    setAddresses(prev => prev.map(a => ({ ...a, isDefault: (a._id ?? a.id) === id })));
+    try { await api.put(`/addresses/${id}/default`); } catch { /* optimistic */ }
+  };
 
-  return { addresses, setAsDefault, deleteAddress };
+  const deleteAddress = async (id) => {
+    setAddresses(prev => prev.filter(a => (a._id ?? a.id) !== id));
+    try { await api.delete(`/addresses/${id}`); } catch { /* optimistic */ }
+  };
+
+  return { addresses, loading, setAsDefault, deleteAddress };
 }
