@@ -19,52 +19,71 @@ export default function useServices() {
   const [location,         setLocation]         = useState("");
   const [inlineSearch,     setInlineSearch]     = useState("");
   const [mobileFiltersOpen,setMobileFiltersOpen]= useState(false);
-  const [currentPage,      setCurrentPage]      = useState(1);
+  const [page,             setPage]             = useState(1);
 
   const [services,    setServices]    = useState([]);
   const [totalCount,  setTotalCount]  = useState(0);
-  const [totalPages,  setTotalPages]  = useState(1);
+  const [hasMore,     setHasMore]     = useState(true);
   const [loading,     setLoading]     = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
 
-  const fetchServices = useCallback(async () => {
-    setLoading(true);
-    try {
-      const params = {
-        page:      currentPage,
-        limit:     12,
-        category:  activeCategory !== "all" ? activeCategory : undefined,
-        petTypes:  selectedPetTypes.length > 0 ? selectedPetTypes.join(",") : undefined,
-        maxPrice:  priceRange < 100000 ? priceRange : undefined,
-        search:    inlineSearch || undefined,
-      };
-      const data = await api.get(`/services${qs(params)}`);
-      setServices(data.services ?? []);
-      setTotalCount(data.totalCount ?? 0);
-      setTotalPages(data.totalPages ?? 1);
-    } catch {
-      // keep previous
-    } finally {
-      setLoading(false);
-    }
-  }, [currentPage, activeCategory, selectedPetTypes, priceRange, inlineSearch]);
+  useEffect(() => {
+    let cancelled = false;
+    if (page === 1) setLoading(true); else setLoadingMore(true);
 
-  useEffect(() => { fetchServices(); }, [fetchServices]);
+    const params = {
+      page,
+      limit:     12,
+      category:  activeCategory !== "all" ? activeCategory : undefined,
+      petTypes:  selectedPetTypes.length > 0 ? selectedPetTypes.join(",") : undefined,
+      maxPrice:  priceRange < 100000 ? priceRange : undefined,
+      search:    inlineSearch || undefined,
+    };
 
-  const handlePetTypeChange = (type) =>
+    api.get(`/services${qs(params)}`)
+      .then(data => {
+        if (cancelled) return;
+        const newItems = data.services ?? [];
+        setServices(prev => page === 1 ? newItems : [...prev, ...newItems]);
+        setTotalCount(data.total ?? data.totalCount ?? 0);
+        setHasMore(page < (data.totalPages ?? 1));
+      })
+      .catch(() => {})
+      .finally(() => { if (!cancelled) { setLoading(false); setLoadingMore(false); } });
+
+    return () => { cancelled = true; };
+  }, [page, activeCategory, selectedPetTypes, priceRange, inlineSearch]);
+
+  const loadMore = useCallback(() => {
+    if (!loading && !loadingMore && hasMore) setPage(p => p + 1);
+  }, [loading, loadingMore, hasMore]);
+
+  // Filter setters: reset page to 1 so the effect replaces instead of appending.
+  // Do NOT clear services here — loading=true hides stale items during the fetch.
+  const handleSetActiveCategory = (c) => { setActiveCategory(c); setPage(1); };
+  const handleSetInlineSearch   = (s) => { setInlineSearch(s);   setPage(1); };
+  const handlePetTypeChange     = (type) => {
     setSelectedPetTypes(prev => prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]);
+    setPage(1);
+  };
+  const handleSetPriceRange = (r) => { setPriceRange(r); setPage(1); };
 
   const handleReset = () => {
-    setSelectedPetTypes([]); setPriceRange(100000); setLocation(""); setActiveCategory("all"); setCurrentPage(1);
+    setSelectedPetTypes([]);
+    setPriceRange(100000);
+    setLocation("");
+    setActiveCategory("all");
+    setPage(1);
   };
 
   return {
-    CATEGORIES, services, totalCount, totalPages, loading,
-    activeCategory, setActiveCategory: (c) => { setActiveCategory(c); setCurrentPage(1); },
-    inlineSearch, setInlineSearch: (s) => { setInlineSearch(s); setCurrentPage(1); },
+    CATEGORIES, services, totalCount, loading, loadingMore, hasMore,
+    activeCategory, setActiveCategory: handleSetActiveCategory,
+    inlineSearch, setInlineSearch: handleSetInlineSearch,
     selectedPetTypes, handlePetTypeChange,
-    priceRange, setPriceRange,
+    priceRange, setPriceRange: handleSetPriceRange,
     location, setLocation,
     mobileFiltersOpen, setMobileFiltersOpen,
-    handleReset, currentPage, setCurrentPage,
+    handleReset, loadMore,
   };
 }

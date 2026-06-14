@@ -1,14 +1,18 @@
 "use client";
 import { memo } from "react";
 import { IconSearch, IconDownload, IconAdd } from "@/lib/icons";
-import { CATEGORIES, BRANDS } from "../data";
+import { CATEGORIES as DEFAULT_CATS, BRANDS as DEFAULT_BRANDS } from "../data";
 
 export default memo(function ProductsToolbar({
   search, onSearch,
   category, onCategory,
   brand, onBrand,
+  categories,
+  brands,
   onExport, onAdd,
 }) {
+  const CATEGORIES = categories ?? DEFAULT_CATS;
+  const BRANDS     = brands     ?? DEFAULT_BRANDS;
   return (
     <div className="flex flex-col lg:flex-row gap-3 mb-4">
       {/* Search */}

@@ -1,7 +1,6 @@
 import Fastify from "fastify";
 import helmet from "@fastify/helmet";
 import cors from "@fastify/cors";
-import compress from "@fastify/compress";
 import rateLimit from "@fastify/rate-limit";
 import { env } from "./config/env";
 import { mongoPlugin } from "./plugins/mongodb";
@@ -15,6 +14,7 @@ export async function buildApp() {
       ? { transport: { target: "pino-pretty", options: { colorize: true } } }
       : true,
     trustProxy: true,
+    bodyLimit: 4 * 1024 * 1024, // 4 MB — needed for base64-encoded avatar uploads
     // Fastify's built-in JSON schema serializer (fast-json-stringify) — no extra config needed
     ajv: {
       customOptions: {
@@ -37,12 +37,8 @@ export async function buildApp() {
   });
 
   // ── Performance ─────────────────────────────────────────────────────────────
-  await app.register(compress, {
-    global: true,
-    encodings: ["br", "gzip", "deflate"],
-    threshold: 1024, // only compress responses > 1KB
-  });
-
+  // @fastify/compress v8 causes premature-close / empty responses on Node 20+ Windows.
+  // Compression is handled by the reverse proxy (nginx/CDN) in production.
   await app.register(rateLimit, {
     max: env.rateLimitMax,
     timeWindow: env.rateLimitWindowMs,

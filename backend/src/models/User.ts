@@ -2,15 +2,17 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 import bcrypt from "bcryptjs";
 
 export interface IUser extends Document {
-  name:      string;
-  email:     string;
-  password:  string;
-  mobile?:   string;
-  petPrefs?: string[];
-  role:      "customer" | "admin";
-  avatar?:   string;
-  createdAt: Date;
-  updatedAt: Date;
+  name:               string;
+  email:              string;
+  password:           string;
+  mobile?:            string;
+  petPrefs?:          string[];
+  role:               "customer" | "admin";
+  avatar?:            string;
+  resetToken?:        string;
+  resetTokenExpiry?:  Date;
+  createdAt:          Date;
+  updatedAt:          Date;
   comparePassword(candidate: string): Promise<boolean>;
 }
 
@@ -23,8 +25,10 @@ const userSchema = new Schema<IUser>(
     password: { type: String, required: true, select: false },
     mobile:   { type: String, trim: true },
     petPrefs: [{ type: String }],
-    role:     { type: String, enum: ["customer", "admin"], default: "customer", index: true },
-    avatar:   { type: String },
+    role:              { type: String, enum: ["customer", "admin"], default: "customer", index: true },
+    avatar:            { type: String },
+    resetToken:        { type: String, select: false },
+    resetTokenExpiry:  { type: Date,   select: false },
   },
   { timestamps: true }
 );
@@ -44,6 +48,8 @@ userSchema.set("toJSON", {
   transform: (_doc, ret) => {
     const r = ret as unknown as Record<string, unknown>;
     delete r.password;
+    delete r.resetToken;
+    delete r.resetTokenExpiry;
     return r;
   },
 });

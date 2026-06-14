@@ -3,18 +3,26 @@
 import { useState } from "react";
 import { Field, SubmitButton } from "./SharedUI";
 import { IconMail, IconArrowLeft } from "@/lib/icons";
+import { api } from "@/lib/api";
 
 export default function ForgotForm({ onBack }) {
   const [email,   setEmail]   = useState("");
   const [loading, setLoading] = useState(false);
   const [sent,    setSent]    = useState(false);
+  const [error,   setError]   = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 1000));
-    setSent(true);
-    setLoading(false);
+    setError("");
+    try {
+      await api.post("/auth/forgot-password", { email });
+      setSent(true);
+    } catch (err) {
+      setError(err.message ?? "Failed to send reset link. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (sent) {
@@ -49,6 +57,10 @@ export default function ForgotForm({ onBack }) {
         placeholder="name@example.com" value={email} onChange={setEmail}>
         <IconMail size={18} className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none" weight="regular" />
       </Field>
+
+      {error && (
+        <p className="text-xs text-red-500 text-center">{error}</p>
+      )}
 
       <SubmitButton loading={loading} label="Send Reset Link" loadingLabel="Sending…" />
 

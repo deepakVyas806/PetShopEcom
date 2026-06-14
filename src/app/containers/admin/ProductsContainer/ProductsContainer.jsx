@@ -1,139 +1,174 @@
 "use client";
-import { useState, useMemo, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { IconPackage, IconWarning } from "@/lib/icons";
+import { SkStatCard, SkTable } from "@/components/ui";
+import { api, qs } from "@/lib/api";
+import { fmt } from "@/lib/currency";
 import ProductsToolbar    from "./Components/ProductsToolbar";
 import ProductsTable      from "./Components/ProductsTable";
 import ProductsPagination from "./Components/ProductsPagination";
 import BulkActionBar      from "./Components/BulkActionBar";
 import DeleteConfirmModal from "./Components/DeleteConfirmModal";
-import { PRODUCTS, CATEGORIES, BRANDS, TOTAL_INVENTORY, LOW_STOCK_ALERTS } from "./data";
+
+const ALL_CATS   = "All Categories";
+const ALL_BRANDS = "All Brands";
+
+function toUiProduct(p) {
+  return {
+    id:       p._id,
+    name:     p.name,
+    variant:  p.variant ?? "",
+    sku:      p.sku,
+    category: p.category,
+    brand:    p.brand,
+    price:    fmt(p.price ?? 0),
+    priceRaw: p.price ?? 0,
+    stock:    p.stock ?? 0,
+    maxStock: p.maxStock ?? 100,
+    status:   p.status ?? "In Stock",
+    image:    p.image ?? "",
+  };
+}
 
 export default function ProductsContainer() {
   const router = useRouter();
 
-  const [products,    setProducts]    = useState(PRODUCTS);
-  const [search,      setSearch]      = useState("");
-  const [category,    setCategory]    = useState(CATEGORIES[0]);
-  const [brand,       setBrand]       = useState(BRANDS[0]);
-  const [selectedIds, setSelectedIds] = useState(new Set());
-  const [selectAll,   setSelectAll]   = useState(false);
-  const [page,        setPage]        = useState(1);
-  const [perPage,     setPerPage]     = useState(10);
+  const [products,    setProducts]    = useState([]);
+  const [categories,  setCategories]  = useState([ALL_CATS]);
+  const [brands,      setBrands]      = useState([ALL_BRANDS]);
+  const [total,       setTotal]       = useState(0);
+  const [loading,     setLoading]     = useState(true);
+
+  const [search,       setSearch]      = useState("");
+  const [category,     setCategory]    = useState(ALL_CATS);
+  const [brand,        setBrand]       = useState(ALL_BRANDS);
+  const [selectedIds,  setSelectedIds] = useState(new Set());
+  const [selectAll,    setSelectAll]   = useState(false);
+  const [page,         setPage]        = useState(1);
+  const [perPage,      setPerPage]     = useState(10);
   const [deleteTarget, setDeleteTarget] = useState(null);
 
-  const filtered = useMemo(() => {
-    let list = products;
-    if (search) {
-      const q = search.toLowerCase();
-      list = list.filter(
-        (p) =>
-          p.name.toLowerCase().includes(q) ||
-          p.sku.toLowerCase().includes(q)  ||
-          p.brand.toLowerCase().includes(q)
-      );
+  const fetchProducts = useCallback(async () => {
+    setLoading(true);
+    try {
+      const data = await api.get(`/admin/products${qs({
+        page, limit: perPage,
+        ...(search                        ? { search }          : {}),
+        ...(category !== ALL_CATS         ? { category }        : {}),
+        ...(brand    !== ALL_BRANDS       ? { brand }           : {}),
+      })}`);
+      setProducts((data.products ?? []).map(toUiProduct));
+      setTotal(data.total ?? 0);
+      if (data.categories?.length) setCategories([ALL_CATS, ...data.categories]);
+      if (data.brands?.length)     setBrands([ALL_BRANDS, ...data.brands]);
+    } catch {
+      setProducts([]);
+    } finally {
+      setLoading(false);
     }
-    if (category !== CATEGORIES[0]) list = list.filter((p) => p.category === category);
-    if (brand    !== BRANDS[0])     list = list.filter((p) => p.brand    === brand);
-    return list;
-  }, [products, search, category, brand]);
+  }, [page, perPage, search, category, brand]);
 
-  const paginated = useMemo(
-    () => filtered.slice((page - 1) * perPage, page * perPage),
-    [filtered, page, perPage]
-  );
+  useEffect(() => { fetchProducts(); }, [fetchProducts]);
 
-  const lowStockCount = useMemo(
-    () => products.filter((p) => p.status === "Low Stock").length,
-    [products]
-  );
+  const lowStockCount = products.filter(p => p.status === "Low Stock").length;
 
   const handleSelectAll = useCallback(() => {
-    setSelectAll((prev) => {
+    setSelectAll(prev => {
       const next = !prev;
-      setSelectedIds(next ? new Set(paginated.map((p) => p.id)) : new Set());
+      setSelectedIds(next ? new Set(products.map(p => p.id)) : new Set());
       return next;
     });
-  }, [paginated]);
+  }, [products]);
 
   const handleSelectRow = useCallback((id) => {
-    setSelectedIds((prev) => {
+    setSelectedIds(prev => {
       const next = new Set(prev);
       next.has(id) ? next.delete(id) : next.add(id);
-      setSelectAll(next.size === paginated.length && paginated.length > 0);
+      setSelectAll(next.size === products.length && products.length > 0);
       return next;
     });
-  }, [paginated]);
+  }, [products]);
 
   const handlePageChange = useCallback((p) => {
-    setPage(p);
-    setSelectedIds(new Set());
-    setSelectAll(false);
+    setPage(p); setSelectedIds(new Set()); setSelectAll(false);
   }, []);
 
   const handlePerPageChange = useCallback((n) => {
-    setPerPage(n);
-    setPage(1);
-    setSelectedIds(new Set());
-    setSelectAll(false);
+    setPerPage(n); setPage(1); setSelectedIds(new Set()); setSelectAll(false);
   }, []);
 
-  const handleDelete = useCallback(() => {
-    setProducts((prev) => prev.filter((p) => p.id !== deleteTarget.id));
-    setSelectedIds((prev) => {
-      const next = new Set(prev);
-      next.delete(deleteTarget.id);
-      return next;
-    });
+  const handleDelete = useCallback(async () => {
+    if (!deleteTarget) return;
+    try { await api.delete(`/admin/products/${deleteTarget.id}`); } catch {}
     setDeleteTarget(null);
-  }, [deleteTarget]);
+    fetchProducts();
+  }, [deleteTarget, fetchProducts]);
 
-  const handleBulkDelete = useCallback(() => {
-    setProducts((prev) => prev.filter((p) => !selectedIds.has(p.id)));
-    setSelectedIds(new Set());
-    setSelectAll(false);
-  }, [selectedIds]);
+  const handleBulkDelete = useCallback(async () => {
+    await Promise.allSettled([...selectedIds].map(id => api.delete(`/admin/products/${id}`)));
+    setSelectedIds(new Set()); setSelectAll(false);
+    fetchProducts();
+  }, [selectedIds, fetchProducts]);
+
+  const isInitial = loading && products.length === 0;
 
   return (
     <div className="space-y-4">
-      {/* Stat chips */}
       <div className="flex flex-wrap gap-3">
-        <div className="px-4 py-2.5 bg-surface-container-high rounded-xl border border-outline-variant/30 flex items-center gap-2.5 shadow-sm">
-          <IconPackage size={18} className="text-primary" weight="duotone" />
-          <div>
-            <p className="text-[10px] uppercase tracking-wider text-outline">Total Items</p>
-            <p className="text-xs font-bold">{TOTAL_INVENTORY.toLocaleString()}</p>
-          </div>
-        </div>
-        <div className="px-4 py-2.5 bg-error/5 border border-error/20 rounded-xl flex items-center gap-2.5 shadow-sm">
-          <IconWarning size={18} className="text-error" weight="duotone" />
-          <div>
-            <p className="text-[10px] uppercase tracking-wider text-error">Low Stock</p>
-            <p className="text-xs font-bold text-error">{lowStockCount || LOW_STOCK_ALERTS} Alerts</p>
-          </div>
-        </div>
+        {isInitial ? (
+          <>
+            <div className="w-32 h-12 rounded-xl bg-on-surface/8 animate-pulse" />
+            <div className="w-32 h-12 rounded-xl bg-on-surface/8 animate-pulse" />
+          </>
+        ) : (
+          <>
+            <div className="px-4 py-2.5 bg-surface-container-high rounded-xl border border-outline-variant/30 flex items-center gap-2.5 shadow-sm">
+              <IconPackage size={18} className="text-primary" weight="duotone" />
+              <div>
+                <p className="text-[10px] uppercase tracking-wider text-outline">Total Items</p>
+                <p className="text-xs font-bold">{total.toLocaleString()}</p>
+              </div>
+            </div>
+            <div className="px-4 py-2.5 bg-error/5 border border-error/20 rounded-xl flex items-center gap-2.5 shadow-sm">
+              <IconWarning size={18} className="text-error" weight="duotone" />
+              <div>
+                <p className="text-[10px] uppercase tracking-wider text-error">Low Stock</p>
+                <p className="text-xs font-bold text-error">{lowStockCount} Alerts</p>
+              </div>
+            </div>
+          </>
+        )}
       </div>
 
       <ProductsToolbar
-        search={search}     onSearch={setSearch}
-        category={category} onCategory={setCategory}
-        brand={brand}       onBrand={setBrand}
+        search={search}     onSearch={v => { setSearch(v); setPage(1); }}
+        category={category} onCategory={v => { setCategory(v); setPage(1); }}
+        brand={brand}       onBrand={v => { setBrand(v); setPage(1); }}
+        categories={categories}
+        brands={brands}
         onExport={() => {}}
         onAdd={() => router.push("/admin/products/create")}
       />
 
       <div className="bg-surface-container-lowest rounded-2xl border border-outline-variant/30 shadow-sm overflow-hidden">
-        <ProductsTable
-          products={paginated}
-          selectedIds={selectedIds}
-          selectAll={selectAll}
-          onSelectAll={handleSelectAll}
-          onSelectRow={handleSelectRow}
-          onEdit={(p) => router.push(`/admin/products/${p.id}/edit`)}
-          onDelete={(p) => setDeleteTarget(p)}
-        />
+        {isInitial ? (
+          <div className="overflow-x-auto">
+            <SkTable rows={10} cols={5} hasCheckbox hasAvatar />
+          </div>
+        ) : (
+          <ProductsTable
+            products={products}
+            selectedIds={selectedIds}
+            selectAll={selectAll}
+            onSelectAll={handleSelectAll}
+            onSelectRow={handleSelectRow}
+            onEdit={(p) => router.push(`/admin/products/${p.id}/edit`)}
+            onDelete={(p) => setDeleteTarget(p)}
+          />
+        )}
         <ProductsPagination
-          total={filtered.length}
+          total={total}
           page={page}
           perPage={perPage}
           onPageChange={handlePageChange}

@@ -5,8 +5,8 @@ import { env } from "../config/env";
 
 const plugin: FastifyPluginAsync = async (app) => {
   await mongoose.connect(env.mongoUri, {
-    maxPoolSize: 20,       // max concurrent connections — tune for your workload
-    minPoolSize: 5,        // keep min connections warm
+    maxPoolSize: 20,
+    minPoolSize: 5,
     serverSelectionTimeoutMS: 5000,
     socketTimeoutMS: 45000,
   });

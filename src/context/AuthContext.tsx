@@ -7,10 +7,12 @@ import { api } from "@/lib/api";
 export type UserRole = "customer" | "admin";
 
 export interface AuthUser {
-  name:   string;
-  email:  string;
-  avatar: string;
-  role:   UserRole;
+  name:     string;
+  email:    string;
+  avatar:   string;
+  role:     UserRole;
+  mobile?:  string;
+  petPrefs?: string[];
 }
 
 interface SignupOpts {
@@ -26,6 +28,8 @@ interface AuthContextType {
   hydrated: boolean;
   login: (email: string, password: string) => Promise<void>;
   signup: (name: string, email: string, password: string, opts?: SignupOpts) => Promise<void>;
+  googleLogin: (accessToken: string) => Promise<void>;
+  updateUser: (updates: Partial<Pick<AuthUser, "name" | "avatar" | "mobile" | "petPrefs">>) => void;
   logout: () => void;
   clearError: () => void;
 }
@@ -81,10 +85,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const res = await api.post<{ user: any; token: string }>("/auth/login", { email, password });
       const u: AuthUser = {
-        name:   res.user.name,
-        email:  res.user.email,
-        avatar: res.user.avatar ?? (res.user.role === "admin" ? "👑" : "🐾"),
-        role:   res.user.role,
+        name:     res.user.name,
+        email:    res.user.email,
+        avatar:   res.user.avatar ?? (res.user.role === "admin" ? "👑" : "🐾"),
+        role:     res.user.role,
+        mobile:   res.user.mobile,
+        petPrefs: res.user.petPrefs,
       };
       finishLogin(u, res.token);
     } catch (err) {
@@ -104,10 +110,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         petPrefs: opts?.petPrefs,
       });
       const u: AuthUser = {
-        name:   res.user.name,
-        email:  res.user.email,
-        avatar: res.user.avatar ?? "🐾",
-        role:   res.user.role,
+        name:     res.user.name,
+        email:    res.user.email,
+        avatar:   res.user.avatar ?? "🐾",
+        role:     res.user.role,
+        mobile:   res.user.mobile,
+        petPrefs: res.user.petPrefs,
       };
       finishLogin(u, res.token);
     } catch (err) {
@@ -116,6 +124,40 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(false);
     }
   };
+
+  const googleLogin = async (accessToken: string) => {
+    setLoading(true);
+    try {
+      const res = await api.post<{ user: any; token: string }>("/auth/google", { access_token: accessToken });
+      const u: AuthUser = {
+        name:     res.user.name,
+        email:    res.user.email,
+        avatar:   res.user.avatar ?? "🐾",
+        role:     res.user.role,
+        mobile:   res.user.mobile,
+        petPrefs: res.user.petPrefs,
+      };
+      finishLogin(u, res.token);
+    } finally {
+      setLoading(false);
+      // Errors bubble up to the caller — keeps shared error state for form errors only
+    }
+  };
+
+  const updateUser = useCallback((updates: Partial<Pick<AuthUser, "name" | "avatar" | "mobile" | "petPrefs">>) => {
+    setUser(prev => {
+      if (!prev) return prev;
+      const updated = { ...prev, ...updates };
+      try {
+        const raw = localStorage.getItem(SESSION_KEY);
+        if (raw) {
+          const session = JSON.parse(raw);
+          localStorage.setItem(SESSION_KEY, JSON.stringify({ ...session, user: updated }));
+        }
+      } catch {}
+      return updated;
+    });
+  }, []);
 
   const logout = useCallback(() => {
     setIsAuthenticated(false);
@@ -129,7 +171,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, user, loading, error, hydrated, login, signup, logout, clearError }}
+      value={{ isAuthenticated, user, loading, error, hydrated, login, signup, googleLogin, updateUser, logout, clearError }}
     >
       {children}
     </AuthContext.Provider>

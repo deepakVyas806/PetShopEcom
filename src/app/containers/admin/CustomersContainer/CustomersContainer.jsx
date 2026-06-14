@@ -1,56 +1,73 @@
 "use client";
-import { useState, useMemo, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { IconFilter, IconDownload } from "@/lib/icons";
+import { SkStatCard, SkTable } from "@/components/ui";
+import { api, qs } from "@/lib/api";
 import StatCards      from "./Components/StatCards";
 import CustomersTable from "./Components/CustomersTable";
 import InsightPanels  from "./Components/InsightPanels";
-import { CUSTOMERS }  from "./data";
 
 const PER_PAGE = 8;
 
+const fmtJoined = (d) => {
+  if (!d) return "—";
+  return new Date(d).toLocaleDateString("en-IN", { month: "short", year: "numeric" });
+};
+
+function toUiCustomer(c) {
+  return {
+    id:        String(c._id),
+    name:      c.name,
+    email:     c.email,
+    avatar:    c.avatar ?? null,
+    joinedAgo: fmtJoined(c.createdAt),
+    orders:    0,
+    ltvRaw:    0,
+    ltv:       "—",
+    status:    "active",
+    pets:      c.petPrefs ?? [],
+  };
+}
+
 export default function CustomersContainer() {
-  const [search, setSearch] = useState("");
-  const [page,   setPage]   = useState(1);
+  const [customers, setCustomers] = useState([]);
+  const [total,     setTotal]     = useState(0);
+  const [loading,   setLoading]   = useState(true);
+  const [search,    setSearch]    = useState("");
+  const [page,      setPage]      = useState(1);
 
-  const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    if (!q) return CUSTOMERS;
-    return CUSTOMERS.filter(
-      (c) =>
-        c.name.toLowerCase().includes(q) ||
-        c.email.toLowerCase().includes(q) ||
-        c.id.toLowerCase().includes(q)
-    );
-  }, [search]);
+  const fetchCustomers = useCallback(async () => {
+    setLoading(true);
+    try {
+      const data = await api.get(`/admin/customers${qs({ page, limit: PER_PAGE, search: search || undefined })}`);
+      setCustomers((data.customers ?? []).map(toUiCustomer));
+      setTotal(data.total ?? 0);
+    } catch {
+      setCustomers([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [page, search]);
 
-  const paginated = useMemo(
-    () => filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE),
-    [filtered, page]
-  );
+  useEffect(() => { fetchCustomers(); }, [fetchCustomers]);
 
-  const stats = useMemo(() => {
-    const totalLtv = CUSTOMERS.reduce((s, c) => s + c.ltvRaw, 0);
-    const totalOrders = CUSTOMERS.reduce((s, c) => s + c.orders, 0);
-    return {
-      totalParents: CUSTOMERS.length,
-      avgOrders:    (totalOrders / (CUSTOMERS.length || 1)).toFixed(1),
-      totalLtv,
-      activeSubs:   CUSTOMERS.filter((c) => c.status === "vip").length,
-    };
-  }, []);
+  const stats = {
+    totalParents: total,
+    avgOrders:    "—",
+    totalLtv:     0,
+    activeSubs:   0,
+  };
 
   const handleSearch = useCallback((e) => {
     setSearch(e.target.value);
     setPage(1);
   }, []);
 
-  const handlePageChange = useCallback((p) => setPage(p), []);
+  const isInitial = loading && customers.length === 0;
 
   return (
     <div className="space-y-6">
-      {/* Action row */}
       <div className="flex items-center gap-2.5 flex-wrap">
-        {/* Search */}
         <input
           type="text"
           value={search}
@@ -59,35 +76,40 @@ export default function CustomersContainer() {
           className="flex-1 min-w-[220px] bg-surface-container-low border border-outline-variant rounded-xl px-4 py-2 text-xs text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
         />
         <div className="flex items-center gap-2 ml-auto">
-          <button
-            type="button"
-            className="flex items-center gap-1.5 px-3.5 py-2 bg-surface-container-low border border-outline-variant text-on-surface-variant rounded-xl text-xs font-bold hover:bg-surface-container transition-all cursor-pointer"
-          >
+          <button type="button" className="flex items-center gap-1.5 px-3.5 py-2 bg-surface-container-low border border-outline-variant text-on-surface-variant rounded-xl text-xs font-bold hover:bg-surface-container transition-all cursor-pointer">
             <IconFilter size={13} weight="bold" /> Filter
           </button>
-          <button
-            type="button"
-            className="flex items-center gap-1.5 px-3.5 py-2 bg-surface-container-low border border-outline-variant text-on-surface-variant rounded-xl text-xs font-bold hover:bg-surface-container transition-all cursor-pointer"
-          >
+          <button type="button" className="flex items-center gap-1.5 px-3.5 py-2 bg-surface-container-low border border-outline-variant text-on-surface-variant rounded-xl text-xs font-bold hover:bg-surface-container transition-all cursor-pointer">
             <IconDownload size={13} weight="bold" /> Export
           </button>
         </div>
       </div>
 
-      {/* Stat cards */}
-      <StatCards stats={stats} />
+      {isInitial ? (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {Array.from({ length: 4 }).map((_, i) => <SkStatCard key={i} />)}
+        </div>
+      ) : (
+        <StatCards stats={stats} />
+      )}
 
-      {/* Table */}
-      <CustomersTable
-        customers={paginated}
-        total={filtered.length}
-        page={page}
-        perPage={PER_PAGE}
-        onPageChange={handlePageChange}
-      />
+      <div className="bg-surface-container-lowest rounded-2xl border border-outline-variant/30 shadow-sm overflow-hidden">
+        {isInitial ? (
+          <div className="overflow-x-auto">
+            <SkTable rows={8} cols={4} hasCheckbox hasAvatar />
+          </div>
+        ) : (
+          <CustomersTable
+            customers={customers}
+            total={total}
+            page={page}
+            perPage={PER_PAGE}
+            onPageChange={setPage}
+          />
+        )}
+      </div>
 
-      {/* Insight panels */}
-      <InsightPanels customers={CUSTOMERS} />
+      <InsightPanels customers={customers} />
     </div>
   );
 }

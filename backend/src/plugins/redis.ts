@@ -11,23 +11,28 @@ declare module "fastify" {
 
 const plugin: FastifyPluginAsync = async (app) => {
   const redis = new Redis(env.redisUrl, {
-    maxRetriesPerRequest: 3,
+    maxRetriesPerRequest: 0,
     lazyConnect: true,
-    enableReadyCheck: true,
-    reconnectOnError: (err) => {
-      const targetErrors = ["READONLY", "ECONNRESET", "ETIMEDOUT"];
-      return targetErrors.some((e) => err.message.includes(e));
-    },
+    enableReadyCheck: false,
+    enableOfflineQueue: false,
+    retryStrategy: () => null,        // disable automatic reconnect
+    reconnectOnError: () => false,
   });
 
-  await redis.connect();
-  app.log.info("Redis connected");
+  // Prevent ioredis from crashing the process with unhandled error events
+  redis.on("error", () => {});
+
+  try {
+    await redis.connect();
+    app.log.info("Redis connected");
+  } catch {
+    app.log.warn("Redis unavailable — caching disabled (OK for dev)");
+  }
 
   app.decorate("redis", redis);
 
   app.addHook("onClose", async () => {
-    await redis.quit();
-    app.log.info("Redis disconnected");
+    try { await redis.quit(); } catch {}
   });
 };
 

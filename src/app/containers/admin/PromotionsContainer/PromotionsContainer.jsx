@@ -1,92 +1,139 @@
 "use client";
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { IconAdd } from "@/lib/icons";
-import { fmt } from "@/lib/currency";
-import StatCards          from "./Components/StatCards";
-import CouponsTable       from "./Components/CouponsTable";
-import SidePanel          from "./Components/SidePanel";
-import CreateCouponModal  from "./Components/CreateCouponModal";
-import { COUPONS, STATUS_META, discountLabel, nextCouponId } from "./data";
+import { api, qs } from "@/lib/api";
+import { SkStatCard, SkTable } from "@/components/ui";
+import StatCards         from "./Components/StatCards";
+import CouponsTable      from "./Components/CouponsTable";
+import SidePanel         from "./Components/SidePanel";
+import CreateCouponModal from "./Components/CreateCouponModal";
+
+function toUiCoupon(c) {
+  return {
+    id:           String(c._id),
+    name:         c.name,
+    code:         c.code,
+    description:  c.description ?? "",
+    discountType: c.discountType ?? "percent",
+    value:        c.value ?? 0,
+    minOrderRaw:  c.minOrder ?? 0,
+    usageCount:   c.usageCount ?? 0,
+    usageLimit:   c.usageLimit ?? 0,
+    startDate:    c.startDate ?? "",
+    endDate:      c.endDate ?? "",
+    status:       c.status,
+    revenueRaw:   c.revenue ?? 0,
+  };
+}
 
 export default function PromotionsContainer() {
-  const [coupons,      setCoupons]      = useState(COUPONS);
+  const [coupons,      setCoupons]      = useState([]);
+  const [total,        setTotal]        = useState(0);
+  const [loading,      setLoading]      = useState(true);
   const [search,       setSearch]       = useState("");
-  const [modalCoupon,  setModalCoupon]  = useState(null);   // null=closed, {}=create, {id}=edit
+  const [page,         setPage]         = useState(1);
+  const [modalCoupon,  setModalCoupon]  = useState(null);
   const [showModal,    setShowModal]    = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
 
-  // ── Filtered list ─────────────────────────────────────────────────────────
+  const fetchCoupons = useCallback(async () => {
+    setLoading(true);
+    try {
+      const data = await api.get(`/admin/promotions${qs({ page, limit: 10, search: search || undefined })}`);
+      setCoupons((data.coupons ?? []).map(toUiCoupon));
+      setTotal(data.total ?? 0);
+    } catch {
+      setCoupons([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [page, search]);
+
+  useEffect(() => { fetchCoupons(); }, [fetchCoupons]);
+
   const displayed = useMemo(() => {
     const q = search.trim().toLowerCase();
     if (!q) return coupons;
     return coupons.filter(
-      (c) =>
-        c.code.toLowerCase().includes(q) ||
-        c.name.toLowerCase().includes(q) ||
-        c.description.toLowerCase().includes(q)
+      c => c.code.toLowerCase().includes(q) ||
+           c.name.toLowerCase().includes(q) ||
+           c.description.toLowerCase().includes(q)
     );
   }, [coupons, search]);
 
-  // ── Modal handlers ────────────────────────────────────────────────────────
   const openCreate = useCallback(() => { setModalCoupon(null); setShowModal(true); }, []);
   const openEdit   = useCallback((coupon) => { setModalCoupon(coupon); setShowModal(true); }, []);
   const closeModal = useCallback(() => { setShowModal(false); setModalCoupon(null); }, []);
 
-  const handleSave = useCallback((data) => {
-    if (data.id) {
-      setCoupons((prev) => prev.map((c) => (c.id === data.id ? { ...c, ...data } : c)));
-    } else {
-      setCoupons((prev) => [
-        { ...data, id: nextCouponId(), usageCount: 0, revenueRaw: 0 },
-        ...prev,
-      ]);
-    }
+  const handleSave = useCallback(async (formData) => {
+    const payload = {
+      name:         formData.name,
+      code:         formData.code,
+      description:  formData.description,
+      discountType: formData.discountType,
+      value:        formData.value,
+      minOrder:     formData.minOrderRaw,
+      usageLimit:   formData.usageLimit,
+      startDate:    formData.startDate,
+      endDate:      formData.endDate,
+      status:       formData.status ?? "active",
+    };
+    try {
+      if (formData.id) {
+        const data = await api.put(`/admin/promotions/${formData.id}`, payload);
+        setCoupons(prev => prev.map(c => c.id === formData.id ? toUiCoupon(data.coupon) : c));
+      } else {
+        const data = await api.post("/admin/promotions", payload);
+        setCoupons(prev => [toUiCoupon(data.coupon), ...prev]);
+      }
+    } catch {}
     closeModal();
   }, [closeModal]);
 
-  // ── Toggle pause/activate ─────────────────────────────────────────────────
-  const handleToggle = useCallback((id) => {
-    setCoupons((prev) =>
-      prev.map((c) =>
-        c.id === id
-          ? { ...c, status: c.status === "active" ? "paused" : "active" }
-          : c
-      )
-    );
+  const handleToggle = useCallback(async (id) => {
+    const coupon = coupons.find(c => c.id === id);
+    if (!coupon) return;
+    const next = coupon.status === "active" ? "paused" : "active";
+    try { await api.put(`/admin/promotions/${id}`, { status: next }); } catch {}
+    setCoupons(prev => prev.map(c => c.id === id ? { ...c, status: next } : c));
+  }, [coupons]);
+
+  const handleDuplicate = useCallback(async (coupon) => {
+    const payload = {
+      name:         coupon.name + " (Copy)",
+      code:         coupon.code + "-COPY",
+      description:  coupon.description,
+      discountType: coupon.discountType,
+      value:        coupon.value,
+      minOrder:     coupon.minOrderRaw,
+      usageLimit:   coupon.usageLimit,
+      startDate:    coupon.startDate,
+      endDate:      coupon.endDate,
+      status:       "paused",
+    };
+    try {
+      const data = await api.post("/admin/promotions", payload);
+      setCoupons(prev => [toUiCoupon(data.coupon), ...prev]);
+    } catch {}
   }, []);
 
-  // ── Duplicate ─────────────────────────────────────────────────────────────
-  const handleDuplicate = useCallback((coupon) => {
-    setCoupons((prev) => [
-      {
-        ...coupon,
-        id:         nextCouponId(),
-        code:       coupon.code + "-COPY",
-        name:       coupon.name + " (Copy)",
-        status:     "paused",
-        usageCount: 0,
-        revenueRaw: 0,
-      },
-      ...prev,
-    ]);
-  }, []);
-
-  // ── Delete ────────────────────────────────────────────────────────────────
-  const confirmDelete = useCallback(() => {
+  const confirmDelete = useCallback(async () => {
     if (!deleteTarget) return;
-    setCoupons((prev) => prev.filter((c) => c.id !== deleteTarget.id));
+    try { await api.delete(`/admin/promotions/${deleteTarget.id}`); } catch {}
+    setCoupons(prev => prev.filter(c => c.id !== deleteTarget.id));
     setDeleteTarget(null);
   }, [deleteTarget]);
+
+  const isInitial = loading && coupons.length === 0;
 
   return (
     <>
       <div className="space-y-6">
-        {/* Action row */}
         <div className="flex items-center gap-3 flex-wrap">
           <input
             type="text"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
             placeholder="Search by code, name or description…"
             className="flex-1 min-w-[220px] bg-surface-container-low border border-outline-variant rounded-xl px-4 py-2 text-xs text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
           />
@@ -99,27 +146,36 @@ export default function PromotionsContainer() {
           </button>
         </div>
 
-        {/* Stats */}
-        <StatCards coupons={coupons} />
-
-        {/* 12-col bento */}
-        <div className="grid grid-cols-12 gap-5">
-          <div className="col-span-12 lg:col-span-8">
-            <CouponsTable
-              coupons={displayed}
-              onEdit={openEdit}
-              onToggle={handleToggle}
-              onDuplicate={handleDuplicate}
-              onDelete={setDeleteTarget}
-            />
+        {isInitial ? (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {Array.from({ length: 4 }).map((_, i) => <SkStatCard key={i} />)}
           </div>
-          <div className="col-span-12 lg:col-span-4">
+        ) : (
+          <StatCards coupons={coupons} />
+        )}
+
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-5">
+          <div className="xl:col-span-8">
+            {isInitial ? (
+              <div className="bg-surface-container-lowest rounded-2xl border border-outline-variant/30 shadow-sm overflow-hidden overflow-x-auto">
+                <SkTable rows={8} cols={5} hasCheckbox={false} />
+              </div>
+            ) : (
+              <CouponsTable
+                coupons={displayed}
+                onEdit={openEdit}
+                onToggle={handleToggle}
+                onDuplicate={handleDuplicate}
+                onDelete={setDeleteTarget}
+              />
+            )}
+          </div>
+          <div className="xl:col-span-4">
             <SidePanel />
           </div>
         </div>
       </div>
 
-      {/* Create / Edit modal */}
       {showModal && (
         <CreateCouponModal
           coupon={modalCoupon}
@@ -128,7 +184,6 @@ export default function PromotionsContainer() {
         />
       )}
 
-      {/* Delete confirm */}
       {deleteTarget && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setDeleteTarget(null)} />

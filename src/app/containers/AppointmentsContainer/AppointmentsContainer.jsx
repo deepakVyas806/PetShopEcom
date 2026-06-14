@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { IconCalendar, IconSearchOff } from "@/lib/icons";
-import useAppointmentsContainer, { APPOINTMENTS } from "./AppointmentsContainer.hook";
+import useAppointmentsContainer from "./AppointmentsContainer.hook";
 import AppointmentsHeader  from "./Components/AppointmentsHeader";
 import AppointmentsStats   from "./Components/AppointmentsStats";
 import AppointmentCard     from "./Components/AppointmentCard";
@@ -16,28 +16,40 @@ const STATUS_FILTERS = [
 ];
 
 export default function AppointmentsContainer() {
-  const { stats } = useAppointmentsContainer();
+  const { upcoming, past, stats, loading, handleCancel } = useAppointmentsContainer();
 
   const [statusFilter, setStatusFilter] = useState("all");
-  const [sortOrder, setSortOrder] = useState("date-asc");
+  const [sortOrder,    setSortOrder]    = useState("date-asc");
 
-  // Filter + sort all appointments
+  const allAppointments = useMemo(() => [...upcoming, ...past], [upcoming, past]);
+
   const filtered = useMemo(() => {
     let list = statusFilter === "all"
-      ? APPOINTMENTS
-      : APPOINTMENTS.filter((a) => a.status === statusFilter);
+      ? allAppointments
+      : allAppointments.filter((a) => a.status?.toLowerCase() === statusFilter);
 
-    list = [...list].sort((a, b) => {
+    return [...list].sort((a, b) => {
       const da = new Date(a.date).getTime();
       const db = new Date(b.date).getTime();
       return sortOrder === "date-asc" ? da - db : db - da;
     });
+  }, [allAppointments, statusFilter, sortOrder]);
 
-    return list;
-  }, [statusFilter, sortOrder]);
+  const filteredUpcoming = filtered.filter((a) => a.status?.toLowerCase() === "upcoming");
+  const filteredPast     = filtered.filter((a) => a.status?.toLowerCase() !== "upcoming");
 
-  const upcoming = filtered.filter((a) => a.status === "upcoming");
-  const past     = filtered.filter((a) => a.status !== "upcoming");
+  if (loading) {
+    return (
+      <div className="py-2 space-y-5">
+        <AppointmentsHeader />
+        <div className="space-y-3">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="h-24 rounded-2xl bg-surface-container-low animate-pulse" />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="py-2 space-y-5">
@@ -45,9 +57,8 @@ export default function AppointmentsContainer() {
       <AppointmentsHeader />
       <AppointmentsStats stats={stats} />
 
-      {/* ── Filter & Sort controls ─────────────────────────────────── */}
+      {/* Filter & Sort controls */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        {/* Segmented pill filter */}
         <div className="flex gap-1 bg-surface-container-high rounded-full p-0.5 flex-wrap">
           {STATUS_FILTERS.map(({ value, label }) => (
             <button
@@ -64,7 +75,6 @@ export default function AppointmentsContainer() {
           ))}
         </div>
 
-        {/* Sort dropdown */}
         <select
           value={sortOrder}
           onChange={(e) => setSortOrder(e.target.value)}
@@ -75,14 +85,20 @@ export default function AppointmentsContainer() {
         </select>
       </div>
 
-      {/* ── Upcoming ──────────────────────────────────────────────── */}
+      {/* Upcoming */}
       {(statusFilter === "all" || statusFilter === "upcoming") && (
         <section>
           <h2 className="text-sm font-bold text-on-surface mb-3">Upcoming</h2>
 
-          {upcoming.length > 0 ? (
+          {filteredUpcoming.length > 0 ? (
             <div className="space-y-3">
-              {upcoming.map((a) => <AppointmentCard key={a.id} appt={a} />)}
+              {filteredUpcoming.map((a) => (
+                <AppointmentCard
+                  key={a._id ?? a.id}
+                  appt={a}
+                  onCancel={handleCancel}
+                />
+              ))}
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center py-12 gap-3 rounded-2xl border border-dashed border-outline-variant/40">
@@ -98,17 +114,19 @@ export default function AppointmentsContainer() {
         </section>
       )}
 
-      {/* ── Past services ─────────────────────────────────────────── */}
-      {(statusFilter === "all" || statusFilter === "completed" || statusFilter === "cancelled") && past.length > 0 && (
+      {/* Past services */}
+      {(statusFilter === "all" || statusFilter === "completed" || statusFilter === "cancelled") && filteredPast.length > 0 && (
         <section>
           <h2 className="text-sm font-bold text-on-surface mb-3">Past Services</h2>
           <div className="space-y-2.5">
-            {past.map((a) => <PastAppointmentCard key={a.id} appt={a} />)}
+            {filteredPast.map((a) => (
+              <PastAppointmentCard key={a._id ?? a.id} appt={a} />
+            ))}
           </div>
         </section>
       )}
 
-      {/* Empty state when no results at all */}
+      {/* Empty state */}
       {filtered.length === 0 && (
         <div className="flex flex-col items-center justify-center py-12 gap-3 rounded-2xl border border-dashed border-outline-variant/40">
           <IconSearchOff size={28} className="text-on-surface-variant" weight="regular" />

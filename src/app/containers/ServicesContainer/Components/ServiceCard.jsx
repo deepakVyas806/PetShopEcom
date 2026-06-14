@@ -9,7 +9,7 @@ export default function ServiceCard({ service }) {
     <div className="bg-white/80 backdrop-blur-md border border-purple-100 rounded-2xl overflow-hidden flex flex-col h-full transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
 
       {/* Image — clicking navigates to detail page */}
-      <Link href={`/services/${service.id}`} className="relative h-52 overflow-hidden block">
+      <Link href={`/services/${service._id ?? service.id}`} className="relative h-52 overflow-hidden block">
         <img
           src={service.image}
           alt={service.title}
@@ -31,7 +31,7 @@ export default function ServiceCard({ service }) {
         <div className="flex justify-between items-start mb-3">
           <div>
             {/* Title links to detail page */}
-            <Link href={`/services/${service.id}`} className="hover:text-primary transition-colors">
+            <Link href={`/services/${service._id ?? service.id}`} className="hover:text-primary transition-colors">
               <h3 className="text-sm font-bold text-on-surface mb-0.5">{service.title}</h3>
             </Link>
             <p className="text-xs text-on-surface-variant flex items-center gap-1">
@@ -51,13 +51,13 @@ export default function ServiceCard({ service }) {
 
         <div className="flex items-center gap-2.5 mt-auto">
           <Link
-            href={`/services/book?serviceId=${service.id}`}
+            href={`/services/book?serviceId=${service._id ?? service.id}`}
             className="flex-1 py-2.5 px-4 bg-primary text-white font-bold text-xs rounded-xl shadow-md hover:opacity-90 active:scale-95 transition-all text-center"
           >
             Book Now
           </Link>
           <Link
-            href={`/services/${service.id}`}
+            href={`/services/${service._id ?? service.id}`}
             className="w-9 h-9 flex items-center justify-center bg-secondary-container text-primary rounded-full hover:bg-primary hover:text-white transition-all shrink-0"
           >
             <IconInfo size={18} weight="regular" />

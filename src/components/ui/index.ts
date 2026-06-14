@@ -9,6 +9,7 @@ export { default as Button }        from "./Button";
 export { default as Badge, OrderStatusBadge, StockBadge, DiscountBadge } from "./Badge";
 export { default as FormField }     from "./FormField";
 export { default as SectionHeader } from "./SectionHeader";
+export { Sk, SkStatCard, SkTableRow, SkTable, SkText } from "./Skeleton";
 
 export type { ButtonVariant, ButtonSize } from "./Button";
 export type { BadgeVariant }             from "./Badge";

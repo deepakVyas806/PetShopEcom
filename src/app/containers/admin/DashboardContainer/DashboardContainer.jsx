@@ -1,34 +1,35 @@
 "use client";
-
-/**
- * Admin Dashboard — thin orchestrator.
- * All heavy sections are memo'd subcomponents that only re-render
- * when their own props change. Static data lives in data.js and is
- * never recreated across renders.
- */
-
-import StatGrid       from "./Components/StatGrid";
-import RevenueChart   from "./Components/RevenueChart";
-import SalesAnalytics from "./Components/SalesAnalytics";
-import RecentActivity from "./Components/RecentActivity";
+import { useState, useEffect } from "react";
+import { api } from "@/lib/api";
+import StatGrid        from "./Components/StatGrid";
+import RevenueChart    from "./Components/RevenueChart";
+import SalesAnalytics  from "./Components/SalesAnalytics";
+import RecentActivity  from "./Components/RecentActivity";
 import BestSellingCard from "./Components/BestSellingCard";
 
 export default function DashboardContainer() {
+  const [data,    setData]    = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    api.get("/admin/dashboard")
+      .then(setData)
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
   return (
     <div className="space-y-5">
-      {/* Row 1: stat cards */}
-      <StatGrid />
+      <StatGrid stats={data?.stats} loading={loading} />
 
-      {/* Row 2: charts */}
       <section className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        <RevenueChart />
-        <SalesAnalytics />
+        <RevenueChart monthlyRevenue={data?.monthlyRevenue} loading={loading} />
+        <SalesAnalytics categories={data?.categoryRevenue} weekRevenue={data?.stats?.weekRevenue} loading={loading} />
       </section>
 
-      {/* Row 3: activity + best seller */}
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        <RecentActivity />
-        <BestSellingCard />
+        <RecentActivity orders={data?.recentOrders} loading={loading} />
+        <BestSellingCard product={data?.topProducts?.[0]} loading={loading} />
       </section>
     </div>
   );

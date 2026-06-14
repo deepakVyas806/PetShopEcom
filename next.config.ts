@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  reactStrictMode: false,
   headers: async () => [
     {
       // Service worker must be served without cache

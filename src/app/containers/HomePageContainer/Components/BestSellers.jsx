@@ -27,9 +27,9 @@ export default function BestSellers({
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
-          {premiumShowcase.map((product) => (
+          {premiumShowcase.map((product, i) => (
             <ProductCard
-              key={product.id}
+              key={product.id ?? product._id ?? i}
               product={product}
               isFavorite={favorites?.includes(product.id)}
               onToggleFavorite={toggleFavorite}

@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { cn } from "@/lib/utils";
 import { IconUser, IconReceipt, IconHeart, IconCalendar, IconLocation, IconMoney, IconBell, IconLogout } from "@/lib/icons";
+import UserAvatar from "@/components/common/UserAvatar";
 
 const NAV_ITEMS = [
   { Icon: IconUser,     label: "My Profile",       href: "/profile"          },
@@ -27,7 +28,7 @@ export default function AccountSidebar() {
         {/* User chip */}
         {user && (
           <div className="flex items-center gap-2 px-3 py-2 mb-3 bg-surface-container-low rounded-xl">
-            <span className="text-base leading-none flex-shrink-0">{user.avatar}</span>
+            <UserAvatar avatar={user.avatar} name={user.name} size="w-8 h-8" textSize="text-base" />
             <div className="min-w-0">
               <p className="text-xs font-semibold text-on-surface truncate">{user.name.split(" ")[0]}</p>
               <p className="text-[10px] text-on-surface-variant truncate">{user.email}</p>

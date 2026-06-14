@@ -1,7 +1,7 @@
 export interface PaginationMeta {
   page:       number;
   limit:      number;
-  totalCount: number;
+  total:      number;
   totalPages: number;
   hasMore:    boolean;
 }
@@ -15,7 +15,7 @@ export function parsePagination(
   return { page, limit, skip: (page - 1) * limit };
 }
 
-export function paginationMeta(page: number, limit: number, totalCount: number): PaginationMeta {
-  const totalPages = Math.ceil(totalCount / limit);
-  return { page, limit, totalCount, totalPages, hasMore: page < totalPages };
+export function paginationMeta(page: number, limit: number, total: number): PaginationMeta {
+  const totalPages = Math.ceil(total / limit);
+  return { page, limit, total, totalPages, hasMore: page < totalPages };
 }

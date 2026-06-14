@@ -1,5 +1,10 @@
 "use client";
 
+import { useState } from "react";
+import { useGoogleLogin } from "@react-oauth/google";
+import { useAuth } from "@/context/AuthContext";
+import { ErrorBanner } from "./SharedUI";
+
 function GoogleIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 48 48" aria-label="Google" role="img">
@@ -11,43 +16,61 @@ function GoogleIcon() {
   );
 }
 
-function AppleIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-label="Apple" role="img">
-      <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-    </svg>
-  );
-}
-
-function FacebookIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" aria-label="Facebook" role="img">
-      <path fill="#1877F2" d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-    </svg>
-  );
-}
-
-const SOCIAL = [
-  { key: "google",   icon: <GoogleIcon />,   label: "Google"   },
-  { key: "apple",    icon: <AppleIcon />,    label: "Apple"    },
-  { key: "facebook", icon: <FacebookIcon />, label: "Facebook" },
-];
+// Apple and Facebook providers are commented out — not yet configured
+// { key: "apple",    label: "Apple"    }
+// { key: "facebook", label: "Facebook" }
 
 export default function SocialButtons() {
+  const { googleLogin, loading } = useAuth();
+  const [googleErr, setGoogleErr] = useState(null);
+
+  const handleGoogle = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      setGoogleErr(null);
+      try {
+        await googleLogin(tokenResponse.access_token);
+      } catch (err) {
+        setGoogleErr(
+          err instanceof Error ? err.message : "Google sign-in failed. Please try again."
+        );
+      }
+    },
+    onError: (err) => {
+      // User voluntarily closed the popup — no error needed
+      if (err.error === "popup_closed_by_user") return;
+
+      if (err.error === "popup_blocked_by_browser") {
+        setGoogleErr("Popup was blocked. Please allow popups for this site and try again.");
+      } else if (err.error === "access_denied") {
+        setGoogleErr("Access was denied. Please allow the required permissions.");
+      } else {
+        setGoogleErr("Google sign-in failed. Please try again.");
+      }
+    },
+  });
+
   return (
     <div className="space-y-3 mb-4">
-      <div className="grid grid-cols-3 gap-2">
-        {SOCIAL.map(({ key, icon, label }) => (
-          <button
-            key={key}
-            type="button"
-            className="flex items-center justify-center gap-1.5 py-2 px-3 border border-outline-variant rounded-xl hover:bg-surface-container-low transition-colors cursor-pointer bg-transparent text-xs font-medium text-on-surface"
-          >
-            {icon}
-            <span className="hidden sm:inline">{label}</span>
-          </button>
-        ))}
-      </div>
+      <button
+        type="button"
+        onClick={() => { setGoogleErr(null); handleGoogle(); }}
+        disabled={loading}
+        className="w-full flex items-center justify-center gap-2 py-2.5 px-3 border border-outline-variant rounded-xl hover:bg-surface-container-low transition-colors cursor-pointer bg-transparent text-xs font-medium text-on-surface disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {loading ? (
+          <>
+            <span className="w-3.5 h-3.5 border-2 border-on-surface/20 border-t-on-surface rounded-full animate-spin" />
+            Signing in…
+          </>
+        ) : (
+          <>
+            <GoogleIcon />
+            Continue with Google
+          </>
+        )}
+      </button>
+
+      {googleErr && <ErrorBanner message={googleErr} />}
 
       {/* Divider */}
       <div className="relative flex items-center">

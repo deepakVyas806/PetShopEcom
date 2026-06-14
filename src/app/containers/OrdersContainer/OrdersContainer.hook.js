@@ -33,7 +33,9 @@ export default function useOrdersContainer() {
     setExpandedOrders(prev => { const next = new Set(prev); next.has(id) ? next.delete(id) : next.add(id); return next; });
 
   return {
-    orders, totalPages, loading,
+    orders,
+    filteredOrders: orders,
+    totalPages, loading,
     searchQuery, setSearchQuery: (q) => { setSearchQuery(q); setCurrentPage(1); },
     expandedOrders, toggleExpand,
     statusFilter, setStatusFilter: (s) => { setStatusFilter(s); setCurrentPage(1); },

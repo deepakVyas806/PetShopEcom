@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { cn } from "@/lib/utils";
 import { IconBell, IconHeart, IconUser, IconBag, IconLogout } from "@/lib/icons";
+import UserAvatar from "@/components/common/UserAvatar";
 
 function IconBtn({
   href, title, children,
@@ -80,14 +81,12 @@ export function DesktopAuthIcons() {
         <button
           onClick={() => setMenuOpen((o) => !o)}
           className={cn(
-            "w-9 h-9 rounded-full flex items-center justify-center text-lg leading-none select-none",
-            "ring-2 ring-primary/30 hover:ring-primary/60 active:scale-95 transition-all cursor-pointer",
-            "bg-primary/10 border-none outline-none",
-            menuOpen && "ring-primary/60 bg-primary/15"
+            "rounded-full ring-2 ring-primary/30 hover:ring-primary/60 active:scale-95 transition-all cursor-pointer border-none outline-none",
+            menuOpen && "ring-primary/60"
           )}
           title={user?.name}
         >
-          {user?.avatar}
+          <UserAvatar avatar={user?.avatar} name={user?.name} size="w-9 h-9" textSize="text-base" />
         </button>
 
         {menuOpen && (

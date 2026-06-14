@@ -26,7 +26,7 @@ const StatCard = memo(function StatCard({ icon: Icon, iconColor, iconBg, stripe,
 
 const StatCards = memo(function StatCards({ stats }) {
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
       <StatCard
         icon={IconUsers}
         iconColor="text-primary"

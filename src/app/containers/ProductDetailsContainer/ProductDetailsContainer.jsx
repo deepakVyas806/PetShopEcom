@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import useProductDetails from "./ProductDetailsContainer.hook";
 import { IconChevronRight, IconShipping, IconCartSimple, IconDelete, IconRemove, IconAdd, IconShield, IconEco, IconBag, IconCheckCircle, IconChevronDown } from "@/lib/icons";
@@ -10,65 +10,44 @@ import RatingSummary from "@/app/containers/ReviewsContainer/Components/RatingSu
 import StarRating from "@/app/containers/ReviewsContainer/Components/StarRating";
 import InlineReviewForm from "@/components/common/InlineReviewForm";
 
-const PRODUCT_RATING_DISTRIBUTION = [
-  { star: "5", pct: 72 },
-  { star: "4", pct: 16 },
-  { star: "3", pct: 7 },
-  { star: "2", pct: 3 },
-  { star: "1", pct: 2 },
+const AVATAR_COLORS = [
+  ["bg-purple-100", "text-purple-700"],
+  ["bg-blue-100",   "text-blue-700"],
+  ["bg-green-100",  "text-green-700"],
+  ["bg-orange-100", "text-orange-700"],
+  ["bg-rose-100",   "text-rose-700"],
 ];
 
-const PRODUCT_REVIEWS = [
-  {
-    id: "pr1",
-    name: "Sarah Jenkins",
-    initials: "SJ",
-    avatarBg: "bg-purple-100",
-    avatarFg: "text-purple-700",
-    rating: 5,
-    verified: true,
-    date: "May 12, 2025",
-    title: "Total game changer for my Labrador!",
-    body: "My Labrador has sensitive skin and this food was a game changer. Her coat is finally shiny again and she's so much more energetic.",
-    photos: [],
-  },
-  {
-    id: "pr2",
-    name: "Mark Thompson",
-    initials: "MT",
-    avatarBg: "bg-blue-100",
-    avatarFg: "text-blue-700",
-    rating: 4,
-    verified: true,
-    date: "Apr 28, 2025",
-    title: "Great quality, wish it came in larger bags",
-    body: "Great quality, though I wish it came in even larger bags. My Husky loves the taste and finishes it in no time.",
-    photos: [],
-  },
-  {
-    id: "pr3",
-    name: "Emily Chen",
-    initials: "EC",
-    avatarBg: "bg-green-100",
-    avatarFg: "text-green-700",
-    rating: 5,
-    verified: true,
-    date: "Apr 10, 2025",
-    title: "Premium packaging, premium results",
-    body: "Excellent delivery speed and the packaging is so premium. Worth every penny for my rescue dog. Will keep ordering.",
-    photos: [],
-  },
-];
+function transformReview(r, idx) {
+  const words = (r.name || "AN").trim().split(/\s+/);
+  const initials = ((words[0]?.[0] ?? "A") + (words[1]?.[0] ?? "N")).toUpperCase();
+  const [avatarBg, avatarFg] = AVATAR_COLORS[idx % AVATAR_COLORS.length];
+  return {
+    ...r,
+    id: r._id ?? r.id,
+    initials,
+    avatarBg,
+    avatarFg,
+    date: r.createdAt
+      ? new Date(r.createdAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })
+      : (r.date ?? ""),
+  };
+}
 
 export default function ProductDetailsContainer({ productId }) {
   const {
     product,
+    loading,
+    ratingDistribution,
+    apiReviews,
+    reviewsLoading,
     gallery,
     activeImage,
     setActiveImage,
     sizes,
     selectedSize,
     setSelectedSize,
+    displayPrice,
     quantity,
     incrementQuantity,
     decrementQuantity,
@@ -87,11 +66,21 @@ export default function ProductDetailsContainer({ productId }) {
 
   const [inCart, setInCart] = useState(false);
 
-  const [helpfulCounts, setHelpfulCounts] = useState({ pr1: 17, pr2: 9, pr3: 24 });
+  const [helpfulCounts, setHelpfulCounts] = useState({});
   const [votedIds, setVotedIds] = useState(new Set());
 
   const [reviewFormOpen, setReviewFormOpen] = useState(false);
-  const [reviews, setReviews] = useState(PRODUCT_REVIEWS);
+  const [reviews, setReviews] = useState([]);
+
+  // Populate reviews from API data
+  useEffect(() => {
+    if (!apiReviews.length) return;
+    const transformed = apiReviews.map(transformReview);
+    setReviews(transformed);
+    const counts = {};
+    transformed.forEach(r => { counts[r.id] = r.helpfulCount ?? 0; });
+    setHelpfulCounts(counts);
+  }, [apiReviews]);
 
   const handleSubmitReview = ({ rating, title, body }) => {
     const newReview = {
@@ -127,9 +116,27 @@ export default function ProductDetailsContainer({ productId }) {
     return `${date1.toLocaleDateString("en-US", options)} - ${date2.toLocaleDateString("en-US", options)}`;
   };
 
-  // Calculate discount percentage if MRP exists
-  const discountPercent = product.mrp && product.mrp > product.price
-    ? Math.round(((product.mrp - product.price) / product.mrp) * 100)
+  if (loading || !product) {
+    return (
+      <div className="w-full bg-background">
+        <div className="max-w-container-max mx-auto px-margin-desktop py-stack-lg">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter animate-pulse">
+            <div className="lg:col-span-7 aspect-square rounded-2xl bg-surface-container-low" />
+            <div className="lg:col-span-5 space-y-4">
+              <div className="h-6 w-2/3 rounded bg-surface-container-low" />
+              <div className="h-4 w-1/2 rounded bg-surface-container-low" />
+              <div className="h-10 w-1/3 rounded bg-surface-container-low" />
+              <div className="h-12 rounded-xl bg-surface-container-low" />
+              <div className="h-12 rounded-xl bg-surface-container-low" />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const discountPercent = product.mrp && product.mrp > displayPrice
+    ? Math.round(((product.mrp - displayPrice) / product.mrp) * 100)
     : 0;
 
   return (
@@ -200,24 +207,27 @@ export default function ProductDetailsContainer({ productId }) {
 
               {/* Star Rating summary */}
               <div className="flex items-center space-x-2 select-none flex-wrap gap-y-1">
-                <StarRating rating={product.rating || 4.8} size={14} />
-                <span className="text-xs text-on-surface-variant font-medium">
-                  {product.rating || 4.8}
-                </span>
-                <Link
-                  href="/reviews"
-                  className="text-xs text-primary font-semibold hover:underline"
-                >
-                  ({product.reviewsCount || "2,451"} reviews)
-                </Link>
-                <span className="text-outline-variant/60">·</span>
-                <Link
-                  href="/reviews"
-                  className="text-xs text-primary font-semibold hover:underline flex items-center gap-0.5"
-                >
-                  See all reviews
-                  <IconChevronRight size={14} className="leading-none" weight="regular" />
-                </Link>
+                {product.reviewsCount > 0 ? (
+                  <>
+                    <StarRating rating={product.rating} size={14} />
+                    <span className="text-xs text-on-surface-variant font-medium">
+                      {product.rating}
+                    </span>
+                    <span className="text-xs text-on-surface-variant">
+                      ({product.reviewsCount} reviews)
+                    </span>
+                    <span className="text-outline-variant/60">·</span>
+                    <button
+                      onClick={() => document.getElementById("reviews-section")?.scrollIntoView({ behavior: "smooth" })}
+                      className="text-xs text-primary font-semibold hover:underline flex items-center gap-0.5 bg-transparent border-none cursor-pointer p-0"
+                    >
+                      See all reviews
+                      <IconChevronRight size={14} className="leading-none" weight="regular" />
+                    </button>
+                  </>
+                ) : (
+                  <span className="text-xs text-on-surface-variant">No reviews yet</span>
+                )}
               </div>
             </div>
 
@@ -225,7 +235,7 @@ export default function ProductDetailsContainer({ productId }) {
             <div className="p-5 bg-surface-container-low rounded-2xl border border-outline-variant/20 shadow-sm space-y-4">
               <div className="flex items-baseline flex-wrap gap-2.5">
                 <span className="text-2xl md:text-3xl font-extrabold text-primary">
-                  {fmt(product.price)}
+                  {fmt(displayPrice)}
                 </span>
                 {product.mrp && (
                   <span className="text-sm text-on-surface-variant line-through font-medium">
@@ -278,7 +288,7 @@ export default function ProductDetailsContainer({ productId }) {
                     <button
                       onClick={() => {
                         if (quantity === 1) {
-                          removeFromCart(product.id);
+                          removeFromCart(product._id ?? product.id);
                           setInCart(false);
                         } else {
                           decrementQuantity();
@@ -450,71 +460,60 @@ export default function ProductDetailsContainer({ productId }) {
               
               {activeTab === "Specifications" && (
                 <div className="space-y-2.5">
-                  <div className="flex justify-between border-b border-outline-variant/10 pb-1.5 text-xs">
-                    <span className="text-on-surface-variant">Primary Protein</span>
-                    <span className="text-on-surface font-bold">
-                      {product.brand === "Royal Canin" ? "Dehydrated Poultry Protein" : "Fresh Wild Salmon"}
-                    </span>
-                  </div>
-                  <div className="flex justify-between border-b border-outline-variant/10 pb-1.5 text-xs">
-                    <span className="text-on-surface-variant">Dietary Requirement</span>
-                    <span className="text-on-surface font-bold">
-                      {product.brand === "Royal Canin" ? "Enriched Formula" : "Grain-Free, Hypoallergenic"}
-                    </span>
-                  </div>
-                  <div className="flex justify-between border-b border-outline-variant/10 pb-1.5 text-xs">
-                    <span className="text-on-surface-variant">Age Range</span>
-                    <span className="text-on-surface font-bold">
-                      {product.name.toLowerCase().includes("puppy") ? "Puppy (2-12 months)" : "Adult (1-7 years)"}
-                    </span>
-                  </div>
-                  <div className="flex justify-between border-b border-outline-variant/10 pb-1.5 text-xs">
-                    <span className="text-on-surface-variant">Bag Weight</span>
-                    <span className="text-on-surface font-bold">{selectedSize}</span>
-                  </div>
-                  <div className="flex justify-between border-b border-outline-variant/10 pb-1.5 text-xs">
-                    <span className="text-on-surface-variant">Country of Origin</span>
-                    <span className="text-on-surface font-bold">Made in India</span>
-                  </div>
+                  {[
+                    { label: "Brand",          value: product.brand },
+                    { label: "Category",       value: product.category },
+                    { label: "Life Stage",     value: product.lifeStage || "All Stages" },
+                    { label: "Pet Type",       value: product.petTypes?.join(", ") || "—" },
+                    { label: "Weight",         value: product.weight || selectedSize || "—" },
+                    { label: "Stock Status",   value: product.status || "In Stock" },
+                    { label: "SKU",            value: product.sku || "—" },
+                  ].map(({ label, value }) => (
+                    <div key={label} className="flex justify-between border-b border-outline-variant/10 pb-1.5 text-xs">
+                      <span className="text-on-surface-variant">{label}</span>
+                      <span className="text-on-surface font-bold capitalize">{value}</span>
+                    </div>
+                  ))}
                 </div>
               )}
 
               {activeTab === "Nutrition Guide" && (
-                <div className="space-y-2.5">
-                  <div className="flex justify-between border-b border-outline-variant/10 pb-1.5 text-xs">
-                    <span className="text-on-surface-variant">Crude Protein (Min)</span>
-                    <span className="text-on-surface font-bold">34.0%</span>
-                  </div>
-                  <div className="flex justify-between border-b border-outline-variant/10 pb-1.5 text-xs">
-                    <span className="text-on-surface-variant">Crude Fat (Min)</span>
-                    <span className="text-on-surface font-bold">16.0%</span>
-                  </div>
-                  <div className="flex justify-between border-b border-outline-variant/10 pb-1.5 text-xs">
-                    <span className="text-on-surface-variant">Crude Fiber (Max)</span>
-                    <span className="text-on-surface font-bold">4.0%</span>
-                  </div>
-                  <div className="flex justify-between border-b border-outline-variant/10 pb-1.5 text-xs">
-                    <span className="text-on-surface-variant">Omega-3 Fatty Acids</span>
-                    <span className="text-on-surface font-bold">1.2%</span>
-                  </div>
-                  <div className="flex justify-between border-b border-outline-variant/10 pb-1.5 text-xs">
-                    <span className="text-on-surface-variant">Omega-6 Fatty Acids</span>
-                    <span className="text-on-surface font-bold">2.8%</span>
-                  </div>
-                </div>
+                (() => {
+                  const nf = product.nutritionFacts;
+                  const rows = nf ? [
+                    ["Crude Protein (Min)", nf.crudeProtein],
+                    ["Crude Fat (Min)",     nf.crudeFat],
+                    ["Crude Fiber (Max)",   nf.crudeFiber],
+                    ["Omega-3 Fatty Acids", nf.omega3],
+                    ["Omega-6 Fatty Acids", nf.omega6],
+                    ["Moisture (Max)",      nf.moisture],
+                  ].filter(([, v]) => v) : [];
+                  return rows.length > 0 ? (
+                    <div className="space-y-2.5">
+                      {rows.map(([label, value]) => (
+                        <div key={label} className="flex justify-between border-b border-outline-variant/10 pb-1.5 text-xs">
+                          <span className="text-on-surface-variant">{label}</span>
+                          <span className="text-on-surface font-bold">{value}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-xs text-on-surface-variant">Nutrition information is not applicable for this product.</p>
+                  );
+                })()
               )}
 
               {activeTab === "Sourcing" && (
                 <div className="space-y-2.5 text-xs text-on-surface-variant leading-relaxed">
-                  <p>
-                    Our ingredients are responsibly sourced from audited farms and sustainable fisheries.
-                  </p>
-                  <p>
-                    All raw organic salmon is caught off the coast of sustainable wild waters, transported in deep temperature-controlled units, and mixed with fresh kale picked from local domestic greenhouses within 24 hours of harvest.
-                  </p>
-                  <p className="font-bold text-on-surface">
-                    100% Traceable supply chain from farm to bowl.
-                  </p>
+                  {product.sourcing ? (
+                    product.sourcing.split("\n").filter(Boolean).map((para, i, arr) => (
+                      <p key={i} className={i === arr.length - 1 ? "font-bold text-on-surface" : ""}>
+                        {para}
+                      </p>
+                    ))
+                  ) : (
+                    <p>Sourcing information is not available for this product.</p>
+                  )}
                 </div>
               )}
             </div>
@@ -523,27 +522,15 @@ export default function ProductDetailsContainer({ productId }) {
             <div className="bg-surface-container-low p-4 rounded-xl border border-outline-variant/20 shadow-xs space-y-3">
               <h3 className="text-xs font-bold text-on-surface">Key Benefits</h3>
               <ul className="space-y-2.5">
-                <li className="flex items-start gap-2.5">
-                  <IconCheckCircle size={18} className="text-green-600 mt-0.5" weight="regular" />
-                  <div>
-                    <h4 className="font-bold text-xs text-on-surface">Shiny Coat &amp; Healthy Skin</h4>
-                    <p className="text-on-surface-variant text-[11px] leading-relaxed">High concentration of active Omega-3 fatty acids for structural fur and skin glow.</p>
-                  </div>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <IconCheckCircle size={18} className="text-green-600 mt-0.5" weight="regular" />
-                  <div>
-                    <h4 className="font-bold text-xs text-on-surface">Digestive Support</h4>
-                    <p className="text-on-surface-variant text-[11px] leading-relaxed">Infused with prebiotic vegetable fibers from clean kale and green field spinach.</p>
-                  </div>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <IconCheckCircle size={18} className="text-green-600 mt-0.5" weight="regular" />
-                  <div>
-                    <h4 className="font-bold text-xs text-on-surface">Immune Boosting</h4>
-                    <p className="text-on-surface-variant text-[11px] leading-relaxed">Packed with antioxidants from fresh organic berries and leafy vegetables.</p>
-                  </div>
-                </li>
+                {(product.bullets?.length > 0
+                  ? product.bullets
+                  : ["Premium quality ingredients", "Vet recommended formula", "No artificial additives"]
+                ).map((bullet, i) => (
+                  <li key={i} className="flex items-start gap-2.5">
+                    <IconCheckCircle size={18} className="text-green-600 mt-0.5 flex-shrink-0" weight="regular" />
+                    <span className="text-xs text-on-surface leading-relaxed">{bullet}</span>
+                  </li>
+                ))}
               </ul>
             </div>
 
@@ -551,7 +538,7 @@ export default function ProductDetailsContainer({ productId }) {
         </section>
 
         {/* Customer Reviews — same components as ServiceDetailsContainer */}
-        <section className="mt-8">
+        <section id="reviews-section" className="mt-8">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-3 gap-3">
             <div>
               <h2 className="text-xs font-bold text-on-surface">Community Stories</h2>
@@ -578,10 +565,20 @@ export default function ProductDetailsContainer({ productId }) {
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
             <aside className="lg:col-span-4">
-              <RatingSummary product={{ ...product, ratingDistribution: PRODUCT_RATING_DISTRIBUTION }} />
+              <RatingSummary product={{ ...product, ratingDistribution }} />
             </aside>
 
             <div className="lg:col-span-8 space-y-4">
+              {reviewsLoading && reviews.length === 0 && (
+                <div className="space-y-3">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} className="h-28 rounded-2xl bg-surface-container-low animate-pulse" />
+                  ))}
+                </div>
+              )}
+              {!reviewsLoading && reviews.length === 0 && (
+                <p className="text-xs text-on-surface-variant py-6 text-center">No reviews yet — be the first to write one!</p>
+              )}
               {reviews.map((review) => (
                 <ReviewCard
                   key={review.id}
@@ -592,12 +589,14 @@ export default function ProductDetailsContainer({ productId }) {
                 />
               ))}
 
-              <div className="flex justify-center pt-2">
-                <Link href="/reviews" className="text-primary font-bold text-xs hover:underline flex items-center gap-0.5">
-                  View All Reviews
-                  <IconChevronRight size={16} className="leading-none" weight="regular" />
-                </Link>
-              </div>
+              {reviews.length > 0 && (
+                <div className="flex justify-center pt-2">
+                  <Link href="/reviews" className="text-primary font-bold text-xs hover:underline flex items-center gap-0.5">
+                    View All Reviews
+                    <IconChevronRight size={16} className="leading-none" weight="regular" />
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
         </section>

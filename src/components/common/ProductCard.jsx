@@ -51,7 +51,7 @@ export default function ProductCard({
 
       {/* Image */}
       <div className="relative aspect-[4/3] bg-surface-container-low overflow-hidden">
-        <Link href={`/marketplace/${product.id}`} className="block w-full h-full">
+        <Link href={`/marketplace/${product._id ?? product.id}`} className="block w-full h-full">
           <img
             alt={product.name}
             src={product.image}
@@ -76,7 +76,7 @@ export default function ProductCard({
           <div className="absolute top-2 right-2 z-10">{topRightSlot}</div>
         ) : hasHeart ? (
           <button
-            onClick={() => onToggleFavorite(product.id)}
+            onClick={() => onToggleFavorite(product._id ?? product.id)}
             className="absolute top-2 right-2 p-1.5 bg-white/80 backdrop-blur shadow-sm rounded-full text-primary hover:bg-primary hover:text-white transition-colors duration-200 cursor-pointer active:scale-95 flex items-center justify-center border-none outline-none z-10"
             title={isFavorite ? "Remove from Wishlist" : "Add to Wishlist"}
           >
@@ -102,7 +102,7 @@ export default function ProductCard({
         )}
 
         <h4 className="text-xs font-bold text-on-surface mb-1 group-hover:text-primary transition-colors leading-snug line-clamp-2">
-          <Link href={`/marketplace/${product.id}`} className="hover:text-primary transition-colors">
+          <Link href={`/marketplace/${product._id ?? product.id}`} className="hover:text-primary transition-colors">
             {product.name}
           </Link>
         </h4>

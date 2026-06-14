@@ -35,16 +35,24 @@ export default function RatingSummary({ product, onWriteReview }) {
     return () => clearTimeout(id);
   }, []);
 
+  const hasReviews = product.ratingDistribution && product.ratingDistribution.length > 0;
+
   return (
     <div className="p-4 rounded-xl space-y-4" style={glassCard}>
       <h2 className="text-sm font-bold text-on-surface">Customer Reviews</h2>
 
-      {/* Star distribution */}
-      <div className="space-y-2.5">
-        {product.ratingDistribution.map(({ star, pct }) => (
-          <RatingBar key={star} star={star} pct={pct} animated={animated} />
-        ))}
-      </div>
+      {hasReviews ? (
+        <div className="space-y-2.5">
+          {product.ratingDistribution.map(({ star, pct }) => (
+            <RatingBar key={star} star={star} pct={pct} animated={animated} />
+          ))}
+        </div>
+      ) : (
+        <div className="py-3 text-center space-y-1">
+          <p className="text-xs font-semibold text-on-surface">No reviews yet</p>
+          <p className="text-xs text-on-surface-variant">Be the first to share your experience</p>
+        </div>
+      )}
 
       {/* Write a review */}
       <div className="border-t border-outline-variant/30 pt-4 space-y-2">

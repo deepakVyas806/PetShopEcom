@@ -70,16 +70,18 @@ export default function useCheckoutContainer() {
           date:     bookingDate,
           timeSlot: bookingTime,
         });
+        router.push("/appointments");
       } else {
-        await api.post("/orders", {
+        const data = await api.post("/orders", {
           items: cartItems.map(i => ({ productId: i.product._id ?? i.product.id, quantity: i.quantity })),
           shippingAddress: address,
           paymentMethod: "Credit / Debit Card",
           couponCode: couponCode || undefined,
         });
         clearCart();
+        const oid = data.order?._id;
+        router.push(oid ? `/order-confirmation?orderId=${oid}` : "/order-confirmation");
       }
-      router.push("/order-confirmation");
     } catch (err) {
       setErrorMsg(err.message ?? "Payment failed. Please try again.");
     } finally {

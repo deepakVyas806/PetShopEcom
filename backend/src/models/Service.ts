@@ -37,7 +37,7 @@ export interface IService extends Document {
 const serviceSchema = new Schema<IService>(
   {
     name:        { type: String, required: true, trim: true },
-    title:       { type: String, required: true, trim: true },
+    title:       { type: String, required: false, default: "", trim: true },
     subtitle:    { type: String },
     category:    { type: String, required: true, index: true },
     badge:       { type: String },

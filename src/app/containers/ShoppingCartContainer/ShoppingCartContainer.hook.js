@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useStore } from "@/context/StoreContext";
 import { useAuth } from "@/context/AuthContext";
+import { api } from "@/lib/api";
 
 export default function useShoppingCart() {
   const { cart, updateQuantity, removeFromCart } = useStore();
@@ -9,9 +10,10 @@ export default function useShoppingCart() {
   const router = useRouter();
 
   // Promo code states
-  const [promoInput, setPromoInput] = useState("");
-  const [appliedCode, setAppliedCode] = useState("");
-  const [promoError, setPromoError] = useState("");
+  const [promoInput,    setPromoInput]    = useState("");
+  const [appliedCode,   setAppliedCode]   = useState("");
+  const [promoError,    setPromoError]    = useState("");
+  const [promoDiscount, setPromoDiscount] = useState(0);
 
   // Cart counts
   const cartCount = useMemo(() => {
@@ -34,13 +36,8 @@ export default function useShoppingCart() {
     return Number((subtotal * 0.085).toFixed(2));
   }, [subtotal]);
 
-  // Promo discount calculation (10% off subtotal if NEWPET10 is applied)
-  const promoDiscount = useMemo(() => {
-    if (appliedCode.toUpperCase() === "NEWPET10") {
-      return Number((subtotal * 0.10).toFixed(2));
-    }
-    return 0;
-  }, [subtotal, appliedCode]);
+  // Reset discount when cart items change significantly
+  // (promoDiscount is now a state set by the API response)
 
   // Grand Total calculation
   const grandTotal = useMemo(() => {
@@ -53,16 +50,24 @@ export default function useShoppingCart() {
     return Math.round(subtotal);
   }, [subtotal]);
 
-  // Apply promo code handler
-  const applyPromoCode = (code) => {
+  // Apply promo code handler — validates against the real API
+  const applyPromoCode = async (code) => {
     const cleanCode = code.trim().toUpperCase();
-    if (cleanCode === "NEWPET10") {
-      setAppliedCode("NEWPET10");
-      setPromoError("");
-    } else if (cleanCode === "") {
+    if (cleanCode === "") {
       setPromoError("Please enter a code");
-    } else {
-      setPromoError("Invalid promo code");
+      return;
+    }
+    if (!isAuthenticated) {
+      setPromoError("Sign in to use promo codes");
+      return;
+    }
+    setPromoError("");
+    try {
+      const data = await api.post("/coupons/validate", { code: cleanCode, subtotal });
+      setAppliedCode(cleanCode);
+      setPromoDiscount(data.discount ?? 0);
+    } catch (err) {
+      setPromoError(err.message ?? "Invalid promo code");
     }
   };
 
@@ -71,6 +76,7 @@ export default function useShoppingCart() {
     setAppliedCode("");
     setPromoInput("");
     setPromoError("");
+    setPromoDiscount(0);
   };
 
   // Quantity updates with validation

@@ -6,6 +6,7 @@ import { StoreProvider } from "@/context/StoreContext";
 import { AuthProvider } from "@/context/AuthContext";
 import AppChrome from "@/components/layout/AppChrome";
 import PWARegister from "@/components/PWARegister";
+import GoogleProvider from "@/components/GoogleProvider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -120,13 +121,15 @@ export default function RootLayout({
       </head>
 
       <body className="min-h-full flex flex-col font-sans selection:bg-brand-primary selection:text-white bg-brand-background text-brand-foreground pb-20 md:pb-0">
-        <StoreProvider>
-          <AuthProvider>
-            <AppChrome>
-              {children}
-            </AppChrome>
-          </AuthProvider>
-        </StoreProvider>
+        <GoogleProvider>
+          <StoreProvider>
+            <AuthProvider>
+              <AppChrome>
+                {children}
+              </AppChrome>
+            </AuthProvider>
+          </StoreProvider>
+        </GoogleProvider>
 
         {/* Register service worker after hydration */}
         <PWARegister />

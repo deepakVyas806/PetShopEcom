@@ -8,6 +8,7 @@ import {
   IconChart, IconBag, IconCart, IconUser, IconCalendar,
   IconLogout, IconTag,
 } from "@/lib/icons";
+import UserAvatar from "@/components/common/UserAvatar";
 import BrandLogo from "@/components/common/BrandLogo";
 
 const NAV = [
@@ -65,7 +66,7 @@ export default function AdminSidebar({ open, onClose }: Props) {
         {user && (
           <div className="px-3 py-3 border-b border-outline-variant/20">
             <div className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl bg-surface-container-low">
-              <span className="text-lg leading-none">{user.avatar}</span>
+              <UserAvatar avatar={user.avatar} name={user.name} size="w-8 h-8" textSize="text-base" />
               <div className="min-w-0">
                 <p className="text-xs font-semibold text-on-surface truncate">{user.name}</p>
                 <p className="text-[10px] text-on-surface-variant truncate">{user.email}</p>

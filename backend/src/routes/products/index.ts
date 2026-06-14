@@ -18,7 +18,7 @@ export const productRoutes: FastifyPluginAsync = async (app) => {
       const filter: any = { active: true };
       if (q.category)   filter.category = q.category;
       if (q.brand)      filter.brand = q.brand;
-      if (q.petTypes)   filter.petTypes = { $in: (q.petTypes as string).split(",") };
+      if (q.petTypes)   filter.petTypes = { $in: (q.petTypes as string).split(",").map((t: string) => new RegExp(`^${t}$`, "i")) };
       if (q.maxPrice)   filter.price = { $lte: parseFloat(q.maxPrice) };
       if (q.minRating)  filter.rating = { $gte: parseFloat(q.minRating) };
       if (q.search)     filter.$text = { $search: q.search };

@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import BrandLogo from "../common/BrandLogo";
+import UserAvatar from "../common/UserAvatar";
 import { useStore } from "@/context/StoreContext";
 import { useAuth } from "@/context/AuthContext";
 
@@ -154,9 +155,7 @@ export default function Header() {
                   <>
                     <div className="flex flex-col border-b border-outline-variant/20 pb-2.5">
                       <div className="flex items-center gap-2">
-                        <span className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-sm shadow-inner shrink-0">
-                          {currentUser.avatar}
-                        </span>
+                        <UserAvatar avatar={currentUser.avatar} name={currentUser.name} size="w-8 h-8" textSize="text-sm" />
                         <div>
                           <h4 className="text-xs font-extrabold text-on-surface">{currentUser.name}</h4>
                           <p className="text-[10px] text-on-surface-variant">{currentUser.email}</p>
@@ -316,9 +315,7 @@ export default function Header() {
           
           {/* User Signin/Signout Profile Widget inside Drawer */}
           <div className="flex items-center gap-3 border-b border-outline-variant/25 pb-3">
-            <span className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-lg shrink-0 text-primary">
-              {currentUser ? currentUser.avatar : "👤"}
-            </span>
+            <UserAvatar avatar={currentUser?.avatar} name={currentUser?.name} size="w-10 h-10" textSize="text-lg" />
             <div className="flex-grow">
               <h4 className="text-sm font-bold text-on-surface">
                 {currentUser ? `Hello, ${currentUser.name}` : "Hello, Welcome"}

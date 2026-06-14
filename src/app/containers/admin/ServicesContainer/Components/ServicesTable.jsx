@@ -41,7 +41,7 @@ const ServiceRow = memo(function ServiceRow({ service, selected, onSelect, onTog
       </td>
 
       <td className="px-5 py-3.5">
-        <span className={`px-2.5 py-1 rounded-full text-[10px] font-semibold ${cat.bg} ${cat.text}`}>
+        <span className={`px-2.5 py-1 rounded-full text-[10px] font-semibold whitespace-nowrap ${cat.bg} ${cat.text}`}>
           {service.category}
         </span>
       </td>
@@ -147,22 +147,24 @@ export default memo(function ServicesTable({
             Showing <span className="font-bold">{from}–{to}</span> of{" "}
             <span className="font-bold">{total}</span> services
           </p>
-          <div className="flex gap-0.5">
-            <button
-              disabled={page === 1}
-              onClick={() => onPageChange(page - 1)}
-              className="p-1.5 text-on-surface-variant hover:bg-surface-container-high rounded-lg disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
-            >
-              <IconChevronLeft size={13} weight="bold" />
-            </button>
-            <button
-              disabled={page === totalPages}
-              onClick={() => onPageChange(page + 1)}
-              className="p-1.5 text-on-surface-variant hover:bg-surface-container-high rounded-lg disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
-            >
-              <IconChevronRight size={13} weight="bold" />
-            </button>
-          </div>
+          {totalPages > 1 && (
+            <div className="flex gap-0.5">
+              <button
+                disabled={page === 1}
+                onClick={() => onPageChange(page - 1)}
+                className="p-1.5 text-on-surface-variant hover:bg-surface-container-high rounded-lg disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
+              >
+                <IconChevronLeft size={13} weight="bold" />
+              </button>
+              <button
+                disabled={page === totalPages}
+                onClick={() => onPageChange(page + 1)}
+                className="p-1.5 text-on-surface-variant hover:bg-surface-container-high rounded-lg disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
+              >
+                <IconChevronRight size={13} weight="bold" />
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -202,9 +204,9 @@ export default memo(function ServicesTable({
             ) : (
               services.map((s) => (
                 <ServiceRow
-                  key={s.id}
+                  key={s._id ?? s.id}
                   service={s}
-                  selected={selectedIds.has(s.id)}
+                  selected={selectedIds.has(s._id ?? s.id)}
                   onSelect={onSelectRow}
                   onToggleFeatured={onToggleFeatured}
                   onMenuAction={onMenuAction}
