@@ -35,6 +35,7 @@ export default function RatingSummary({ product, onWriteReview }) {
     return () => clearTimeout(id);
   }, []);
 
+  if (!product) return null;
   const hasReviews = product.ratingDistribution && product.ratingDistribution.length > 0;
 
   return (

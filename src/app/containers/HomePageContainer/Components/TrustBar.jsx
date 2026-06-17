@@ -1,23 +1,33 @@
 "use client";
 
-import { IconMedical, IconEco, IconSupport, IconShipping } from "@/lib/icons";
+import { IconMedical, IconEco, IconSupport, IconShipping, IconShield, IconGift } from "@/lib/icons";
 
 const ITEMS = [
-  { Icon: IconMedical,  label: "Vet-Approved Nutrition" },
-  { Icon: IconEco,      label: "Eco-Friendly Packaging" },
-  { Icon: IconSupport,  label: "24/7 Expert Support"    },
-  { Icon: IconShipping, label: "Free Shipping on $50+"  },
+  { Icon: IconShipping, title: "Free Delivery",      sub: "On orders above ₹499"        },
+  { Icon: IconShield,   title: "100% Genuine",        sub: "Vet-approved products"        },
+  { Icon: IconMedical,  title: "Expert Support",      sub: "24/7 pet care guidance"       },
+  { Icon: IconGift,     title: "Easy Returns",        sub: "7-day hassle-free policy"     },
+  { Icon: IconEco,      title: "Eco-Friendly",        sub: "Sustainable packaging"        },
+  { Icon: IconSupport,  title: "Live Chat",           sub: "Talk to a pet expert now"     },
 ];
 
 export default function TrustBar() {
   return (
-    <section className="bg-surface-container-low py-2.5 border-b border-outline-variant/20">
-      <div className="max-w-container-max mx-auto px-4 md:px-margin-desktop">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
-          {ITEMS.map(({ Icon, label }) => (
-            <div key={label} className="flex items-center justify-center sm:justify-start gap-2">
-              <Icon size={16} className="text-primary shrink-0" weight="regular" />
-              <span className="text-xs font-medium text-on-surface">{label}</span>
+    <section className="bg-surface border-y border-outline-variant/20">
+      <div className="max-w-container-max mx-auto px-4 md:px-margin-desktop py-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          {ITEMS.map(({ Icon, title, sub }) => (
+            <div
+              key={title}
+              className="flex items-center gap-2.5 p-2 rounded-lg hover:bg-surface-container-low transition-colors"
+            >
+              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                <Icon size={16} className="text-primary" weight="regular" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-[11px] font-bold text-on-surface truncate">{title}</p>
+                <p className="text-[9px] text-on-surface-variant leading-tight truncate">{sub}</p>
+              </div>
             </div>
           ))}
         </div>

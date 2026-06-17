@@ -7,6 +7,12 @@ import { fmt } from "@/lib/currency";
 import PageHeader from "@/components/common/PageHeader";
 import { IconCheckCircle, IconArrowLeft, IconTag, IconCalendar, IconLock, IconShipping, IconArrowRight, IconStar, IconBag, IconPaw } from "@/lib/icons";
 
+const COUPON_SUGGESTIONS = [
+  { code: "PETS20",   desc: "20% off your first order" },
+  { code: "HDFC15",   desc: "15% off with HDFC card"   },
+  { code: "ARTPET10", desc: "Flat ₹100 off on ₹999+"   },
+];
+
 export default function ShoppingCartContainer() {
   const {
     cart,
@@ -28,6 +34,12 @@ export default function ShoppingCartContainer() {
     handleProceedToCheckout,
     checkoutSuccess,
   } = useShoppingCart();
+
+  const itemSavings = cart.reduce((acc, item) => {
+    const mrp = item.product.mrp ?? item.product.price;
+    return acc + Math.max(0, (mrp - item.product.price) * item.quantity);
+  }, 0);
+  const totalSavings = itemSavings + promoDiscount;
 
   return (
     <div className="w-full bg-background text-on-background transition-colors duration-300 relative">
@@ -153,6 +165,14 @@ export default function ShoppingCartContainer() {
                     <span className="text-sm font-black text-primary">{fmt(grandTotal)}</span>
                   </div>
 
+                  {/* Savings summary */}
+                  {totalSavings > 0 && (
+                    <div className="bg-green-50 border border-green-100 rounded-lg px-3 py-2 flex items-center justify-between">
+                      <span className="text-xs font-semibold text-green-700">You&apos;re saving</span>
+                      <span className="text-xs font-black text-green-700">{fmt(totalSavings)} 🎉</span>
+                    </div>
+                  )}
+
                   {/* Promo code */}
                   <div className="space-y-1.5">
                     <label className="text-[10px] font-semibold text-on-surface-variant">Promo Code</label>
@@ -175,6 +195,23 @@ export default function ShoppingCartContainer() {
                     </div>
                     {promoError && <p className="text-[10px] text-error font-semibold">{promoError}</p>}
                     {appliedCode && <p className="text-[10px] text-green-600 font-semibold">Promo applied!</p>}
+                    {!appliedCode && (
+                      <div className="space-y-1 pt-1">
+                        <p className="text-[10px] text-on-surface-variant font-semibold">Available coupons</p>
+                        {COUPON_SUGGESTIONS.map((c) => (
+                          <button
+                            key={c.code}
+                            onClick={() => { setPromoInput(c.code); applyPromoCode(c.code); }}
+                            className="w-full flex items-center justify-between px-2.5 py-1.5 border border-dashed border-primary/40 rounded-lg bg-primary/3 hover:bg-primary/8 text-left transition-colors cursor-pointer outline-none"
+                          >
+                            <span className="text-[10px] text-on-surface-variant">{c.desc}</span>
+                            <span className="text-[10px] font-black text-primary border border-primary/30 px-1.5 py-0.5 rounded bg-white">
+                              {c.code}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   {/* Estimated delivery note */}

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import useProductDetails from "./ProductDetailsContainer.hook";
-import { IconChevronRight, IconShipping, IconCartSimple, IconDelete, IconRemove, IconAdd, IconShield, IconEco, IconBag, IconCheckCircle, IconChevronDown } from "@/lib/icons";
+import { IconChevronRight, IconShipping, IconCartSimple, IconDelete, IconRemove, IconAdd, IconShield, IconEco, IconBag, IconCheckCircle, IconChevronDown, IconTag, IconLocation, IconLightning, IconCopy } from "@/lib/icons";
 import { fmt } from "@/lib/currency";
 import ReviewCard from "@/app/containers/ReviewsContainer/Components/ReviewCard";
 import RatingSummary from "@/app/containers/ReviewsContainer/Components/RatingSummary";
@@ -32,6 +32,110 @@ function transformReview(r, idx) {
       ? new Date(r.createdAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })
       : (r.date ?? ""),
   };
+}
+
+const OFFERS = [
+  { code: "PETS20",   desc: "20% off on first order",              detail: "Max discount ₹200"  },
+  { code: "HDFC15",   desc: "15% off with HDFC Bank credit card",  detail: "Min order ₹499"     },
+  { code: "ARTPET10", desc: "Flat ₹100 off on orders above ₹999",  detail: "No max cap"         },
+];
+
+function OffersSection() {
+  const [expanded, setExpanded] = useState(false);
+  const [copied, setCopied] = useState(null);
+
+  function copyCode(code) {
+    if (typeof navigator !== "undefined") navigator.clipboard?.writeText(code);
+    setCopied(code);
+    setTimeout(() => setCopied(null), 1800);
+  }
+
+  const visible = expanded ? OFFERS : OFFERS.slice(0, 2);
+
+  return (
+    <div className="border border-outline-variant/30 rounded-xl overflow-hidden bg-white dark:bg-surface-container-lowest">
+      <div className="flex items-center gap-2 px-3 py-2.5 border-b border-outline-variant/20 bg-surface-container/40">
+        <IconTag size={14} className="text-primary" weight="fill" />
+        <span className="text-xs font-bold text-on-surface">Available Offers</span>
+      </div>
+      <div className="divide-y divide-outline-variant/10">
+        {visible.map((o) => (
+          <div key={o.code} className="flex items-start gap-3 px-3 py-2.5">
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-medium text-on-surface leading-snug">{o.desc}</p>
+              <p className="text-[10px] text-on-surface-variant mt-0.5">{o.detail}</p>
+            </div>
+            <button
+              onClick={() => copyCode(o.code)}
+              className="shrink-0 flex items-center gap-1 border border-dashed border-primary/50 text-primary text-[10px] font-bold px-2 py-1 rounded cursor-pointer bg-transparent hover:bg-primary/5 transition-colors whitespace-nowrap"
+            >
+              {copied === o.code ? "✓ Copied!" : (
+                <>
+                  <span>{o.code}</span>
+                  <IconCopy size={10} weight="regular" />
+                </>
+              )}
+            </button>
+          </div>
+        ))}
+      </div>
+      {OFFERS.length > 2 && (
+        <button
+          onClick={() => setExpanded((v) => !v)}
+          className="w-full text-[10px] text-primary font-semibold py-2 hover:bg-surface-container/40 transition-colors cursor-pointer border-none bg-transparent"
+        >
+          {expanded ? "Show less" : `+${OFFERS.length - 2} more offers`}
+        </button>
+      )}
+    </div>
+  );
+}
+
+function DeliveryCheck() {
+  const [pin, setPin] = useState("");
+  const [result, setResult] = useState(null);
+
+  function checkPin() {
+    if (pin.length !== 6) return;
+    // Simulate: pins starting with 4 or 5 = fast delivery, otherwise standard
+    const fast = ["4", "5"].includes(pin[0]);
+    setResult(fast
+      ? { ok: true,  msg: "Delivery by Tomorrow, 10am – 6pm" }
+      : { ok: true,  msg: "Delivery in 3–5 business days" });
+  }
+
+  return (
+    <div className="space-y-2">
+      <p className="text-xs font-bold text-on-surface flex items-center gap-1.5">
+        <IconLocation size={13} className="text-primary" weight="fill" />
+        Check delivery to your pincode
+      </p>
+      <div className="flex gap-2">
+        <input
+          type="text"
+          inputMode="numeric"
+          maxLength={6}
+          value={pin}
+          onChange={(e) => { setPin(e.target.value.replace(/\D/g, "")); setResult(null); }}
+          placeholder="Enter 6-digit pincode"
+          className="flex-1 border border-outline-variant/40 rounded-lg px-3 py-2 text-xs outline-none focus:border-primary text-on-surface bg-white dark:bg-surface-container-lowest placeholder:text-on-surface-variant/50"
+        />
+        <button
+          onClick={checkPin}
+          disabled={pin.length !== 6}
+          className="px-4 py-2 bg-primary text-white text-xs font-bold rounded-lg disabled:opacity-40 cursor-pointer border-none transition-opacity"
+        >
+          Check
+        </button>
+      </div>
+      {result && (
+        <p className={`text-xs font-medium flex items-center gap-1 ${result.ok ? "text-green-600" : "text-red-500"}`}>
+          <IconShipping size={13} weight="fill" />
+          {result.msg}
+        </p>
+      )}
+    </div>
+  );
 }
 
 export default function ProductDetailsContainer({ productId }) {
@@ -231,10 +335,24 @@ export default function ProductDetailsContainer({ productId }) {
               </div>
             </div>
 
+            {/* Urgency signals */}
+            <div className="flex items-center gap-3 flex-wrap">
+              {product.stock != null && product.stock <= 5 && (
+                <span className="flex items-center gap-1 text-xs font-bold text-red-600 bg-red-50 border border-red-100 px-2.5 py-1 rounded-full">
+                  <IconLightning size={12} weight="fill" />
+                  Only {product.stock} left in stock!
+                </span>
+              )}
+              <span className="flex items-center gap-1 text-xs text-on-surface-variant bg-surface-container px-2.5 py-1 rounded-full">
+                <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse inline-block" />
+                {Math.floor(12 + (product._id?.charCodeAt(0) ?? 3) % 19)} people viewing this now
+              </span>
+            </div>
+
             {/* Pricing and Cart Box */}
             <div className="p-5 bg-surface-container-low rounded-2xl border border-outline-variant/20 shadow-sm space-y-4">
               <div className="flex items-baseline flex-wrap gap-2.5">
-                <span className="text-2xl md:text-3xl font-extrabold text-primary">
+                <span className="text-2xl md:text-3xl font-extrabold text-on-surface">
                   {fmt(displayPrice)}
                 </span>
                 {product.mrp && (
@@ -243,8 +361,8 @@ export default function ProductDetailsContainer({ productId }) {
                   </span>
                 )}
                 {discountPercent > 0 && (
-                  <span className="bg-error-container text-on-error-container px-2 py-0.5 rounded-lg text-xs font-bold uppercase tracking-wider">
-                    -{discountPercent}% OFF
+                  <span className="bg-green-100 text-green-700 px-2 py-0.5 rounded-lg text-xs font-bold">
+                    {discountPercent}% off
                   </span>
                 )}
               </div>
@@ -346,6 +464,12 @@ export default function ProductDetailsContainer({ productId }) {
                 <span className="font-bold text-xs text-on-surface">100% Organic</span>
               </div>
             </div>
+
+            {/* Available Offers */}
+            <OffersSection />
+
+            {/* Delivery Pincode Check */}
+            <DeliveryCheck />
 
           </div>
         </div>
@@ -602,6 +726,30 @@ export default function ProductDetailsContainer({ productId }) {
         </section>
 
       </main>
+
+      {/* Sticky mobile CTA bar */}
+      <div className="fixed bottom-16 left-0 right-0 z-40 md:hidden bg-white dark:bg-surface-container-lowest border-t border-outline-variant/20 px-4 py-2.5 flex items-center gap-3 shadow-[0_-4px_12px_rgba(0,0,0,0.08)]">
+        <div className="min-w-0 shrink-0">
+          <p className="text-base font-extrabold text-on-surface leading-none">{fmt(displayPrice)}</p>
+          {discountPercent > 0 && (
+            <p className="text-[10px] text-green-600 font-bold mt-0.5">{discountPercent}% off</p>
+          )}
+        </div>
+        <div className="flex-1 flex gap-2">
+          <button
+            onClick={() => { handleAddToCart(); setInCart(true); }}
+            className="flex-1 bg-primary/10 text-primary border border-primary/30 font-bold text-xs py-2.5 rounded-lg active:scale-95 transition-all cursor-pointer"
+          >
+            Add to Cart
+          </button>
+          <button
+            onClick={handleBuyNow}
+            className="flex-1 bg-primary text-white font-bold text-xs py-2.5 rounded-lg active:scale-95 transition-all cursor-pointer border-none"
+          >
+            Buy Now
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

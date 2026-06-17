@@ -1,14 +1,22 @@
 "use client";
 
-import useHomePage        from "./HomePageContainer.hook";
-import TrustBar           from "./Components/TrustBar";
-import HeroSection        from "./Components/HeroSection";
-import ShopByPet          from "./Components/ShopByPet";
-import LifeStageSection   from "./Components/LifeStageSection";
-import BestSellers        from "./Components/BestSellers";
-import ServicesSection    from "./Components/ServicesSection";
-import BundlePromo        from "./Components/BundlePromo";
-import Testimonials       from "./Components/Testimonials";
+import useHomePage          from "./HomePageContainer.hook";
+import HeroSection          from "./Components/HeroSection";
+import FlashSaleSection     from "./Components/FlashSaleSection";
+import ShopByPet            from "./Components/ShopByPet";
+import ShopByCategoryGrid   from "./Components/ShopByCategoryGrid";
+import FeaturedBrands       from "./Components/FeaturedBrands";
+import BestSellers          from "./Components/BestSellers";
+import OfferZoneBanners     from "./Components/OfferZoneBanners";
+import NewArrivalsSection   from "./Components/NewArrivalsSection";
+import LifeStageSection     from "./Components/LifeStageSection";
+import SeasonalBanner       from "./Components/SeasonalBanner";
+import ServicesSection      from "./Components/ServicesSection";
+import BlogTipsSection      from "./Components/BlogTipsSection";
+import BundlePromo          from "./Components/BundlePromo";
+import TrustBar             from "./Components/TrustBar";
+import Testimonials         from "./Components/Testimonials";
+import NewsletterSection    from "./Components/NewsletterSection";
 
 export default function HomePageContainer() {
   const {
@@ -22,19 +30,22 @@ export default function HomePageContainer() {
   return (
     <div className="min-h-screen bg-background text-on-background pb-16 md:pb-0">
 
-      {/* 1. Trust strip */}
-      <TrustBar />
-
-      {/* 2. Hero */}
+      {/* 1. Hero carousel */}
       <HeroSection />
 
-      {/* 3. Shop by Pet */}
+      {/* 2. Flash Sale / Deal of the Day */}
+      <FlashSaleSection addedItems={addedItems} handleAddToCart={handleAddToCart} />
+
+      {/* 3. Shop by Pet (circles) */}
       <ShopByPet />
 
-      {/* 4. Shop by Life Stage */}
-      <LifeStageSection />
+      {/* 4. Shop by Category grid */}
+      <ShopByCategoryGrid />
 
-      {/* 5. Best Sellers */}
+      {/* 5. Featured Brands */}
+      <FeaturedBrands />
+
+      {/* 6. Best Sellers (tabbed) */}
       <BestSellers
         premiumShowcase={premiumShowcase}
         addedItems={addedItems}
@@ -43,14 +54,35 @@ export default function HomePageContainer() {
         toggleFavorite={toggleFavorite}
       />
 
-      {/* 6. Services */}
+      {/* 7. Offer Zone banners */}
+      <OfferZoneBanners />
+
+      {/* 8. New Arrivals horizontal scroll */}
+      <NewArrivalsSection addedItems={addedItems} handleAddToCart={handleAddToCart} />
+
+      {/* 9. Shop by Life Stage */}
+      <LifeStageSection />
+
+      {/* 10. Seasonal campaign banner */}
+      <SeasonalBanner />
+
+      {/* 11. Services */}
       <ServicesSection />
 
-      {/* 7. Bundle promo */}
+      {/* 12. Pet Care Blog */}
+      <BlogTipsSection />
+
+      {/* 13. Bundle promo */}
       <BundlePromo />
 
-      {/* 8. Testimonials */}
+      {/* 14. Trust indicators */}
+      <TrustBar />
+
+      {/* 15. Testimonials */}
       <Testimonials />
+
+      {/* 16. Newsletter + community */}
+      <NewsletterSection />
 
     </div>
   );

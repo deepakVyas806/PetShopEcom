@@ -29,7 +29,7 @@ export default function LifeStageSection() {
     <section className="max-w-container-max mx-auto px-4 md:px-margin-desktop py-5">
       <div className="text-center mb-4">
         <h2 className="text-sm font-bold text-on-surface">Shop by Life Stage</h2>
-        <p className="text-xs text-on-surface-variant mt-0.5">Tailored nutrition for every chapter of their life</p>
+        <p className="text-[11px] text-on-surface-variant mt-0.5">Tailored nutrition for every chapter of their life</p>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
         {STAGES.map(({ label, sub, href, image }) => (

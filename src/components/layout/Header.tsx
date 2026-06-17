@@ -3,15 +3,66 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { 
-  Menu, X, LogOut, Shield, MapPin, Search, ShoppingCart, 
-  ChevronDown, User, Calendar, ClipboardList, Moon, Sun, Settings 
+import {
+  Menu, X, LogOut, Shield, MapPin, Search, ShoppingCart,
+  ChevronDown, Calendar, ClipboardList, Moon, Sun, Settings
 } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import BrandLogo from "../common/BrandLogo";
 import UserAvatar from "../common/UserAvatar";
 import { useStore } from "@/context/StoreContext";
 import { useAuth } from "@/context/AuthContext";
+
+const PROMOS = [
+  { text: "🐾 Use code PETS20 for 20% off your first order", highlight: "PETS20" },
+  { text: "🚚 Free delivery on all orders above ₹499 — Shop Now", highlight: "₹499" },
+  { text: "⭐ New arrivals: Premium grooming kits for dogs & cats", highlight: null },
+  { text: "🎁 Buy 2 get 1 free on all Drools products this week", highlight: null },
+];
+
+const PET_QUICK_LINKS = [
+  { label: "🐕 Dogs",       href: "/marketplace?category=dogs" },
+  { label: "🐱 Cats",       href: "/marketplace?category=cats" },
+  { label: "🦜 Birds",      href: "/marketplace?category=birds" },
+  { label: "🐠 Fish",       href: "/marketplace?category=fish" },
+  { label: "🐹 Small Pets", href: "/marketplace?category=small_pets" },
+];
+
+function AnnouncementBanner() {
+  const [idx,       setIdx]       = useState(0);
+  const [visible,   setVisible]   = useState(true);
+  const [animating, setAnimating] = useState(false);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setAnimating(true);
+      setTimeout(() => {
+        setIdx((p) => (p + 1) % PROMOS.length);
+        setAnimating(false);
+      }, 300);
+    }, 4500);
+    return () => clearInterval(id);
+  }, []);
+
+  if (!visible) return null;
+
+  const promo = PROMOS[idx];
+
+  return (
+    <div className="bg-primary text-white text-[11px] font-medium flex items-center justify-center gap-2 px-4 py-1.5 relative select-none">
+      <span className={`transition-opacity duration-300 text-center ${animating ? "opacity-0" : "opacity-100"}`}>
+        {promo.text}
+      </span>
+      <button
+        onClick={() => setVisible(false)}
+        className="absolute right-3 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition-colors cursor-pointer border-none bg-transparent p-0.5"
+        aria-label="Dismiss"
+      >
+        <X size={12} />
+      </button>
+    </div>
+  );
+}
 
 export default function Header() {
   const pathname = usePathname();
@@ -63,7 +114,10 @@ export default function Header() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 flex flex-col font-sans select-none">
-      
+
+      {/* TIER 0: Announcement Banner */}
+      <AnnouncementBanner />
+
       {/* TIER 1: Main Navigation Bar - Glassmorphism */}
       <div className="bg-surface/80 backdrop-blur-md text-on-surface py-2 px-4 flex items-center justify-between gap-4 h-[60px] md:h-[65px] border-b border-outline-variant/25 shadow-sm transition-all duration-300">
         
@@ -269,49 +323,46 @@ export default function Header() {
         </form>
       </div>
 
-      {/* TIER 2: Secondary Category Strip - Translucent Container */}
-      <div className="bg-surface-container-low/90 backdrop-blur-md text-on-surface-variant text-xs px-4 py-2 flex items-center justify-between gap-4 h-[44px] border-b border-outline-variant/20 shadow-sm transition-all duration-300">
-        
-        {/* Navigation Categories Links */}
-        <div className="flex items-center gap-2 overflow-x-auto whitespace-nowrap scrollbar-none py-1">
-          {/* Hamburger All shortcut */}
-          <button className="flex items-center gap-1.5 font-bold text-on-surface hover:bg-surface-container px-3 py-1.5 rounded-full transition-all cursor-pointer border-none outline-none">
-            <Menu className="w-4 h-4" />
-            <span>All</span>
+      {/* TIER 2: Category / Pet Quick-Links Strip */}
+      <div className="bg-surface-container-low/90 backdrop-blur-md text-on-surface-variant text-xs px-4 py-2 flex items-center justify-between gap-4 h-[40px] border-b border-outline-variant/20 shadow-sm">
+
+        {/* Left: pet category quick links + nav */}
+        <div className="flex items-center gap-1 overflow-x-auto no-scrollbar whitespace-nowrap">
+          {/* All hamburger */}
+          <button className="flex items-center gap-1.5 font-bold text-on-surface hover:bg-surface-container px-2.5 py-1 rounded-full transition-all cursor-pointer border-none outline-none shrink-0">
+            <Menu className="w-3.5 h-3.5" />
+            <span className="text-[11px]">All</span>
           </button>
- 
-          {navItems.map((item) => {
-            const isActive = pathname === item.href;
-            return (
-              <Link
-                key={item.label}
-                href={item.href}
-                className={`font-bold text-xs px-3.5 py-1.5 rounded-full transition-all duration-300 hover:scale-[1.02] cursor-pointer ${
-                  isActive 
-                    ? "bg-primary-container text-primary border border-primary-container/20 shadow-sm font-extrabold" 
-                    : "text-on-surface-variant hover:bg-surface-container hover:text-on-surface border border-transparent"
-                }`}
-              >
-                {item.label}
-              </Link>
-            );
-          })}
- 
-          <span className="text-on-surface-variant/30 font-light px-1 hidden sm:inline">|</span>
-          <span className="hover:bg-surface-container px-3.5 py-1.5 rounded-full transition-all cursor-pointer text-on-surface-variant hover:text-on-surface hidden sm:inline font-bold">Today's Deals</span>
-          <span className="hover:bg-surface-container px-3.5 py-1.5 rounded-full transition-all cursor-pointer text-on-surface-variant hover:text-on-surface hidden sm:inline font-bold">Gift Cards</span>
-          <span className="hover:bg-surface-container px-3.5 py-1.5 rounded-full transition-all cursor-pointer text-on-surface-variant hover:text-on-surface hidden sm:inline font-bold">Customer Care</span>
+
+          <span className="text-outline-variant/40 mx-0.5">|</span>
+
+          {/* Pet quick-links */}
+          {PET_QUICK_LINKS.map((link) => (
+            <Link
+              key={link.label}
+              href={link.href}
+              className="text-[11px] font-semibold px-2.5 py-1 rounded-full transition-all hover:bg-surface-container hover:text-on-surface text-on-surface-variant shrink-0"
+            >
+              {link.label}
+            </Link>
+          ))}
+
+          <span className="text-outline-variant/40 mx-0.5">|</span>
+          <Link href="/marketplace" className="text-[11px] font-bold text-orange-600 hover:bg-orange-50 px-2.5 py-1 rounded-full shrink-0 transition-all">
+            ⚡ Today&apos;s Deals
+          </Link>
         </div>
- 
-        {/* Right side Promo strip text */}
-        <div className="hidden md:block text-xs font-bold text-primary hover:underline cursor-pointer tracking-wider whitespace-nowrap">
-          Save 20% on Vet Appointments | Code: VET20
+
+        {/* Right: promo code */}
+        <div className="hidden lg:flex items-center gap-1 text-[10px] font-bold text-primary whitespace-nowrap shrink-0">
+          <span className="bg-primary/10 px-2 py-0.5 rounded font-black tracking-wider text-primary">VET20</span>
+          <span className="text-on-surface-variant font-medium">— 20% off vet visits</span>
         </div>
       </div>
 
-      {/* Mobile Menu Panel (Slide Down Overlay) */}
+      {/* Mobile Menu Panel */}
       {mobileMenuOpen && (
-        <div className="md:hidden absolute inset-x-0 top-[100px] bg-surface border-b border-outline-variant/30 p-4 shadow-2xl flex flex-col gap-4 font-sans text-left transition-all max-h-[80vh] overflow-y-auto z-40 text-on-surface">
+        <div className="md:hidden absolute inset-x-0 top-full bg-surface border-b border-outline-variant/30 p-4 shadow-2xl flex flex-col gap-4 font-sans text-left max-h-[80vh] overflow-y-auto z-40 text-on-surface">
           
           {/* User Signin/Signout Profile Widget inside Drawer */}
           <div className="flex items-center gap-3 border-b border-outline-variant/25 pb-3">
