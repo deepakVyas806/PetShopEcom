@@ -1,155 +1,107 @@
 "use client";
 
 import Link from "next/link";
-import {
-  IconBowlFood,
-  IconGameController,
-  IconPill,
-  IconGroom,
-  IconBed,
-  IconTag,
-  IconFish,
-  IconBird,
-} from "@/lib/icons";
+import { useState } from "react";
+import { IconArrowRight } from "@/lib/icons";
 
 const CATEGORIES = [
   {
-    label:  "Food & Treats",
-    Icon:   IconBowlFood,
-    href:   "/marketplace?type=food",
-    bg:     "#FFF3E0",
-    iconBg: "#FF9800",
-    text:   "#BF360C",
-    count:  "240+ items",
+    label: "Food & Treats",
+    href:  "/marketplace?type=food",
+    image: "https://images.unsplash.com/photo-1589941013453-ec89f33b5e95?w=300&q=80&fit=crop&auto=format",
+    initial: "🍗",
   },
   {
-    label:  "Toys & Play",
-    Icon:   IconGameController,
-    href:   "/marketplace?type=toy",
-    bg:     "#FFF8E1",
-    iconBg: "#FFC107",
-    text:   "#E65100",
-    count:  "130+ items",
+    label: "Toys & Play",
+    href:  "/marketplace?type=toy",
+    image: "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1?w=300&q=80&fit=crop&auto=format",
+    initial: "🎾",
   },
   {
-    label:  "Health & Pharma",
-    Icon:   IconPill,
-    href:   "/marketplace?type=health",
-    bg:     "#E8F5E9",
-    iconBg: "#43A047",
-    text:   "#1B5E20",
-    count:  "180+ items",
+    label: "Health & Pharma",
+    href:  "/marketplace?type=health",
+    image: "https://images.unsplash.com/photo-1628009368231-7bb7cfcb0def?w=300&q=80&fit=crop&auto=format",
+    initial: "💊",
   },
   {
-    label:  "Grooming",
-    Icon:   IconGroom,
-    href:   "/marketplace?type=grooming",
-    bg:     "#FCE4EC",
-    iconBg: "#E91E63",
-    text:   "#880E4F",
-    count:  "90+ items",
+    label: "Grooming",
+    href:  "/marketplace?type=grooming",
+    image: "https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?w=300&q=80&fit=crop&auto=format",
+    initial: "✂️",
   },
   {
-    label:  "Beds & Houses",
-    Icon:   IconBed,
-    href:   "/marketplace?type=beds",
-    bg:     "#E3F2FD",
-    iconBg: "#1E88E5",
-    text:   "#0D47A1",
-    count:  "70+ items",
+    label: "Beds & Houses",
+    href:  "/marketplace?type=beds",
+    image: "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=300&q=80&fit=crop&auto=format",
+    initial: "🛏️",
   },
   {
-    label:  "Accessories",
-    Icon:   IconTag,
-    href:   "/marketplace?type=accessories",
-    bg:     "#F3E5F5",
-    iconBg: "#8E24AA",
-    text:   "#4A148C",
-    count:  "320+ items",
+    label: "Accessories",
+    href:  "/marketplace?type=accessories",
+    image: "https://images.unsplash.com/photo-1601758125946-6ec2ef64daf8?w=300&q=80&fit=crop&auto=format",
+    initial: "🏷️",
   },
   {
-    label:  "Aquatics",
-    Icon:   IconFish,
-    href:   "/marketplace?category=fish",
-    bg:     "#E0F7FA",
-    iconBg: "#00ACC1",
-    text:   "#006064",
-    count:  "60+ items",
+    label: "Aquatics",
+    href:  "/marketplace?category=fish",
+    image: "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?w=300&q=80&fit=crop&auto=format",
+    initial: "🐟",
   },
   {
-    label:  "Birds & Exotics",
-    Icon:   IconBird,
-    href:   "/marketplace?category=birds",
-    bg:     "#F1F8E9",
-    iconBg: "#7CB342",
-    text:   "#33691E",
-    count:  "45+ items",
+    label: "Birds & Exotics",
+    href:  "/marketplace?category=birds",
+    image: "https://images.unsplash.com/photo-1552728089-57bdde30beb3?w=300&q=80&fit=crop&auto=format",
+    initial: "🦜",
   },
 ];
 
+function CategoryCard({ label, href, image, initial }) {
+  const [errored, setErrored] = useState(false);
+
+  return (
+    <Link href={href} className="group flex flex-col items-center gap-2 min-w-0">
+      {/* Square image */}
+      <div className="w-full aspect-square rounded-2xl overflow-hidden transition-transform duration-300 group-hover:scale-95">
+        {!errored ? (
+          <img
+            src={image}
+            alt={label}
+            className="w-full h-full object-cover"
+            onError={() => setErrored(true)}
+          />
+        ) : (
+          <div className="w-full h-full bg-surface-container flex items-center justify-center text-2xl">
+            {initial}
+          </div>
+        )}
+      </div>
+
+      {/* Label */}
+      <span className="text-[11px] font-semibold text-on-surface-variant group-hover:text-on-surface transition-colors duration-200 text-center leading-tight w-full truncate">
+        {label}
+      </span>
+    </Link>
+  );
+}
+
 export default function ShopByCategoryGrid() {
   return (
-    <section className="w-full bg-white border-y" style={{ borderColor: "rgba(0,0,0,0.06)" }}>
-      <div className="max-w-container-max mx-auto px-4 md:px-margin-desktop py-8">
+    <section className="w-full py-7 bg-surface-container-lowest">
+      <div className="max-w-container-max mx-auto px-4 md:px-margin-desktop">
 
         {/* Header */}
-        <div className="flex items-end justify-between mb-7">
-          <div>
-            <h2 className="text-sm font-bold text-on-surface">Shop by Category</h2>
-            <p className="text-[11px] text-on-surface-variant mt-0.5">
-              Everything your pet needs, all in one place
-            </p>
-          </div>
-          <Link href="/marketplace" className="text-xs font-bold text-primary hover:underline hidden sm:block">
-            See all →
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="text-base font-extrabold text-on-surface">Shop by Category</h2>
+          <Link href="/marketplace" className="flex items-center gap-0.5 text-xs font-bold text-primary hover:underline">
+            See all <IconArrowRight size={13} weight="bold" />
           </Link>
         </div>
 
-        {/* Grid — 4 cols mobile, 8 cols desktop */}
-        <div className="grid grid-cols-4 md:grid-cols-8 gap-x-3 gap-y-6 md:gap-x-4 md:gap-y-8">
-          {CATEGORIES.map(({ label, Icon, href, bg, iconBg, text, count }) => (
-            <Link
-              key={label}
-              href={href}
-              className="group flex flex-col items-center gap-2.5"
-            >
-              {/* Icon circle */}
-              <div
-                className="w-full aspect-square max-w-[84px] mx-auto rounded-full flex items-center justify-center transition-all duration-200 group-hover:scale-105 group-hover:shadow-xl"
-                style={{ background: bg }}
-              >
-                <div
-                  className="w-[56%] h-[56%] rounded-full flex items-center justify-center"
-                  style={{ background: iconBg }}
-                >
-                  <Icon size={22} weight="fill" className="text-white" />
-                </div>
-              </div>
-
-              {/* Label */}
-              <div className="text-center">
-                <p
-                  className="text-[10px] md:text-[11px] font-black leading-tight"
-                  style={{ color: text }}
-                >
-                  {label}
-                </p>
-                <p className="text-[8px] md:text-[9px] text-on-surface-variant mt-0.5">
-                  {count}
-                </p>
-              </div>
-            </Link>
+        {/* 4-col mobile → 8-col desktop */}
+        <div className="grid grid-cols-4 md:grid-cols-8 gap-x-3 gap-y-4 md:gap-x-4">
+          {CATEGORIES.map((cat) => (
+            <CategoryCard key={cat.label} {...cat} />
           ))}
-        </div>
-
-        {/* Mobile "see all" */}
-        <div className="flex justify-center mt-6 sm:hidden">
-          <Link
-            href="/marketplace"
-            className="text-xs font-bold text-primary border border-primary/30 px-6 py-2 rounded-full hover:bg-primary hover:text-white transition-all"
-          >
-            See all categories →
-          </Link>
         </div>
 
       </div>
