@@ -16,8 +16,13 @@ export default function ProductsListContainer() {
     loading,
     loadingMore,
     hasMore,
+    brands,
+    petTypeOptions,
+    categoryOptions,
     selectedPetTypes,
     handlePetTypeChange,
+    selectedCategories,
+    handleCategoryChange,
     priceRange,
     setPriceRange,
     selectedBrands,
@@ -52,9 +57,10 @@ export default function ProductsListContainer() {
 
   const handleClearAll = () => {
     selectedPetTypes.forEach((t) => handlePetTypeChange(t));
-    setPriceRange(100000);
-    setRatingFilter(false);
+    selectedCategories.forEach((c) => handleCategoryChange(c));
     selectedBrands.forEach((b) => handleBrandChange(b));
+    setPriceRange(5000);
+    setRatingFilter(false);
   };
 
   return (
@@ -69,8 +75,10 @@ export default function ProductsListContainer() {
           onListSearch={setSearchQuery}
           selectedPetTypes={selectedPetTypes}
           onClearPetType={handlePetTypeChange}
+          selectedCategories={selectedCategories}
+          onClearCategory={handleCategoryChange}
           priceRange={priceRange}
-          onClearPrice={() => setPriceRange(100000)}
+          onClearPrice={() => setPriceRange(5000)}
           ratingFilter={ratingFilter}
           onClearRating={() => setRatingFilter(false)}
           selectedBrands={selectedBrands}
@@ -85,12 +93,18 @@ export default function ProductsListContainer() {
           <SidebarFilters
             selectedPetTypes={selectedPetTypes}
             onPetTypeChange={handlePetTypeChange}
+            petTypeOptions={petTypeOptions}
+            selectedCategories={selectedCategories}
+            onCategoryChange={handleCategoryChange}
+            categoryOptions={categoryOptions}
             priceRange={priceRange}
             onPriceRangeChange={setPriceRange}
             selectedBrands={selectedBrands}
             onBrandChange={handleBrandChange}
+            brands={brands}
             ratingFilter={ratingFilter}
             onRatingFilterChange={setRatingFilter}
+            onReset={handleClearAll}
           />
 
           <section className="flex-1 min-w-0">
@@ -159,12 +173,18 @@ export default function ProductsListContainer() {
         onClose={() => setMobileFiltersOpen(false)}
         selectedPetTypes={selectedPetTypes}
         onPetTypeChange={handlePetTypeChange}
+        petTypeOptions={petTypeOptions}
+        selectedCategories={selectedCategories}
+        onCategoryChange={handleCategoryChange}
+        categoryOptions={categoryOptions}
         priceRange={priceRange}
         onPriceRangeChange={setPriceRange}
         selectedBrands={selectedBrands}
         onBrandChange={handleBrandChange}
+        brands={brands}
         ratingFilter={ratingFilter}
         onRatingFilterChange={setRatingFilter}
+        onReset={handleClearAll}
       />
     </div>
   );

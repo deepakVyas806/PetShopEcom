@@ -6,7 +6,9 @@ import { ANIMAL_TYPES, LIFE_STAGES } from "../../data";
 const inp = "w-full px-3 py-2.5 bg-surface-container-low border border-outline-variant/50 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-primary/30 text-on-surface placeholder:text-on-surface-variant";
 const lbl = "block text-[10px] font-bold uppercase tracking-wide text-on-surface-variant mb-1.5";
 
-export default memo(function SpecificationsCard({ weight, dimensions, lifeStage, animalTypes, onField, onToggleAnimalType }) {
+export default memo(function SpecificationsCard({ weight, dimensions, lifeStage, animalTypes, lifeStages, petTypes, onField, onToggleAnimalType }) {
+  const STAGES   = lifeStages?.length ? lifeStages : LIFE_STAGES;
+  const PET_OPTS = petTypes?.length   ? petTypes   : ANIMAL_TYPES;
   return (
     <section className="bg-surface-container-lowest rounded-xl p-5 border border-outline-variant/30 shadow-sm">
       <h3 className="text-xs font-bold text-on-surface mb-5 flex items-center gap-2">
@@ -43,7 +45,7 @@ export default memo(function SpecificationsCard({ weight, dimensions, lifeStage,
             onChange={(e) => onField("lifeStage", e.target.value)}
             className={`${inp} cursor-pointer`}
           >
-            {LIFE_STAGES.map((s) => <option key={s}>{s}</option>)}
+            {STAGES.map((s) => <option key={s}>{s}</option>)}
           </select>
         </div>
       </div>
@@ -60,7 +62,7 @@ export default memo(function SpecificationsCard({ weight, dimensions, lifeStage,
           )}
         </label>
         <div className="flex flex-wrap gap-2">
-          {ANIMAL_TYPES.map((type) => {
+          {PET_OPTS.map((type) => {
             const active = animalTypes.includes(type);
             return (
               <button

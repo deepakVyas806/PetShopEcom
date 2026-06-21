@@ -34,13 +34,7 @@ function transformReview(r, idx) {
   };
 }
 
-const OFFERS = [
-  { code: "PETS20",   desc: "20% off on first order",              detail: "Max discount ₹200"  },
-  { code: "HDFC15",   desc: "15% off with HDFC Bank credit card",  detail: "Min order ₹499"     },
-  { code: "ARTPET10", desc: "Flat ₹100 off on orders above ₹999",  detail: "No max cap"         },
-];
-
-function OffersSection() {
+function OffersSection({ coupons = [] }) {
   const [expanded, setExpanded] = useState(false);
   const [copied, setCopied] = useState(null);
 
@@ -50,7 +44,9 @@ function OffersSection() {
     setTimeout(() => setCopied(null), 1800);
   }
 
-  const visible = expanded ? OFFERS : OFFERS.slice(0, 2);
+  if (coupons.length === 0) return null;
+
+  const visible = expanded ? coupons : coupons.slice(0, 2);
 
   return (
     <div className="border border-outline-variant/30 rounded-xl overflow-hidden bg-white dark:bg-surface-container-lowest">
@@ -59,32 +55,42 @@ function OffersSection() {
         <span className="text-xs font-bold text-on-surface">Available Offers</span>
       </div>
       <div className="divide-y divide-outline-variant/10">
-        {visible.map((o) => (
-          <div key={o.code} className="flex items-start gap-3 px-3 py-2.5">
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-medium text-on-surface leading-snug">{o.desc}</p>
-              <p className="text-[10px] text-on-surface-variant mt-0.5">{o.detail}</p>
+        {visible.map((o) => {
+          const desc = o.description ||
+            (o.discountType === "percent"
+              ? `${o.value}% off${o.minOrder > 0 ? ` on orders above ₹${o.minOrder}` : ""}`
+              : `Flat ₹${o.value} off${o.minOrder > 0 ? ` on orders above ₹${o.minOrder}` : ""}`);
+          return (
+            <div key={o.code} className="flex items-start gap-3 px-3 py-2.5">
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-medium text-on-surface leading-snug">{desc}</p>
+                {o.endDate && (
+                  <p className="text-[10px] text-on-surface-variant mt-0.5">
+                    Valid till {new Date(o.endDate).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
+                  </p>
+                )}
+              </div>
+              <button
+                onClick={() => copyCode(o.code)}
+                className="shrink-0 flex items-center gap-1 border border-dashed border-primary/50 text-primary text-[10px] font-bold px-2 py-1 rounded cursor-pointer bg-transparent hover:bg-primary/5 transition-colors whitespace-nowrap"
+              >
+                {copied === o.code ? "✓ Copied!" : (
+                  <>
+                    <span>{o.code}</span>
+                    <IconCopy size={10} weight="regular" />
+                  </>
+                )}
+              </button>
             </div>
-            <button
-              onClick={() => copyCode(o.code)}
-              className="shrink-0 flex items-center gap-1 border border-dashed border-primary/50 text-primary text-[10px] font-bold px-2 py-1 rounded cursor-pointer bg-transparent hover:bg-primary/5 transition-colors whitespace-nowrap"
-            >
-              {copied === o.code ? "✓ Copied!" : (
-                <>
-                  <span>{o.code}</span>
-                  <IconCopy size={10} weight="regular" />
-                </>
-              )}
-            </button>
-          </div>
-        ))}
+          );
+        })}
       </div>
-      {OFFERS.length > 2 && (
+      {coupons.length > 2 && (
         <button
           onClick={() => setExpanded((v) => !v)}
           className="w-full text-[10px] text-primary font-semibold py-2 hover:bg-surface-container/40 transition-colors cursor-pointer border-none bg-transparent"
         >
-          {expanded ? "Show less" : `+${OFFERS.length - 2} more offers`}
+          {expanded ? "Show less" : `+${coupons.length - 2} more offers`}
         </button>
       )}
     </div>
@@ -161,6 +167,7 @@ export default function ProductDetailsContainer({ productId }) {
     toggleBundleItem,
     bundleTotal,
     bundleItems,
+    coupons,
     handleAddToCart,
     handleBuyNow,
     handleAddBundleToCart,
@@ -466,7 +473,7 @@ export default function ProductDetailsContainer({ productId }) {
             </div>
 
             {/* Available Offers */}
-            <OffersSection />
+            <OffersSection coupons={coupons} />
 
             {/* Delivery Pincode Check */}
             <DeliveryCheck />
@@ -475,86 +482,68 @@ export default function ProductDetailsContainer({ productId }) {
         </div>
 
         {/* Frequently Bought Together Bundle */}
-        <section className="mt-8">
-          <h2 className="text-xs font-bold mb-3 flex items-center gap-1.5 text-on-surface">
-            <IconBag size={18} className="text-primary" weight="regular" />
-            Frequently Bought Together
-          </h2>
+        {bundleItems.length > 0 && (
+          <section className="mt-8">
+            <h2 className="text-xs font-bold mb-3 flex items-center gap-1.5 text-on-surface">
+              <IconBag size={18} className="text-primary" weight="regular" />
+              Frequently Bought Together
+            </h2>
 
-          <div className="bg-surface-container/50 dark:bg-surface-container/30 p-4 rounded-xl border border-outline-variant/20 flex flex-col md:flex-row items-center justify-center gap-4">
-            <div className="flex items-center gap-4 flex-wrap justify-center select-none">
-              
-              {/* Product Card 1: Current Item */}
-              <div className="w-28 h-28 bg-white dark:bg-surface-container-lowest rounded-xl shadow-xs border border-outline-variant/30 p-2.5 relative flex items-center justify-center">
-                <img
-                  alt="Current Item"
-                  className="w-full h-full object-contain rounded-lg"
-                  src={product.image}
-                />
-                <div className="absolute bottom-[-10px] left-1/2 -translate-x-1/2 bg-primary text-white text-[9px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap uppercase tracking-wider shadow-sm">
-                  This Item
-                </div>
-              </div>
-              
-              <IconAdd size={20} className="text-outline font-bold" weight="bold" />
-              
-              {/* Product Card 2: Supplement Bundle Sibling */}
-              <div
-                onClick={() => toggleBundleItem("bundle_supp")}
-                className={`w-28 h-28 bg-white dark:bg-surface-container-lowest rounded-xl shadow-xs border p-2.5 relative flex items-center justify-center cursor-pointer transition-all hover:scale-105 ${
-                  checkedBundleItems.bundle_supp ? "border-primary" : "border-outline-variant/30"
-                }`}
-              >
-                <img
-                  alt={bundleItems[0].name}
-                  className="w-full h-full object-contain rounded-lg"
-                  src={bundleItems[0].image}
-                />
-                <div className="absolute top-1.5 right-1.5">
-                  <IconCheckCircle size={18} weight={checkedBundleItems.bundle_supp ? "fill" : "regular"} className={checkedBundleItems.bundle_supp ? "text-primary" : "text-outline-variant/60"} />
-                </div>
-                <div className="absolute bottom-1.5 left-1.5 right-1.5 text-center bg-black/60 text-white text-[9px] rounded py-0.5 font-bold">
-                  +{fmt(bundleItems[0].price)}
-                </div>
-              </div>
+            <div className="bg-surface-container/50 dark:bg-surface-container/30 p-4 rounded-xl border border-outline-variant/20 flex flex-col md:flex-row items-center justify-center gap-4">
+              <div className="flex items-center gap-4 flex-wrap justify-center select-none">
 
-              <IconAdd size={20} className="text-outline font-bold" weight="bold" />
+                {/* Product Card 1: Current Item */}
+                <div className="w-28 h-28 bg-white dark:bg-surface-container-lowest rounded-xl shadow-xs border border-outline-variant/30 p-2.5 relative flex items-center justify-center">
+                  <img
+                    alt="Current Item"
+                    className="w-full h-full object-contain rounded-lg"
+                    src={product.image}
+                  />
+                  <div className="absolute bottom-[-10px] left-1/2 -translate-x-1/2 bg-primary text-white text-[9px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap uppercase tracking-wider shadow-sm">
+                    This Item
+                  </div>
+                </div>
 
-              {/* Product Card 3: Bowl Bundle Sibling */}
-              <div
-                onClick={() => toggleBundleItem("bundle_bowl")}
-                className={`w-28 h-28 bg-white dark:bg-surface-container-lowest rounded-xl shadow-xs border p-2.5 relative flex items-center justify-center cursor-pointer transition-all hover:scale-105 ${
-                  checkedBundleItems.bundle_bowl ? "border-primary" : "border-outline-variant/30"
-                }`}
-              >
-                <img
-                  alt={bundleItems[1].name}
-                  className="w-full h-full object-contain rounded-lg"
-                  src={bundleItems[1].image}
-                />
-                <div className="absolute top-1.5 right-1.5">
-                  <IconCheckCircle size={18} weight={checkedBundleItems.bundle_bowl ? "fill" : "regular"} className={checkedBundleItems.bundle_bowl ? "text-primary" : "text-outline-variant/60"} />
-                </div>
-                <div className="absolute bottom-1.5 left-1.5 right-1.5 text-center bg-black/60 text-white text-[9px] rounded py-0.5 font-bold">
-                  +{fmt(bundleItems[1].price)}
-                </div>
+                {bundleItems.map((item) => (
+                  <React.Fragment key={item.id}>
+                    <IconAdd size={20} className="text-outline font-bold" weight="bold" />
+                    <div
+                      onClick={() => toggleBundleItem(item.id)}
+                      className={`w-28 h-28 bg-white dark:bg-surface-container-lowest rounded-xl shadow-xs border p-2.5 relative flex items-center justify-center cursor-pointer transition-all hover:scale-105 ${
+                        checkedBundleItems[item.id] ? "border-primary" : "border-outline-variant/30"
+                      }`}
+                    >
+                      <img
+                        alt={item.name}
+                        className="w-full h-full object-contain rounded-lg"
+                        src={item.image}
+                      />
+                      <div className="absolute top-1.5 right-1.5">
+                        <IconCheckCircle size={18} weight={checkedBundleItems[item.id] ? "fill" : "regular"} className={checkedBundleItems[item.id] ? "text-primary" : "text-outline-variant/60"} />
+                      </div>
+                      <div className="absolute bottom-1.5 left-1.5 right-1.5 text-center bg-black/60 text-white text-[9px] rounded py-0.5 font-bold">
+                        +{fmt(item.price)}
+                      </div>
+                    </div>
+                  </React.Fragment>
+                ))}
+
               </div>
 
+              {/* Bundle Total Calculator Box */}
+              <div className="md:border-l border-outline-variant/30 md:pl-5 flex flex-col items-center md:items-start space-y-2">
+                <span className="text-on-surface-variant text-xs font-semibold">Total for items:</span>
+                <span className="text-sm font-black text-on-surface">{fmt(bundleTotal)}</span>
+                <button
+                  onClick={handleAddBundleToCart}
+                  className="bg-primary text-on-primary text-xs px-4 py-2 rounded-full font-bold hover:brightness-105 active:scale-95 transition-all shadow-sm cursor-pointer border-none outline-none"
+                >
+                  Add Bundle to Cart
+                </button>
+              </div>
             </div>
-
-            {/* Bundle Total Calculator Box */}
-            <div className="md:border-l border-outline-variant/30 md:pl-5 flex flex-col items-center md:items-start space-y-2">
-              <span className="text-on-surface-variant text-xs font-semibold">Total for items:</span>
-              <span className="text-sm font-black text-on-surface">{fmt(bundleTotal)}</span>
-              <button
-                onClick={handleAddBundleToCart}
-                className="bg-primary text-on-primary text-xs px-4 py-2 rounded-full font-bold hover:brightness-105 active:scale-95 transition-all shadow-sm cursor-pointer border-none outline-none"
-              >
-                Add Bundle to Cart
-              </button>
-            </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* Tabbed Detailed Content */}
         <section className="mt-8">

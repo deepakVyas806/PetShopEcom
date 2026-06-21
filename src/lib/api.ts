@@ -19,7 +19,8 @@ function getToken(): string | null {
 async function request<T>(endpoint: string, init: RequestInit = {}): Promise<T> {
   const token = getToken();
   const headers: Record<string, string> = {
-    "Content-Type": "application/json",
+    // Only set Content-Type when there is a body — Fastify rejects empty-body JSON requests
+    ...(init.body !== undefined ? { "Content-Type": "application/json" } : {}),
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...(init.headers as Record<string, string> | undefined),
   };

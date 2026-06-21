@@ -3,13 +3,15 @@ import { memo } from "react";
 import { IconInfo, IconRefresh } from "@/lib/icons";
 import { CATEGORIES, BRANDS } from "../../data";
 
-const CONTENT_CATS   = CATEGORIES.filter((c) => c !== CATEGORIES[0]);
-const CONTENT_BRANDS = BRANDS.filter((b) => b !== BRANDS[0]);
+const FALLBACK_CATS   = CATEGORIES.filter((c) => c !== CATEGORIES[0]);
+const FALLBACK_BRANDS = BRANDS.filter((b) => b !== BRANDS[0]);
 
 const inp = "w-full px-3 py-2.5 bg-surface-container-low border border-outline-variant/50 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-primary/30 text-on-surface placeholder:text-on-surface-variant";
 const lbl = "block text-[10px] font-bold uppercase tracking-wide text-on-surface-variant mb-1.5";
 
-export default memo(function GeneralInfoCard({ name, sku, stock, category, brand, onField, onRefreshSKU, skuReadOnly }) {
+export default memo(function GeneralInfoCard({ name, sku, stock, category, brand, categories, brands, onField, onRefreshSKU, skuReadOnly }) {
+  const CONTENT_CATS   = categories?.length   ? categories   : FALLBACK_CATS;
+  const CONTENT_BRANDS = brands?.length       ? brands       : FALLBACK_BRANDS;
   return (
     <section className="bg-surface-container-lowest rounded-xl p-5 border border-outline-variant/30 shadow-sm">
       <h3 className="text-xs font-bold text-on-surface mb-5 flex items-center gap-2">

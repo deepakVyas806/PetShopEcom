@@ -1,41 +1,71 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { useStore } from "@/context/StoreContext";
 import { api, qs } from "@/lib/api";
+
+// Convert a catalog item to the {key, label} shape FilterPanel expects
+function itemsToOptions(items) {
+  return items.map(i => ({ key: i.slug, label: i.name }));
+}
 
 export default function useProductsList() {
   const searchParams = useSearchParams();
   const { addToCart } = useStore();
 
   const categoryParam = searchParams.get("category");
+  const typeParam     = searchParams.get("type");
   const queryParam    = searchParams.get("query");
+  const brandParam    = searchParams.get("brand");
 
-  const [selectedPetTypes, setSelectedPetTypes] = useState(categoryParam ? [categoryParam] : []);
-  const [priceRange,       setPriceRange]        = useState(100000);
-  const [selectedBrands,   setSelectedBrands]    = useState([]);
-  const [ratingFilter,     setRatingFilter]      = useState(false);
-  const [sortBy,           setSortBy]            = useState("Popularity");
-  const [searchQuery,      setSearchQuery]        = useState(queryParam ?? "");
-  const [mobileFiltersOpen,setMobileFiltersOpen]  = useState(false);
-  const [favorites,        setFavorites]          = useState({});
-  const [addedItems,       setAddedItems]         = useState({});
+  const [selectedPetTypes,   setSelectedPetTypes]   = useState(categoryParam ? [categoryParam] : []);
+  const [selectedCategories, setSelectedCategories] = useState(typeParam ? [typeParam] : []);
+  const [priceRange,         setPriceRange]         = useState(5000);
+  const [selectedBrands,     setSelectedBrands]     = useState(brandParam ? [brandParam] : []);
+  const [ratingFilter,       setRatingFilter]       = useState(false);
+  const [sortBy,             setSortBy]             = useState("Popularity");
+  const [searchQuery,        setSearchQuery]        = useState(queryParam ?? "");
+  const [mobileFiltersOpen,  setMobileFiltersOpen]  = useState(false);
+  const [favorites,          setFavorites]          = useState({});
+  const [addedItems,         setAddedItems]         = useState({});
 
-  const [products,    setProducts]    = useState([]);
-  const [totalCount,  setTotalCount]  = useState(0);
-  const [page,        setPage]        = useState(1);
-  const [hasMore,     setHasMore]     = useState(true);
-  const [loading,     setLoading]     = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [brands,      setBrands]      = useState([]);
+  const [products,         setProducts]         = useState([]);
+  const [totalCount,       setTotalCount]       = useState(0);
+  const [page,             setPage]             = useState(1);
+  const [hasMore,          setHasMore]          = useState(true);
+  const [loading,          setLoading]          = useState(true);
+  const [loadingMore,      setLoadingMore]      = useState(false);
+  const [brands,           setBrands]           = useState([]);
+  const [petTypeOptions,   setPetTypeOptions]   = useState([]);
+  const [categoryOptions,  setCategoryOptions]  = useState([]);
 
-  // Sync URL params → filter state only (no product clear — effect handles replace/append)
+  // Fetch catalog options for filter panel (once on mount — ref guard prevents StrictMode double-fetch)
+  const catalogFetchedRef = useRef(false);
+  useEffect(() => {
+    if (catalogFetchedRef.current) return;
+    catalogFetchedRef.current = true;
+    Promise.all([
+      api.get("/catalog?type=petType"),
+      api.get("/catalog?type=category"),
+    ]).then(([pets, cats]) => {
+      if (pets.items?.length)  setPetTypeOptions(itemsToOptions(pets.items));
+      if (cats.items?.length)  setCategoryOptions(itemsToOptions(cats.items));
+    }).catch(() => {}); // silently fall back to hardcoded defaults in FilterPanel
+  }, []);
+
+  // Sync URL params → filter state
   useEffect(() => {
     if (categoryParam) { setSelectedPetTypes([categoryParam]); setPage(1); }
   }, [categoryParam]);
   useEffect(() => {
+    if (typeParam) { setSelectedCategories([typeParam]); setPage(1); }
+  }, [typeParam]);
+  useEffect(() => {
     setSearchQuery(queryParam ?? "");
     setPage(1);
   }, [queryParam]);
+  useEffect(() => {
+    if (brandParam) { setSelectedBrands([brandParam]); setPage(1); }
+  }, [brandParam]);
 
   // Fetch on page or any filter change
   useEffect(() => {
@@ -47,10 +77,11 @@ export default function useProductsList() {
       limit:     12,
       sortBy,
       search:    searchQuery || undefined,
-      petTypes:  selectedPetTypes.length > 0 ? selectedPetTypes.join(",") : undefined,
-      maxPrice:  priceRange < 100000 ? priceRange : undefined,
+      petTypes:  selectedPetTypes.length  > 0 ? selectedPetTypes.join(",")   : undefined,
+      type:      selectedCategories.length > 0 ? selectedCategories.join(",") : undefined,
+      maxPrice:  priceRange < 5000 ? priceRange : undefined,
       minRating: ratingFilter ? 4 : undefined,
-      brand:     selectedBrands.length === 1 ? selectedBrands[0] : undefined,
+      brands:    selectedBrands.length > 0 ? selectedBrands.join(",") : undefined,
     };
 
     api.get(`/products${qs(params)}`)
@@ -67,26 +98,28 @@ export default function useProductsList() {
       .finally(() => { if (!cancelled) { setLoading(false); setLoadingMore(false); } });
 
     return () => { cancelled = true; };
-  }, [page, sortBy, searchQuery, selectedPetTypes, priceRange, ratingFilter, selectedBrands]);
+  }, [page, sortBy, searchQuery, selectedPetTypes, selectedCategories, priceRange, ratingFilter, selectedBrands]);
 
   const loadMore = useCallback(() => {
     if (!loading && !loadingMore && hasMore) setPage(p => p + 1);
   }, [loading, loadingMore, hasMore]);
 
-  // Filter setters: reset page to 1 so the effect replaces instead of appending.
-  // Do NOT clear products here — loading=true hides stale items during the fetch.
   const handlePetTypeChange = (type) => {
     setSelectedPetTypes(prev => prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]);
+    setPage(1);
+  };
+  const handleCategoryChange = (cat) => {
+    setSelectedCategories(prev => prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat]);
     setPage(1);
   };
   const handleBrandChange = (brand) => {
     setSelectedBrands(prev => prev.includes(brand) ? prev.filter(b => b !== brand) : [...prev, brand]);
     setPage(1);
   };
-  const handleSetSortBy         = (s) => { setSortBy(s);         setPage(1); };
-  const handleSetSearchQuery    = (q) => { setSearchQuery(q);    setPage(1); };
-  const handleSetPriceRange     = (r) => { setPriceRange(r);     setPage(1); };
-  const handleSetRatingFilter   = (r) => { setRatingFilter(r);   setPage(1); };
+  const handleSetSortBy       = (s) => { setSortBy(s);       setPage(1); };
+  const handleSetSearchQuery  = (q) => { setSearchQuery(q);  setPage(1); };
+  const handleSetPriceRange   = (r) => { setPriceRange(r);   setPage(1); };
+  const handleSetRatingFilter = (r) => { setRatingFilter(r); setPage(1); };
 
   const toggleFavorite = (id) => setFavorites(prev => ({ ...prev, [id]: !prev[id] }));
   const handleAddToCart = (product) => {
@@ -98,15 +131,17 @@ export default function useProductsList() {
 
   return {
     products, totalCount, loading, loadingMore, hasMore, brands,
-    selectedPetTypes, handlePetTypeChange,
-    priceRange, setPriceRange: handleSetPriceRange,
-    selectedBrands, handleBrandChange,
-    ratingFilter, setRatingFilter: handleSetRatingFilter,
-    sortBy, setSortBy: handleSetSortBy,
-    searchQuery, setSearchQuery: handleSetSearchQuery,
-    mobileFiltersOpen, setMobileFiltersOpen,
-    favorites, toggleFavorite,
-    addedItems, handleAddToCart,
+    petTypeOptions, categoryOptions,
+    selectedPetTypes,   handlePetTypeChange,
+    selectedCategories, handleCategoryChange,
+    priceRange,         setPriceRange: handleSetPriceRange,
+    selectedBrands,     handleBrandChange,
+    ratingFilter,       setRatingFilter: handleSetRatingFilter,
+    sortBy,             setSortBy: handleSetSortBy,
+    searchQuery,        setSearchQuery: handleSetSearchQuery,
+    mobileFiltersOpen,  setMobileFiltersOpen,
+    favorites,          toggleFavorite,
+    addedItems,         handleAddToCart,
     loadMore,
   };
 }

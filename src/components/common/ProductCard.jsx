@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import CartButton from "./CartButton";
-import { IconHeart } from "@/lib/icons";
+import { IconHeart, IconCart } from "@/lib/icons";
 import { fmt } from "@/lib/currency";
+import { useStore } from "@/context/StoreContext";
 
 export default function ProductCard({
   product,
@@ -19,6 +20,10 @@ export default function ProductCard({
   isMoving           = false,
   layout             = "card",   // "card" | "list"
 }) {
+  const { cart } = useStore();
+  const productId = product._id ?? product.id;
+  const isInCart  = cart.some((item) => (item.product._id ?? item.product.id) === productId);
+
   const hasHeart = !topRightSlot && Boolean(onToggleFavorite);
   const discount =
     product.mrp && product.price && product.mrp > product.price
@@ -119,8 +124,18 @@ export default function ProductCard({
                   <IconHeart size={13} weight={isFavorite ? "fill" : "regular"} />
                 </button>
               )}
-              {onAddToCart && !ctaSlot && (
-                <CartButton onClick={() => onAddToCart(product)} isAdded={isAdded} variant="pill" label="Add to Cart" />
+              {!ctaSlot && (
+                isInCart ? (
+                  <Link
+                    href="/cart"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-600 text-white text-[11px] font-bold hover:brightness-110 transition-colors"
+                  >
+                    <IconCart size={13} weight="fill" />
+                    Go to Cart
+                  </Link>
+                ) : onAddToCart ? (
+                  <CartButton onClick={() => onAddToCart(product)} isAdded={isAdded} variant="pill" label="Add to Cart" />
+                ) : null
               )}
               {ctaSlot}
             </div>
@@ -200,18 +215,28 @@ export default function ProductCard({
           </button>
         ) : null}
 
-        {/* Desktop hover add-to-cart strip */}
-        {onAddToCart && !ctaSlot && !stockOverlay && (
+        {/* Desktop hover add-to-cart / go-to-cart strip */}
+        {!ctaSlot && !stockOverlay && (
           <div className="absolute bottom-0 left-0 right-0 z-10 translate-y-full group-hover:translate-y-0 transition-transform duration-200 hidden md:block">
-            <button
-              onClick={(e) => { e.preventDefault(); onAddToCart(product); }}
-              className={cn(
-                "w-full py-2 text-[11px] font-bold border-none cursor-pointer transition-colors",
-                isAdded ? "bg-green-600 text-white" : "bg-primary text-white hover:brightness-110"
-              )}
-            >
-              {isAdded ? "✓ Added!" : "+ Add to Cart"}
-            </button>
+            {isInCart ? (
+              <Link
+                href="/cart"
+                className="w-full py-2 text-[11px] font-bold flex items-center justify-center gap-1.5 bg-green-600 text-white hover:brightness-110 transition-colors"
+              >
+                <IconCart size={13} weight="fill" />
+                Go to Cart
+              </Link>
+            ) : onAddToCart ? (
+              <button
+                onClick={(e) => { e.preventDefault(); onAddToCart(product); }}
+                className={cn(
+                  "w-full py-2 text-[11px] font-bold border-none cursor-pointer transition-colors",
+                  isAdded ? "bg-green-600 text-white" : "bg-primary text-white hover:brightness-110"
+                )}
+              >
+                {isAdded ? "✓ Added!" : "+ Add to Cart"}
+              </button>
+            ) : null}
           </div>
         )}
       </div>
@@ -255,13 +280,23 @@ export default function ProductCard({
                 <span className="text-[10px] font-bold text-green-600">{discount}% off</span>
               )}
             </div>
-            {onAddToCart && !ctaSlot && (
-              <CartButton
-                onClick={() => onAddToCart(product)}
-                isAdded={isAdded}
-                variant="icon"
-                className="shrink-0 md:hidden"
-              />
+            {!ctaSlot && (
+              isInCart ? (
+                <Link
+                  href="/cart"
+                  className="shrink-0 md:hidden flex items-center justify-center w-7 h-7 rounded-full bg-green-600 text-white"
+                  title="Go to Cart"
+                >
+                  <IconCart size={14} weight="fill" />
+                </Link>
+              ) : onAddToCart ? (
+                <CartButton
+                  onClick={() => onAddToCart(product)}
+                  isAdded={isAdded}
+                  variant="icon"
+                  className="shrink-0 md:hidden"
+                />
+              ) : null
             )}
           </div>
           {ctaSlot && <div className="mt-2">{ctaSlot}</div>}

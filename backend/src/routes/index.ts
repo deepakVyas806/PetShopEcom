@@ -17,6 +17,11 @@ import { adminServiceRoutes }    from "./admin/services";
 import { adminAppointmentRoutes } from "./admin/appointments";
 import { adminPromotionRoutes }  from "./admin/promotions";
 import { wishlistRoutes }        from "./wishlists";
+import { cartRoutes }            from "./cart";
+import { catalogRoutes }         from "./catalog";
+import { settingsRoutes }        from "./settings";
+import { adminCatalogRoutes }    from "./admin/catalog";
+import { adminSettingsRoutes }   from "./admin/settings";
 
 export const registerRoutes: FastifyPluginAsync = async (app) => {
   // ── Public / customer routes ────────────────────────────────────────────────
@@ -31,6 +36,7 @@ export const registerRoutes: FastifyPluginAsync = async (app) => {
   await app.register(paymentMethodRoutes, { prefix: "/payment-methods" });
   await app.register(couponRoutes,        { prefix: "/coupons"         });
   await app.register(wishlistRoutes,      { prefix: "/wishlists"       });
+  await app.register(cartRoutes,          { prefix: "/cart"            });
 
   // ── Admin routes ────────────────────────────────────────────────────────────
   await app.register(adminDashboardRoutes,  { prefix: "/admin/dashboard"    });
@@ -40,4 +46,10 @@ export const registerRoutes: FastifyPluginAsync = async (app) => {
   await app.register(adminServiceRoutes,    { prefix: "/admin/services"     });
   await app.register(adminAppointmentRoutes,{ prefix: "/admin/appointments" });
   await app.register(adminPromotionRoutes,  { prefix: "/admin/promotions"   });
+  await app.register(adminCatalogRoutes,    { prefix: "/admin/catalog"      });
+  await app.register(adminSettingsRoutes,   { prefix: "/admin/settings"     });
+
+  // ── Public utility routes ───────────────────────────────────────────────────
+  await app.register(catalogRoutes,         { prefix: "/catalog"            });
+  await app.register(settingsRoutes,        { prefix: "/settings"           });
 };

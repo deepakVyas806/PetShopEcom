@@ -13,8 +13,8 @@ const PAGE_META: Record<string, { title: string; subtitle: string }> = {
   "/admin/customers":    { title: "Customers",     subtitle: "View and manage customer accounts."               },
   "/admin/promotions":   { title: "Promotions",    subtitle: "Manage coupons, discounts, and seasonal campaigns." },
   "/admin/appointments": { title: "Appointments",  subtitle: "Track and manage service bookings."               },
-  // "/admin/notifications": { title: "Notifications", subtitle: "Manage and send notifications to customers." },
-  // "/admin/settings":      { title: "Settings",       subtitle: "Configure store settings and preferences."  },
+  "/admin/catalog":     { title: "Catalog",       subtitle: "Manage categories, brands, pet types and more."   },
+  "/admin/settings":    { title: "Settings",       subtitle: "Configure store settings and preferences."        },
 };
 
 export default function AdminShell({ children }: { children: React.ReactNode }) {

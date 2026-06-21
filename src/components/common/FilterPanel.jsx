@@ -1,14 +1,28 @@
 "use client";
 
-import { IconFilter, IconLocation, IconStar } from "@/lib/icons";
+import { IconFilter, IconStar } from "@/lib/icons";
 
-const PET_TYPES = [
+const FALLBACK_PET_TYPES = [
   { key: "dogs",       label: "Dogs"       },
   { key: "cats",       label: "Cats"       },
-  { key: "small_pets", label: "Small Pets" },
+  { key: "birds",      label: "Birds"      },
+  { key: "fish",       label: "Fish"       },
+  { key: "small-pets", label: "Small Pets" },
 ];
 
-const DEFAULT_BRANDS = ["Royal Canin", "Purina Pro", "Hill's Science Diet", "Blue Buffalo"];
+const FALLBACK_CATEGORIES = [
+  { key: "food",        label: "Food & Treats"   },
+  { key: "toy",         label: "Toys & Play"     },
+  { key: "health",      label: "Health & Pharma" },
+  { key: "grooming",    label: "Grooming"        },
+  { key: "beds",        label: "Beds & Houses"   },
+  { key: "accessories", label: "Accessories"     },
+];
+
+const DEFAULT_BRANDS = [
+  "Royal Canin", "Pedigree", "Purina", "Whiskas",
+  "Himalaya", "Drools", "Trixie", "Beaphar",
+];
 
 const Divider = () => <div className="h-px bg-outline-variant/20" />;
 
@@ -21,42 +35,44 @@ function SectionLabel({ children }) {
 }
 
 export default function FilterPanel({
-  showPetType = true,
-  showPriceRange = true,
-  showBrands = false,
-  showRating = false,
-  showLocation = false,
+  showPetType      = true,
+  showCategory     = true,
+  showPriceRange   = true,
+  showBrands       = false,
+  showRating       = false,
 
   selectedPetTypes = [],
   onPetTypeChange,
+  // API-driven pet type options — falls back to hardcoded list
+  petTypeOptions,
+
+  selectedCategories = [],
+  onCategoryChange,
+  // API-driven category options — falls back to hardcoded list
+  categoryOptions,
 
   priceRange = 250,
   onPriceRangeChange,
-  priceMin = 0,
-  priceMax = 500,
+  priceMin   = 0,
+  priceMax   = 5000,
 
   selectedBrands = [],
   onBrandChange,
-  brands = DEFAULT_BRANDS,
+  brands         = DEFAULT_BRANDS,
 
   ratingFilter = false,
   onRatingFilterChange,
 
-  location = "",
-  onLocationChange,
-
   onReset,
 }) {
-  // Count active filters for badge
+  const PET_TYPES         = petTypeOptions?.length   ? petTypeOptions   : FALLBACK_PET_TYPES;
+  const PRODUCT_CATEGORIES = categoryOptions?.length ? categoryOptions  : FALLBACK_CATEGORIES;
   const activeCount =
     selectedPetTypes.length +
+    selectedCategories.length +
     selectedBrands.length +
     (ratingFilter ? 1 : 0) +
-    (location ? 1 : 0);
-
-  const sections = [showPetType, showPriceRange, showLocation, showBrands, showRating].filter(Boolean).length;
-  const needsDividerAfter = (index) => index < sections - 1;
-  let sectionIndex = 0;
+    (priceRange < priceMax ? 1 : 0);
 
   return (
     <div className="bg-white/80 dark:bg-surface-container-lowest backdrop-blur-sm border border-[#F3E8FF] dark:border-outline-variant/20 rounded-xl shadow-sm p-4 flex flex-col gap-3">
@@ -75,109 +91,104 @@ export default function FilterPanel({
       </div>
 
       {/* Pet Type */}
-      {showPetType && (() => {
-        const idx = sectionIndex++;
-        return (
-          <>
-            <div>
-              <SectionLabel>Pet Type</SectionLabel>
-              <div className="flex flex-col gap-2">
-                {PET_TYPES.map(({ key, label }) => (
-                  <label key={key} className="flex items-center gap-2 cursor-pointer group">
-                    <input
-                      type="checkbox"
-                      checked={selectedPetTypes.includes(key)}
-                      onChange={() => onPetTypeChange?.(key)}
-                      className="w-3.5 h-3.5 rounded border-outline-variant text-primary focus:ring-primary cursor-pointer accent-primary"
-                    />
-                    <span className={`text-xs transition-colors ${selectedPetTypes.includes(key) ? "text-primary font-semibold" : "text-on-surface group-hover:text-primary"}`}>
-                      {label}
-                    </span>
-                  </label>
-                ))}
-              </div>
+      {showPetType && (
+        <>
+          <div>
+            <SectionLabel>Pet Type</SectionLabel>
+            <div className="flex flex-col gap-2">
+              {PET_TYPES.map(({ key, label }) => (
+                <label key={key} className="flex items-center gap-2 cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    checked={selectedPetTypes.includes(key)}
+                    onChange={() => onPetTypeChange?.(key)}
+                    className="w-3.5 h-3.5 rounded border-outline-variant text-primary focus:ring-primary cursor-pointer accent-primary"
+                  />
+                  <span className={`text-xs transition-colors ${selectedPetTypes.includes(key) ? "text-primary font-semibold" : "text-on-surface group-hover:text-primary"}`}>
+                    {label}
+                  </span>
+                </label>
+              ))}
             </div>
-            {needsDividerAfter(idx) && <Divider />}
-          </>
-        );
-      })()}
+          </div>
+          <Divider />
+        </>
+      )}
+
+      {/* Category */}
+      {showCategory && (
+        <>
+          <div>
+            <SectionLabel>Category</SectionLabel>
+            <div className="flex flex-col gap-2">
+              {PRODUCT_CATEGORIES.map(({ key, label }) => (
+                <label key={key} className="flex items-center gap-2 cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    checked={selectedCategories.includes(key)}
+                    onChange={() => onCategoryChange?.(key)}
+                    className="w-3.5 h-3.5 rounded border-outline-variant text-primary focus:ring-primary cursor-pointer accent-primary"
+                  />
+                  <span className={`text-xs transition-colors ${selectedCategories.includes(key) ? "text-primary font-semibold" : "text-on-surface group-hover:text-primary"}`}>
+                    {label}
+                  </span>
+                </label>
+              ))}
+            </div>
+          </div>
+          <Divider />
+        </>
+      )}
 
       {/* Price Range */}
-      {showPriceRange && (() => {
-        const idx = sectionIndex++;
-        return (
-          <>
-            <div>
-              <SectionLabel>Price Range</SectionLabel>
-              <input
-                type="range"
-                min={priceMin}
-                max={priceMax}
-                step="10"
-                value={priceRange}
-                onChange={(e) => onPriceRangeChange?.(Number(e.target.value))}
-                className="w-full h-1 bg-secondary-container rounded-lg appearance-none cursor-pointer accent-primary"
-              />
-              <div className="flex justify-between mt-1.5 text-xs text-on-surface-variant font-medium">
-                <span>${priceMin}</span>
-                <span className="font-bold text-primary">${priceRange}+</span>
-              </div>
+      {showPriceRange && (
+        <>
+          <div>
+            <SectionLabel>Price Range</SectionLabel>
+            <input
+              type="range"
+              min={priceMin}
+              max={priceMax}
+              step="100"
+              value={priceRange}
+              onChange={(e) => onPriceRangeChange?.(Number(e.target.value))}
+              className="w-full h-1 bg-secondary-container rounded-lg appearance-none cursor-pointer accent-primary"
+            />
+            <div className="flex justify-between mt-1.5 text-xs text-on-surface-variant font-medium">
+              <span>₹{priceMin}</span>
+              <span className="font-bold text-primary">
+                {priceRange >= priceMax ? `₹${priceMax.toLocaleString()}+` : `Up to ₹${priceRange.toLocaleString()}`}
+              </span>
             </div>
-            {needsDividerAfter(idx) && <Divider />}
-          </>
-        );
-      })()}
-
-      {/* Location */}
-      {showLocation && (() => {
-        const idx = sectionIndex++;
-        return (
-          <>
-            <div>
-              <SectionLabel>Location</SectionLabel>
-              <div className="relative">
-                <IconLocation size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-on-surface-variant" weight="regular" />
-                <input
-                  type="text"
-                  value={location}
-                  onChange={(e) => onLocationChange?.(e.target.value)}
-                  placeholder="City or zip code"
-                  className="w-full pl-7 pr-3 py-1.5 bg-surface-container-low border border-outline-variant/30 rounded-lg text-xs focus:ring-1 focus:ring-primary focus:border-primary outline-none text-on-surface"
-                />
-              </div>
-            </div>
-            {needsDividerAfter(idx) && <Divider />}
-          </>
-        );
-      })()}
+          </div>
+          {(showBrands || showRating) && <Divider />}
+        </>
+      )}
 
       {/* Brands */}
-      {showBrands && (() => {
-        const idx = sectionIndex++;
-        return (
-          <>
-            <div>
-              <SectionLabel>Brands</SectionLabel>
-              <div className="flex flex-col gap-2">
-                {brands.map((brand) => (
-                  <label key={brand} className="flex items-center gap-2 cursor-pointer group">
-                    <input
-                      type="checkbox"
-                      checked={selectedBrands.includes(brand)}
-                      onChange={() => onBrandChange?.(brand)}
-                      className="w-3.5 h-3.5 rounded border-outline-variant text-primary focus:ring-primary cursor-pointer accent-primary"
-                    />
-                    <span className={`text-xs transition-colors ${selectedBrands.includes(brand) ? "text-primary font-semibold" : "text-on-surface group-hover:text-primary"}`}>
-                      {brand}
-                    </span>
-                  </label>
-                ))}
-              </div>
+      {showBrands && (
+        <>
+          <div>
+            <SectionLabel>Brand</SectionLabel>
+            <div className="flex flex-col gap-2">
+              {(brands.length > 0 ? brands : DEFAULT_BRANDS).map((brand) => (
+                <label key={brand} className="flex items-center gap-2 cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    checked={selectedBrands.includes(brand)}
+                    onChange={() => onBrandChange?.(brand)}
+                    className="w-3.5 h-3.5 rounded border-outline-variant text-primary focus:ring-primary cursor-pointer accent-primary"
+                  />
+                  <span className={`text-xs transition-colors ${selectedBrands.includes(brand) ? "text-primary font-semibold" : "text-on-surface group-hover:text-primary"}`}>
+                    {brand}
+                  </span>
+                </label>
+              ))}
             </div>
-            {needsDividerAfter(idx) && <Divider />}
-          </>
-        );
-      })()}
+          </div>
+          {showRating && <Divider />}
+        </>
+      )}
 
       {/* Rating */}
       {showRating && (
@@ -202,7 +213,7 @@ export default function FilterPanel({
       )}
 
       {/* Reset */}
-      {onReset && (
+      {onReset && activeCount > 0 && (
         <button
           onClick={onReset}
           className="w-full py-1.5 bg-surface-container-high text-on-surface-variant font-semibold text-xs rounded-lg hover:bg-primary/10 hover:text-primary transition-all cursor-pointer border-none outline-none mt-0.5"

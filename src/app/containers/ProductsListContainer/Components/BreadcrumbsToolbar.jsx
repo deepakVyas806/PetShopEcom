@@ -12,6 +12,15 @@ const SORT_OPTIONS = [
   { value: "Rating",              label: "Avg Rating"         },
 ];
 
+const CATEGORY_LABELS = {
+  food:        "Food & Treats",
+  toy:         "Toys & Play",
+  health:      "Health & Pharma",
+  grooming:    "Grooming",
+  beds:        "Beds & Houses",
+  accessories: "Accessories",
+};
+
 export default function BreadcrumbsToolbar({
   totalCount,
   sortBy,
@@ -19,13 +28,15 @@ export default function BreadcrumbsToolbar({
   onOpenMobileFilters,
   onListSearch,
   /* filter chip props */
-  selectedPetTypes   = [],
+  selectedPetTypes    = [],
   onClearPetType,
+  selectedCategories  = [],
+  onClearCategory,
   priceRange,
   onClearPrice,
   ratingFilter,
   onClearRating,
-  selectedBrands     = [],
+  selectedBrands      = [],
   onClearBrand,
   onClearAll,
   /* view toggle */
@@ -42,15 +53,19 @@ export default function BreadcrumbsToolbar({
   /* Build chip list */
   const chips = [
     ...selectedPetTypes.map((t) => ({
-      label:    t.charAt(0).toUpperCase() + t.slice(1).replace("_", " "),
+      label:    t.charAt(0).toUpperCase() + t.slice(1).replace("-", " "),
       onRemove: () => onClearPetType?.(t),
     })),
-    ...(priceRange < 100000 ? [{
-      label:    `Max ₹${priceRange.toLocaleString()}`,
+    ...selectedCategories.map((c) => ({
+      label:    CATEGORY_LABELS[c] ?? c,
+      onRemove: () => onClearCategory?.(c),
+    })),
+    ...(priceRange < 5000 ? [{
+      label:    `Up to ₹${priceRange.toLocaleString()}`,
       onRemove: onClearPrice,
     }] : []),
     ...(ratingFilter ? [{
-      label:    `${ratingFilter}★ & above`,
+      label:    "4★ & above",
       onRemove: onClearRating,
     }] : []),
     ...selectedBrands.map((b) => ({
