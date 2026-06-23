@@ -20,16 +20,16 @@ export default function OrderDetailItems({ items }) {
 
       {/* Items list */}
       <div className="divide-y divide-outline-variant/20">
-        {items.map((item) => (
+        {(items ?? []).map((item, idx) => (
           <div
-            key={item.id}
+            key={item.sku ?? item.productId?.toString() ?? idx}
             className="px-5 py-4 flex gap-4 items-center group hover:bg-surface/50 transition-colors"
           >
             {/* Thumbnail */}
             <div className="w-16 h-16 rounded-lg overflow-hidden bg-surface-container flex-shrink-0">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={item.image}
+                src={item.image || null}
                 alt={item.name}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               />
@@ -38,17 +38,12 @@ export default function OrderDetailItems({ items }) {
             {/* Info */}
             <div className="flex-grow min-w-0">
               <h3 className="text-xs font-semibold text-on-surface truncate">{item.name}</h3>
-              <p className="text-[10px] text-on-surface-variant mt-0.5">Qty: {item.qty}</p>
+              <p className="text-[10px] text-on-surface-variant mt-0.5">Qty: {item.quantity ?? item.qty}</p>
             </div>
 
             {/* Price */}
             <div className="text-right flex-shrink-0">
               <p className="text-xs font-bold text-primary">{fmt(item.price)}</p>
-              {item.originalPrice && (
-                <p className="text-[10px] text-on-surface-variant line-through">
-                  {fmt(item.originalPrice)}
-                </p>
-              )}
             </div>
           </div>
         ))}

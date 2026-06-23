@@ -56,7 +56,7 @@ export default function ProductCard({
         >
           <img
             alt={product.name}
-            src={product.image}
+            src={product.image || null}
             className={cn(
               "w-full h-full object-cover transition-transform duration-500 group-hover:scale-105",
               stockOverlay && "opacity-40"
@@ -161,7 +161,7 @@ export default function ProductCard({
         <Link href={`/marketplace/${product._id ?? product.id}`} className="block w-full h-full">
           <img
             alt={product.name}
-            src={product.image}
+            src={product.image || null}
             className={cn(
               "w-full h-full object-cover transition-transform duration-500 group-hover:scale-105",
               stockOverlay && "opacity-40"

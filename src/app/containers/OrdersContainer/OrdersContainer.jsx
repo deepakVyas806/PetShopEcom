@@ -65,14 +65,17 @@ export default function OrdersContainer() {
 
       {tabOrders.length > 0 ? (
         <div className="space-y-4">
-          {tabOrders.map((order) => (
+          {tabOrders.map((order) => {
+            const oid = order._id?.toString() ?? order.orderId;
+            return (
             <OrderCard
-              key={order.id}
+              key={oid}
               order={order}
-              isExpanded={expandedOrders.has(order.id)}
-              onToggleExpand={() => toggleExpand(order.id)}
+              isExpanded={expandedOrders.has(oid)}
+              onToggleExpand={() => toggleExpand(oid)}
             />
-          ))}
+            );
+          })}
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center py-16 text-center gap-3">

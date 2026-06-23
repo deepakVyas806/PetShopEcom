@@ -11,16 +11,39 @@ import OrderSummaryCard   from "./Components/OrderSummaryCard";
 import MiniMap            from "./Components/MiniMap";
 
 export default function OrderDetailContainer({ orderId }) {
-  const { order } = useOrderDetailContainer(orderId);
+  const { order, loading, error } = useOrderDetailContainer(orderId);
   const [cancelStep, setCancelStep] = useState("idle"); // idle | confirm | done
 
-  const canCancel = order.status === "Order Confirmed";
+  if (loading || !order) {
+    return (
+      <div className="py-16 text-center text-xs text-on-surface-variant">
+        {error ? `Error: ${error}` : "Loading order…"}
+      </div>
+    );
+  }
+
+  const displayId = order.orderId ?? order._id?.toString() ?? "—";
+  const orderKey  = order._id?.toString() ?? order.orderId ?? "";
+  const placedDate = order.createdAt
+    ? new Date(order.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })
+    : "—";
+  const placedTime = order.createdAt
+    ? new Date(order.createdAt).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })
+    : "";
+
+  const canCancel = order.status === "Order Confirmed" || order.status === "Pending";
 
   return (
     <main className="py-2">
 
       {/* Breadcrumb + heading + action buttons */}
-      <OrderDetailHeader order={order} />
+      <OrderDetailHeader
+        orderId={displayId}
+        orderKey={orderKey}
+        date={placedDate}
+        time={placedTime}
+        status={order.status}
+      />
 
       {/* Two-column grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
@@ -37,13 +60,14 @@ export default function OrderDetailContainer({ orderId }) {
         {/* Right: shipping/payment + summary + mini map + cancel */}
         <div className="lg:col-span-4 space-y-gutter">
           <ShippingPaymentCard
-            shipping={order.shipping}
-            payment={order.payment}
+            shippingAddress={order.shippingAddress}
+            paymentMethod={order.paymentMethod}
           />
           <OrderSummaryCard
             subtotal={order.subtotal}
-            shippingCost={order.shippingCost}
+            shippingCost={order.shipping}
             tax={order.tax}
+            discount={order.discount}
             total={order.total}
           />
           <MiniMap />

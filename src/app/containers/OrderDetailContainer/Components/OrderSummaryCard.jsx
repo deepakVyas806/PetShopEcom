@@ -2,7 +2,7 @@
 
 import { fmt } from "@/lib/currency";
 
-export default function OrderSummaryCard({ subtotal, shippingCost, tax, total }) {
+export default function OrderSummaryCard({ subtotal, shippingCost, tax, discount, total }) {
   return (
     <section className="bg-primary text-on-primary p-5 rounded-xl shadow-lg relative overflow-hidden">
       {/* Dot pattern background */}
@@ -34,6 +34,12 @@ export default function OrderSummaryCard({ subtotal, shippingCost, tax, total })
           <span>Tax</span>
           <span>{fmt(tax)}</span>
         </div>
+        {discount > 0 && (
+          <div className="flex justify-between text-xs opacity-90">
+            <span>Discount</span>
+            <span className="font-bold">−{fmt(discount)}</span>
+          </div>
+        )}
 
         <div className="pt-3 border-t border-white/20 flex justify-between items-end">
           <span className="text-xs font-bold">Total</span>

@@ -11,14 +11,27 @@ import DeliveryPartner    from "./Components/DeliveryPartner";
 import OrderItemsSummary  from "./Components/OrderItemsSummary";
 
 export default function TrackOrderContainer({ orderId }) {
-  const { order } = useTrackOrderContainer(orderId);
+  const { order, loading, error } = useTrackOrderContainer(orderId);
   const [helpOpen, setHelpOpen] = useState(false);
+
+  if (loading || !order) {
+    return (
+      <div className="py-16 text-center text-xs text-on-surface-variant">
+        {error ? `Error: ${error}` : "Loading tracking info…"}
+      </div>
+    );
+  }
+
+  const displayId  = order.orderId ?? order._id?.toString() ?? "—";
+  const placedDate = order.createdAt
+    ? new Date(order.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })
+    : "—";
 
   return (
     <main className="py-2">
 
       {/* Page heading + status */}
-      <OrderHeader order={order} />
+      <OrderHeader displayId={displayId} placedDate={placedDate} status={order.status} />
 
       {/* Two-column grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
@@ -27,18 +40,18 @@ export default function TrackOrderContainer({ orderId }) {
         <div className="lg:col-span-7 space-y-gutter">
           <DeliveryTimeline
             milestones={order.milestones}
-            carrier={order.carrier}
-            trackingNumber={order.trackingNumber}
+            carrier={order.carrier ?? null}
+            trackingNumber={order.trackingNumber ?? null}
           />
-          <MapSection driver={order.driver} />
+          <MapSection driver={order.driver ?? null} />
         </div>
 
         {/* Right: address, carrier, items, help */}
         <div className="lg:col-span-5 space-y-gutter">
-          <ShippingAddress address={order.address} />
-          <DeliveryPartner carrier={order.carrier} />
+          <ShippingAddress address={order.shippingAddress} />
+          <DeliveryPartner carrier={order.carrier ?? null} />
           <OrderItemsSummary
-            items={order.items}
+            items={order.items ?? []}
             subtotal={order.subtotal}
             shipping={order.shipping}
             total={order.total}

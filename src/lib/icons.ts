@@ -140,6 +140,7 @@ export {
 
   // ── Finance ──────────────────────────────────────────────────────────────
   QrCodeIcon            as IconQR,
+  BankIcon              as IconNetbanking,
 
   // ── Filters & Controls ───────────────────────────────────────────────────
   FunnelIcon            as IconFilter,

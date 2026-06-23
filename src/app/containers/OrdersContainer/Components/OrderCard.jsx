@@ -48,8 +48,13 @@ export default function OrderCard({ order, isExpanded, onToggleExpand }) {
   // Reorder state
   const [reorderStep, setReorderStep] = useState("idle"); // "idle" | "adding" | "done"
 
-  const cfg     = STATUS_CONFIG[order.status] ?? DEFAULT_STATUS;
-  const hasItems = order.items.length > 0;
+  const cfg      = STATUS_CONFIG[order.status] ?? DEFAULT_STATUS;
+  const hasItems = order.items?.length > 0;
+  const orderId  = order.orderId ?? order._id?.toString() ?? "—";
+  const orderKey = order._id?.toString() ?? order.orderId;
+  const placedOn = order.createdAt
+    ? new Date(order.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })
+    : "—";
 
   // ── Handle Reorder ────────────────────────────────────────────────────────
   const handleReorder = async () => {
@@ -68,10 +73,10 @@ export default function OrderCard({ order, isExpanded, onToggleExpand }) {
       case "Out for Delivery":
         return (
           <>
-            <Button href={`/track-order/${order.id}`} variant="primary" size="md" rounded="lg">
+            <Button href={`/track-order/${orderKey}`} variant="primary" size="md" rounded="lg">
               Track Order
             </Button>
-            <Button href={`/order-detail/${order.id}`} variant="secondary" size="md" rounded="lg">
+            <Button href={`/order-detail/${orderKey}`} variant="secondary" size="md" rounded="lg">
               View Details
             </Button>
             <div className="ml-auto">
@@ -124,7 +129,7 @@ export default function OrderCard({ order, isExpanded, onToggleExpand }) {
       default:
         return (
           <>
-            <Button href={`/order-detail/${order.id}`} variant="secondary" size="md" rounded="lg">
+            <Button href={`/order-detail/${orderKey}`} variant="secondary" size="md" rounded="lg">
               View Details
             </Button>
 
@@ -183,14 +188,14 @@ export default function OrderCard({ order, isExpanded, onToggleExpand }) {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-on-surface">#{order.id}</span>
+                <span className="text-xs font-bold text-on-surface">#{orderId}</span>
                 {cancelStep === "done"
                   ? <OrderStatusBadge status="Cancelled" />
                   : <OrderStatusBadge status={order.status} />
                 }
               </div>
               <p className="text-[10px] text-on-surface-variant mt-0.5">
-                Placed on {order.date}
+                Placed on {placedOn}
               </p>
             </div>
           </div>

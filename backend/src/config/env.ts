@@ -33,4 +33,7 @@ export const env = {
   taxRate:               parseFloat(optional("TAX_RATE", "0.18")),
   freeShippingThreshold: parseFloat(optional("FREE_SHIPPING_THRESHOLD", "999")),
   shippingFee:           parseFloat(optional("SHIPPING_FEE", "99")),
+
+  razorpayKeyId:     optional("RAZORPAY_KEY_ID",     ""),
+  razorpayKeySecret: optional("RAZORPAY_KEY_SECRET",  ""),
 } as const;
