@@ -2,7 +2,14 @@
 
 import Link from "next/link";
 import { fmt } from "@/lib/currency";
-import { IconStar, IconClock, IconInfo } from "@/lib/icons";
+import { IconStar, IconClock, IconInfo, IconCalendar } from "@/lib/icons";
+
+function getNextSlots(serviceId) {
+  const seed = (serviceId?.charCodeAt(0) ?? 0) + (serviceId?.charCodeAt(1) ?? 0);
+  const allSlots = ["9:00 AM", "11:00 AM", "2:00 PM", "4:00 PM", "6:00 PM"];
+  const start = seed % allSlots.length;
+  return allSlots.slice(start, start + 3).concat(allSlots.slice(0, Math.max(0, start + 3 - allSlots.length)));
+}
 
 export default function ServiceCard({ service }) {
   return (
@@ -48,6 +55,21 @@ export default function ServiceCard({ service }) {
         <p className="text-xs text-on-surface-variant mb-4 flex-1 leading-relaxed">
           {service.description}
         </p>
+
+        {/* Available time slots */}
+        <div className="mb-3">
+          <p className="text-[10px] text-on-surface-variant font-semibold mb-1.5 flex items-center gap-1">
+            <IconCalendar size={11} weight="regular" />
+            Today&apos;s available slots
+          </p>
+          <div className="flex gap-1.5 flex-wrap">
+            {getNextSlots(service._id ?? service.id).map((slot) => (
+              <span key={slot} className="text-[10px] font-bold px-2 py-0.5 bg-green-50 text-green-700 border border-green-200 rounded-full">
+                {slot}
+              </span>
+            ))}
+          </div>
+        </div>
 
         <div className="flex items-center gap-2.5 mt-auto">
           <Link

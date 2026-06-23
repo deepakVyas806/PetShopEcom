@@ -141,11 +141,58 @@ export default function Footer() {
         </div>
       )}
 
-      {/* Copyright */}
-      <div className="px-4 md:px-10 py-3 border-t border-outline-variant/20 text-center max-w-[1280px] mx-auto">
+      {/* Payment methods + trust strip */}
+      <div className="border-t border-outline-variant/20 px-4 md:px-10 py-4 max-w-[1280px] mx-auto">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+
+          {/* Payment icons */}
+          <div className="flex items-center gap-2 flex-wrap justify-center sm:justify-start">
+            <span className="text-[10px] text-gray-400 font-medium shrink-0">We accept:</span>
+            {["VISA", "MC", "UPI", "Paytm", "GPay", "COD"].map((p) => (
+              <span
+                key={p}
+                className={`text-[9px] font-black px-2 py-0.5 rounded border border-outline-variant/40 select-none ${
+                  p === "VISA"   ? "text-blue-700 bg-blue-50"    :
+                  p === "MC"     ? "text-red-600 bg-red-50"       :
+                  p === "UPI"    ? "text-green-700 bg-green-50"   :
+                  p === "Paytm"  ? "text-sky-700 bg-sky-50"       :
+                  p === "GPay"   ? "text-indigo-700 bg-indigo-50" :
+                                   "text-gray-600 bg-gray-50"
+                }`}
+              >
+                {p === "MC" ? "Mastercard" : p}
+              </span>
+            ))}
+          </div>
+
+          {/* Trust seals */}
+          <div className="flex items-center gap-3 flex-wrap justify-center">
+            {[
+              { icon: "🔒", label: "SSL Secured" },
+              { icon: "✓",  label: "Verified Store" },
+              { icon: "🛡", label: "100% Genuine" },
+            ].map(({ icon, label }) => (
+              <div key={label} className="flex items-center gap-1 text-[10px] text-gray-500 font-medium">
+                <span className="text-xs">{icon}</span>
+                {label}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Copyright + legal */}
+      <div className="px-4 md:px-10 py-3 border-t border-outline-variant/20 max-w-[1280px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
         <p className="text-black text-xs font-medium opacity-70">
           &copy; {new Date().getFullYear()} artPetShop. All rights reserved.
         </p>
+        <div className="flex items-center gap-3">
+          {["Privacy Policy", "Terms of Use", "Refund Policy", "Contact Us"].map((l) => (
+            <Link key={l} href="#" className="text-[10px] text-gray-400 hover:text-primary transition-colors font-medium">
+              {l}
+            </Link>
+          ))}
+        </div>
       </div>
 
     </footer>

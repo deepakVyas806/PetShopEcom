@@ -1,8 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import ProductCard from "@/components/common/ProductCard";
-import { IconDelete, IconCalendar, IconCartSimple, IconCheck } from "@/lib/icons";
+import { IconDelete, IconCalendar, IconCartSimple, IconCheck, IconBell } from "@/lib/icons";
 
 /* ─── Badge config ───────────────────────────────────────────────────────────── */
 function buildBadges(badge, stock) {
@@ -68,6 +69,26 @@ function WishlistCTA({ item, isMoving, onMoveToCart }) {
   );
 }
 
+/* ─── Price Alert button ─────────────────────────────────────────────────────── */
+function PriceAlertButton({ item }) {
+  const [alertSet, setAlertSet] = useState(false);
+  if (item.stock === "outOfStock" || item.itemType === "service") return null;
+  return (
+    <button
+      onClick={() => setAlertSet((v) => !v)}
+      className={cn(
+        "flex items-center gap-1 text-[10px] font-semibold border rounded-full px-2 py-0.5 transition-all cursor-pointer outline-none mt-1.5",
+        alertSet
+          ? "bg-primary/10 text-primary border-primary/30"
+          : "bg-surface-container text-on-surface-variant border-outline-variant/30 hover:border-primary/30 hover:text-primary"
+      )}
+    >
+      <IconBell size={10} weight={alertSet ? "fill" : "regular"} />
+      {alertSet ? "Alert set ✓" : "Price alert"}
+    </button>
+  );
+}
+
 /* ─── WishlistCard ───────────────────────────────────────────────────────────── */
 export default function WishlistCard({ item, isMoving, onRemove, onMoveToCart }) {
   // Map wishlist item to ProductCard's product format
@@ -78,7 +99,6 @@ export default function WishlistCard({ item, isMoving, onRemove, onMoveToCart })
     price:       item.price,
     mrp:         item.originalPrice ?? undefined,
     meta:        `${item.category} · ${item.type}`,
-    // No rating / description for wishlist items
   };
 
   return (
@@ -89,7 +109,10 @@ export default function WishlistCard({ item, isMoving, onRemove, onMoveToCart })
       isMoving={isMoving}
       topRightSlot={<DeleteButton onClick={onRemove} />}
       ctaSlot={
-        <WishlistCTA item={item} isMoving={isMoving} onMoveToCart={onMoveToCart} />
+        <div>
+          <WishlistCTA item={item} isMoving={isMoving} onMoveToCart={onMoveToCart} />
+          <PriceAlertButton item={item} />
+        </div>
       }
     />
   );

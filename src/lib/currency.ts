@@ -14,7 +14,7 @@ export const CURRENCY = {
   symbol:  "₹",
   code:    "INR",
   locale:  "en-IN",
-  rate:    83,        // 1 USD → 83 INR  (update as needed)
+  rate:    1,         // prices stored in INR — no conversion needed
 } as const;
 
 /**

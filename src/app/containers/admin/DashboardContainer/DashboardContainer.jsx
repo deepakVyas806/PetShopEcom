@@ -29,7 +29,7 @@ export default function DashboardContainer() {
 
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <RecentActivity orders={data?.recentOrders} loading={loading} />
-        <BestSellingCard product={data?.topProducts?.[0]} loading={loading} />
+        <BestSellingCard topProducts={data?.topProducts} loading={loading} />
       </section>
     </div>
   );

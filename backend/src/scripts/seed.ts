@@ -7,6 +7,8 @@ import "dotenv/config";
 import mongoose from "mongoose";
 import { Product } from "../models/Product";
 import { Service } from "../models/Service";
+import { Order }   from "../models/Order";
+import { User }    from "../models/User";
 
 const MONGO_URI =
   process.env.MONGODB_URI ?? "mongodb://localhost:27017/artpetshop";
@@ -843,6 +845,82 @@ async function main() {
   }
 
   console.log(`\nDone. Products: ${pInserted} inserted, ${pUpdated} updated. Services: ${sInserted} inserted, ${sUpdated} updated.`);
+
+  // ── Demo orders ────────────────────────────────────────────────────────────
+  // Fetch seeded products to get real _ids
+  const prods = await Product.find({}, "_id name image price sku").lean();
+  const byIdx = (i: number) => prods[i % prods.length];
+
+  // Find or use the admin user as the order owner
+  const admin = await User.findOne({ role: "admin" }).lean();
+  const userId = admin?._id ?? new mongoose.Types.ObjectId();
+
+  const dummyAddress = {
+    name: "Demo Customer", line1: "123 Pet Lane", city: "Mumbai",
+    state: "Maharashtra", country: "India", pincode: "400001", phone: "9876543210",
+  };
+
+  const now = new Date();
+  const ago = (days: number, hours = 0) =>
+    new Date(now.getTime() - (days * 86400 + hours * 3600) * 1000);
+
+  // Each entry: [orderId, createdAt, items: [productIndex, qty]]
+  const DEMO_ORDERS: [string, Date, [number, number][]][] = [
+    // ── Today ──────────────────────────────────────────────────────────────
+    ["SEED-T-001", ago(0, 2),  [[0, 3], [2, 2]]],
+    ["SEED-T-002", ago(0, 4),  [[0, 2], [3, 4]]],
+    ["SEED-T-003", ago(0, 6),  [[1, 5], [4, 1]]],
+    ["SEED-T-004", ago(0, 8),  [[2, 3], [5, 2]]],
+    // ── This Week (2–6 days ago) ───────────────────────────────────────────
+    ["SEED-W-001", ago(2),     [[0, 4], [1, 3]]],
+    ["SEED-W-002", ago(3),     [[2, 5], [3, 2]]],
+    ["SEED-W-003", ago(4),     [[0, 3], [4, 3], [6, 1]]],
+    ["SEED-W-004", ago(5),     [[1, 4], [3, 2]]],
+    ["SEED-W-005", ago(6),     [[2, 2], [5, 3], [7, 2]]],
+    // ── This Month (8–25 days ago) ─────────────────────────────────────────
+    ["SEED-M-001", ago(8),     [[0, 5], [2, 4]]],
+    ["SEED-M-002", ago(10),    [[3, 6], [1, 2]]],
+    ["SEED-M-003", ago(13),    [[4, 3], [0, 2], [5, 1]]],
+    ["SEED-M-004", ago(17),    [[2, 4], [6, 3]]],
+    ["SEED-M-005", ago(20),    [[0, 3], [3, 5]]],
+    ["SEED-M-006", ago(24),    [[1, 6], [7, 2], [4, 2]]],
+    // ── All Time (30–90 days ago) ──────────────────────────────────────────
+    ["SEED-A-001", ago(31),    [[0, 8], [2, 3]]],
+    ["SEED-A-002", ago(40),    [[3, 7], [4, 4]]],
+    ["SEED-A-003", ago(48),    [[1, 5], [0, 4]]],
+    ["SEED-A-004", ago(55),    [[2, 6], [5, 3]]],
+    ["SEED-A-005", ago(63),    [[0, 6], [3, 4], [6, 2]]],
+    ["SEED-A-006", ago(72),    [[4, 5], [1, 3], [7, 1]]],
+    ["SEED-A-007", ago(80),    [[2, 7], [0, 3]]],
+    ["SEED-A-008", ago(88),    [[3, 8], [5, 2], [8, 1]]],
+  ];
+
+  console.log("\nUpserting demo orders...");
+  let oInserted = 0, oSkipped = 0;
+  for (const [orderId, createdAt, itemDefs] of DEMO_ORDERS) {
+    const items = itemDefs.map(([idx, qty]) => {
+      const p = byIdx(idx);
+      return { productId: p._id, name: p.name, image: p.image ?? "", price: p.price, quantity: qty, sku: p.sku ?? "" };
+    });
+    const subtotal = items.reduce((s, i) => s + i.price * i.quantity, 0);
+    const tax      = Math.round(subtotal * 0.18);
+    const shipping = subtotal >= 999 ? 0 : 99;
+    const total    = subtotal + tax + shipping;
+    const statuses = ["Pending","Confirmed","Processing","Shipped","Delivered"] as const;
+    const status   = statuses[Math.floor(Math.random() * statuses.length)];
+
+    // Use raw collection to set createdAt explicitly (bypasses Mongoose timestamps)
+    const result = await Order.collection.updateOne(
+      { orderId },
+      { $setOnInsert: { orderId, userId, items, subtotal, tax, shipping, discount: 0, total, shippingAddress: dummyAddress, paymentMethod: "Cash on Delivery", status, createdAt, updatedAt: createdAt } },
+      { upsert: true }
+    );
+    if (result.upsertedCount > 0) { console.log(`  inserted: ${orderId}`); oInserted++; }
+    else { oSkipped++; }
+  }
+  console.log(`  Orders: ${oInserted} inserted, ${oSkipped} already existed.`);
+
+  console.log("\nAll done.");
   await mongoose.disconnect();
   process.exit(0);
 }

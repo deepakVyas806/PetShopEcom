@@ -8,6 +8,7 @@ const glassCard = {
 };
 
 export default function CustomerPhotos({ photos }) {
+  if (!photos?.length) return null;
   return (
     <div className="p-4 rounded-xl overflow-hidden" style={glassCard}>
       <div className="flex items-center justify-between mb-3">

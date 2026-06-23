@@ -1,5 +1,5 @@
 "use client";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import Link from "next/link";
@@ -16,7 +16,7 @@ import SeoCard            from "./Components/SeoCard";
 import StatusSideCard     from "./Components/StatusSideCard";
 import TagsSideCard       from "./Components/TagsSideCard";
 import ProductPreviewCard from "./Components/ProductPreviewCard";
-import { CATEGORIES, BRANDS } from "../data";
+import { CATEGORIES, BRANDS, ANIMAL_TYPES, LIFE_STAGES } from "../data";
 
 function generateSKU() {
   const n = Math.floor(10000 + Math.random() * 90000);
@@ -24,10 +24,13 @@ function generateSKU() {
   return `APT-${n}-${s}`;
 }
 
+const FALLBACK_CATS   = CATEGORIES.filter(c => c !== "All Categories");
+const FALLBACK_BRANDS = BRANDS.filter(b => b !== "All Brands");
+
 const EMPTY_FORM = {
   name: "", stock: "0",
-  category: CATEGORIES[1] ?? CATEGORIES[0],
-  brand: BRANDS[1] ?? BRANDS[0],
+  category: FALLBACK_CATS[0]   ?? "",
+  brand:    FALLBACK_BRANDS[0] ?? "",
   images: ["", "", "", "", ""],
   basePrice: "", salePrice: "",
   description: "",
@@ -113,6 +116,36 @@ export default function CreateProductContainer({ editId = undefined }) {
   const [done,        setDone]      = useState(false);
   const [error,       setError]     = useState("");
   const [notFound,    setNotFound]  = useState(false);
+
+  // Catalog options — fetched from API, fall back to hardcoded data.js values
+  const [catalogOpts, setCatalogOpts] = useState({
+    categories: FALLBACK_CATS,
+    brands:     FALLBACK_BRANDS,
+    petTypes:   ANIMAL_TYPES,
+    lifeStages: LIFE_STAGES,
+    tags:       ["Organic", "Premium", "New Arrival", "Bestseller", "Sale", "Vet Approved", "Grain-Free", "Natural"],
+  });
+
+  const catalogFetchedRef = useRef(false);
+  useEffect(() => {
+    if (catalogFetchedRef.current) return;
+    catalogFetchedRef.current = true;
+    Promise.all([
+      api.get("/catalog?type=category"),
+      api.get("/catalog?type=brand"),
+      api.get("/catalog?type=petType"),
+      api.get("/catalog?type=lifeStage"),
+      api.get("/catalog?type=tag"),
+    ]).then(([cats, brands, pets, stages, tags]) => {
+      setCatalogOpts(prev => ({
+        categories: cats.items?.length   ? cats.items.map(i => i.name)   : prev.categories,
+        brands:     brands.items?.length ? brands.items.map(i => i.name) : prev.brands,
+        petTypes:   pets.items?.length   ? pets.items.map(i => i.name)   : prev.petTypes,
+        lifeStages: stages.items?.length ? stages.items.map(i => i.name) : prev.lifeStages,
+        tags:       tags.items?.length   ? tags.items.map(i => i.name)   : prev.tags,
+      }));
+    }).catch(() => {}); // graceful fallback — hardcoded data still works
+  }, []);
 
   // Fetch existing product when in edit mode
   useEffect(() => {
@@ -306,6 +339,8 @@ export default function CreateProductContainer({ editId = undefined }) {
           <GeneralInfoCard
             name={form.name} sku={form.sku} stock={form.stock}
             category={form.category} brand={form.brand}
+            categories={catalogOpts.categories}
+            brands={catalogOpts.brands}
             onField={setField} onRefreshSKU={refreshSKU}
             skuReadOnly={isEdit}
           />
@@ -315,6 +350,8 @@ export default function CreateProductContainer({ editId = undefined }) {
           <SpecificationsCard
             weight={form.weight} dimensions={form.dimensions}
             lifeStage={form.lifeStage} animalTypes={form.animalTypes}
+            lifeStages={catalogOpts.lifeStages}
+            petTypes={catalogOpts.petTypes}
             onField={setField} onToggleAnimalType={toggleAnimalType}
           />
           <VariantsCard
@@ -330,7 +367,7 @@ export default function CreateProductContainer({ editId = undefined }) {
         {/* ── Sidebar (1/3) ── */}
         <div className="space-y-5">
           <StatusSideCard status={form.status} isPublic={form.isPublic} onField={setField} />
-          <TagsSideCard tags={form.tags} onAdd={addTag} onRemove={removeTag} />
+          <TagsSideCard tags={form.tags} suggestions={catalogOpts.tags} onAdd={addTag} onRemove={removeTag} />
           <ProductPreviewCard
             name={form.name} basePrice={form.basePrice} salePrice={form.salePrice}
             image={form.images[0]} category={form.category} status={form.status}

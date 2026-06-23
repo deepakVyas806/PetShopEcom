@@ -2,6 +2,12 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactStrictMode: false,
+  images: {
+    remotePatterns: [
+      { protocol: "https", hostname: "logo.clearbit.com" },
+      { protocol: "https", hostname: "**.googleapis.com" },
+    ],
+  },
   headers: async () => [
     {
       // Service worker must be served without cache

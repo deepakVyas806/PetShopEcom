@@ -4,6 +4,24 @@ import { authenticate } from "../../hooks/authenticate";
 
 export const couponRoutes: FastifyPluginAsync = async (app) => {
 
+  // GET /coupons — list currently active coupons (public)
+  app.get("/", async (_req, reply) => {
+    const now = new Date();
+    const coupons = await Coupon.find({
+      status:    "active",
+      startDate: { $lte: now },
+      endDate:   { $gte: now },
+      $or: [
+        { usageLimit: 0 },
+        { $expr: { $lt: ["$usageCount", "$usageLimit"] } },
+      ],
+    })
+      .select("code description discountType value minOrder endDate")
+      .sort({ value: -1 })
+      .lean();
+    reply.send({ coupons });
+  });
+
   // POST /coupons/validate — validate a coupon code against an order total
   app.post("/validate", {
     preHandler: authenticate,

@@ -9,12 +9,18 @@ export default function MobileFilterDrawer({
   onClose,
   selectedPetTypes,
   onPetTypeChange,
+  petTypeOptions,
+  selectedCategories,
+  onCategoryChange,
+  categoryOptions,
   priceRange,
   onPriceRangeChange,
   selectedBrands,
   onBrandChange,
+  brands,
   ratingFilter,
   onRatingFilterChange,
+  onReset,
 }) {
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "unset";
@@ -42,17 +48,24 @@ export default function MobileFilterDrawer({
         <div className="flex-1 overflow-y-auto p-4" style={{ scrollbarWidth: "thin", scrollbarColor: "#ccc3d8 transparent" }}>
           <FilterPanel
             showPetType
+            showCategory
             showPriceRange
             showBrands
             showRating
             selectedPetTypes={selectedPetTypes}
             onPetTypeChange={onPetTypeChange}
+            petTypeOptions={petTypeOptions}
+            selectedCategories={selectedCategories}
+            onCategoryChange={onCategoryChange}
+            categoryOptions={categoryOptions}
             priceRange={priceRange}
             onPriceRangeChange={onPriceRangeChange}
             selectedBrands={selectedBrands}
             onBrandChange={onBrandChange}
+            brands={brands}
             ratingFilter={ratingFilter}
             onRatingFilterChange={onRatingFilterChange}
+            onReset={onReset}
           />
         </div>
 

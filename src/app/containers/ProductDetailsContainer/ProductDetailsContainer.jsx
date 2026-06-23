@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import useProductDetails from "./ProductDetailsContainer.hook";
-import { IconChevronRight, IconShipping, IconCartSimple, IconDelete, IconRemove, IconAdd, IconShield, IconEco, IconBag, IconCheckCircle, IconChevronDown } from "@/lib/icons";
+import { IconChevronRight, IconShipping, IconCartSimple, IconDelete, IconRemove, IconAdd, IconShield, IconEco, IconBag, IconCheckCircle, IconChevronDown, IconTag, IconLocation, IconLightning, IconCopy } from "@/lib/icons";
 import { fmt } from "@/lib/currency";
 import ReviewCard from "@/app/containers/ReviewsContainer/Components/ReviewCard";
 import RatingSummary from "@/app/containers/ReviewsContainer/Components/RatingSummary";
@@ -34,6 +34,116 @@ function transformReview(r, idx) {
   };
 }
 
+function OffersSection({ coupons = [] }) {
+  const [expanded, setExpanded] = useState(false);
+  const [copied, setCopied] = useState(null);
+
+  function copyCode(code) {
+    if (typeof navigator !== "undefined") navigator.clipboard?.writeText(code);
+    setCopied(code);
+    setTimeout(() => setCopied(null), 1800);
+  }
+
+  if (coupons.length === 0) return null;
+
+  const visible = expanded ? coupons : coupons.slice(0, 2);
+
+  return (
+    <div className="border border-outline-variant/30 rounded-xl overflow-hidden bg-white dark:bg-surface-container-lowest">
+      <div className="flex items-center gap-2 px-3 py-2.5 border-b border-outline-variant/20 bg-surface-container/40">
+        <IconTag size={14} className="text-primary" weight="fill" />
+        <span className="text-xs font-bold text-on-surface">Available Offers</span>
+      </div>
+      <div className="divide-y divide-outline-variant/10">
+        {visible.map((o) => {
+          const desc = o.description ||
+            (o.discountType === "percent"
+              ? `${o.value}% off${o.minOrder > 0 ? ` on orders above ₹${o.minOrder}` : ""}`
+              : `Flat ₹${o.value} off${o.minOrder > 0 ? ` on orders above ₹${o.minOrder}` : ""}`);
+          return (
+            <div key={o.code} className="flex items-start gap-3 px-3 py-2.5">
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-medium text-on-surface leading-snug">{desc}</p>
+                {o.endDate && (
+                  <p className="text-[10px] text-on-surface-variant mt-0.5">
+                    Valid till {new Date(o.endDate).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
+                  </p>
+                )}
+              </div>
+              <button
+                onClick={() => copyCode(o.code)}
+                className="shrink-0 flex items-center gap-1 border border-dashed border-primary/50 text-primary text-[10px] font-bold px-2 py-1 rounded cursor-pointer bg-transparent hover:bg-primary/5 transition-colors whitespace-nowrap"
+              >
+                {copied === o.code ? "✓ Copied!" : (
+                  <>
+                    <span>{o.code}</span>
+                    <IconCopy size={10} weight="regular" />
+                  </>
+                )}
+              </button>
+            </div>
+          );
+        })}
+      </div>
+      {coupons.length > 2 && (
+        <button
+          onClick={() => setExpanded((v) => !v)}
+          className="w-full text-[10px] text-primary font-semibold py-2 hover:bg-surface-container/40 transition-colors cursor-pointer border-none bg-transparent"
+        >
+          {expanded ? "Show less" : `+${coupons.length - 2} more offers`}
+        </button>
+      )}
+    </div>
+  );
+}
+
+function DeliveryCheck() {
+  const [pin, setPin] = useState("");
+  const [result, setResult] = useState(null);
+
+  function checkPin() {
+    if (pin.length !== 6) return;
+    // Simulate: pins starting with 4 or 5 = fast delivery, otherwise standard
+    const fast = ["4", "5"].includes(pin[0]);
+    setResult(fast
+      ? { ok: true,  msg: "Delivery by Tomorrow, 10am – 6pm" }
+      : { ok: true,  msg: "Delivery in 3–5 business days" });
+  }
+
+  return (
+    <div className="space-y-2">
+      <p className="text-xs font-bold text-on-surface flex items-center gap-1.5">
+        <IconLocation size={13} className="text-primary" weight="fill" />
+        Check delivery to your pincode
+      </p>
+      <div className="flex gap-2">
+        <input
+          type="text"
+          inputMode="numeric"
+          maxLength={6}
+          value={pin}
+          onChange={(e) => { setPin(e.target.value.replace(/\D/g, "")); setResult(null); }}
+          placeholder="Enter 6-digit pincode"
+          className="flex-1 border border-outline-variant/40 rounded-lg px-3 py-2 text-xs outline-none focus:border-primary text-on-surface bg-white dark:bg-surface-container-lowest placeholder:text-on-surface-variant/50"
+        />
+        <button
+          onClick={checkPin}
+          disabled={pin.length !== 6}
+          className="px-4 py-2 bg-primary text-white text-xs font-bold rounded-lg disabled:opacity-40 cursor-pointer border-none transition-opacity"
+        >
+          Check
+        </button>
+      </div>
+      {result && (
+        <p className={`text-xs font-medium flex items-center gap-1 ${result.ok ? "text-green-600" : "text-red-500"}`}>
+          <IconShipping size={13} weight="fill" />
+          {result.msg}
+        </p>
+      )}
+    </div>
+  );
+}
+
 export default function ProductDetailsContainer({ productId }) {
   const {
     product,
@@ -57,6 +167,7 @@ export default function ProductDetailsContainer({ productId }) {
     toggleBundleItem,
     bundleTotal,
     bundleItems,
+    coupons,
     handleAddToCart,
     handleBuyNow,
     handleAddBundleToCart,
@@ -231,10 +342,24 @@ export default function ProductDetailsContainer({ productId }) {
               </div>
             </div>
 
+            {/* Urgency signals */}
+            <div className="flex items-center gap-3 flex-wrap">
+              {product.stock != null && product.stock <= 5 && (
+                <span className="flex items-center gap-1 text-xs font-bold text-red-600 bg-red-50 border border-red-100 px-2.5 py-1 rounded-full">
+                  <IconLightning size={12} weight="fill" />
+                  Only {product.stock} left in stock!
+                </span>
+              )}
+              <span className="flex items-center gap-1 text-xs text-on-surface-variant bg-surface-container px-2.5 py-1 rounded-full">
+                <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse inline-block" />
+                {Math.floor(12 + (product._id?.charCodeAt(0) ?? 3) % 19)} people viewing this now
+              </span>
+            </div>
+
             {/* Pricing and Cart Box */}
             <div className="p-5 bg-surface-container-low rounded-2xl border border-outline-variant/20 shadow-sm space-y-4">
               <div className="flex items-baseline flex-wrap gap-2.5">
-                <span className="text-2xl md:text-3xl font-extrabold text-primary">
+                <span className="text-2xl md:text-3xl font-extrabold text-on-surface">
                   {fmt(displayPrice)}
                 </span>
                 {product.mrp && (
@@ -243,8 +368,8 @@ export default function ProductDetailsContainer({ productId }) {
                   </span>
                 )}
                 {discountPercent > 0 && (
-                  <span className="bg-error-container text-on-error-container px-2 py-0.5 rounded-lg text-xs font-bold uppercase tracking-wider">
-                    -{discountPercent}% OFF
+                  <span className="bg-green-100 text-green-700 px-2 py-0.5 rounded-lg text-xs font-bold">
+                    {discountPercent}% off
                   </span>
                 )}
               </div>
@@ -347,90 +472,78 @@ export default function ProductDetailsContainer({ productId }) {
               </div>
             </div>
 
+            {/* Available Offers */}
+            <OffersSection coupons={coupons} />
+
+            {/* Delivery Pincode Check */}
+            <DeliveryCheck />
+
           </div>
         </div>
 
         {/* Frequently Bought Together Bundle */}
-        <section className="mt-8">
-          <h2 className="text-xs font-bold mb-3 flex items-center gap-1.5 text-on-surface">
-            <IconBag size={18} className="text-primary" weight="regular" />
-            Frequently Bought Together
-          </h2>
+        {bundleItems.length > 0 && (
+          <section className="mt-8">
+            <h2 className="text-xs font-bold mb-3 flex items-center gap-1.5 text-on-surface">
+              <IconBag size={18} className="text-primary" weight="regular" />
+              Frequently Bought Together
+            </h2>
 
-          <div className="bg-surface-container/50 dark:bg-surface-container/30 p-4 rounded-xl border border-outline-variant/20 flex flex-col md:flex-row items-center justify-center gap-4">
-            <div className="flex items-center gap-4 flex-wrap justify-center select-none">
-              
-              {/* Product Card 1: Current Item */}
-              <div className="w-28 h-28 bg-white dark:bg-surface-container-lowest rounded-xl shadow-xs border border-outline-variant/30 p-2.5 relative flex items-center justify-center">
-                <img
-                  alt="Current Item"
-                  className="w-full h-full object-contain rounded-lg"
-                  src={product.image}
-                />
-                <div className="absolute bottom-[-10px] left-1/2 -translate-x-1/2 bg-primary text-white text-[9px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap uppercase tracking-wider shadow-sm">
-                  This Item
-                </div>
-              </div>
-              
-              <IconAdd size={20} className="text-outline font-bold" weight="bold" />
-              
-              {/* Product Card 2: Supplement Bundle Sibling */}
-              <div
-                onClick={() => toggleBundleItem("bundle_supp")}
-                className={`w-28 h-28 bg-white dark:bg-surface-container-lowest rounded-xl shadow-xs border p-2.5 relative flex items-center justify-center cursor-pointer transition-all hover:scale-105 ${
-                  checkedBundleItems.bundle_supp ? "border-primary" : "border-outline-variant/30"
-                }`}
-              >
-                <img
-                  alt={bundleItems[0].name}
-                  className="w-full h-full object-contain rounded-lg"
-                  src={bundleItems[0].image}
-                />
-                <div className="absolute top-1.5 right-1.5">
-                  <IconCheckCircle size={18} weight={checkedBundleItems.bundle_supp ? "fill" : "regular"} className={checkedBundleItems.bundle_supp ? "text-primary" : "text-outline-variant/60"} />
-                </div>
-                <div className="absolute bottom-1.5 left-1.5 right-1.5 text-center bg-black/60 text-white text-[9px] rounded py-0.5 font-bold">
-                  +{fmt(bundleItems[0].price)}
-                </div>
-              </div>
+            <div className="bg-surface-container/50 dark:bg-surface-container/30 p-4 rounded-xl border border-outline-variant/20 flex flex-col md:flex-row items-center justify-center gap-4">
+              <div className="flex items-center gap-4 flex-wrap justify-center select-none">
 
-              <IconAdd size={20} className="text-outline font-bold" weight="bold" />
+                {/* Product Card 1: Current Item */}
+                <div className="w-28 h-28 bg-white dark:bg-surface-container-lowest rounded-xl shadow-xs border border-outline-variant/30 p-2.5 relative flex items-center justify-center">
+                  <img
+                    alt="Current Item"
+                    className="w-full h-full object-contain rounded-lg"
+                    src={product.image}
+                  />
+                  <div className="absolute bottom-[-10px] left-1/2 -translate-x-1/2 bg-primary text-white text-[9px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap uppercase tracking-wider shadow-sm">
+                    This Item
+                  </div>
+                </div>
 
-              {/* Product Card 3: Bowl Bundle Sibling */}
-              <div
-                onClick={() => toggleBundleItem("bundle_bowl")}
-                className={`w-28 h-28 bg-white dark:bg-surface-container-lowest rounded-xl shadow-xs border p-2.5 relative flex items-center justify-center cursor-pointer transition-all hover:scale-105 ${
-                  checkedBundleItems.bundle_bowl ? "border-primary" : "border-outline-variant/30"
-                }`}
-              >
-                <img
-                  alt={bundleItems[1].name}
-                  className="w-full h-full object-contain rounded-lg"
-                  src={bundleItems[1].image}
-                />
-                <div className="absolute top-1.5 right-1.5">
-                  <IconCheckCircle size={18} weight={checkedBundleItems.bundle_bowl ? "fill" : "regular"} className={checkedBundleItems.bundle_bowl ? "text-primary" : "text-outline-variant/60"} />
-                </div>
-                <div className="absolute bottom-1.5 left-1.5 right-1.5 text-center bg-black/60 text-white text-[9px] rounded py-0.5 font-bold">
-                  +{fmt(bundleItems[1].price)}
-                </div>
+                {bundleItems.map((item) => (
+                  <React.Fragment key={item.id}>
+                    <IconAdd size={20} className="text-outline font-bold" weight="bold" />
+                    <div
+                      onClick={() => toggleBundleItem(item.id)}
+                      className={`w-28 h-28 bg-white dark:bg-surface-container-lowest rounded-xl shadow-xs border p-2.5 relative flex items-center justify-center cursor-pointer transition-all hover:scale-105 ${
+                        checkedBundleItems[item.id] ? "border-primary" : "border-outline-variant/30"
+                      }`}
+                    >
+                      <img
+                        alt={item.name}
+                        className="w-full h-full object-contain rounded-lg"
+                        src={item.image}
+                      />
+                      <div className="absolute top-1.5 right-1.5">
+                        <IconCheckCircle size={18} weight={checkedBundleItems[item.id] ? "fill" : "regular"} className={checkedBundleItems[item.id] ? "text-primary" : "text-outline-variant/60"} />
+                      </div>
+                      <div className="absolute bottom-1.5 left-1.5 right-1.5 text-center bg-black/60 text-white text-[9px] rounded py-0.5 font-bold">
+                        +{fmt(item.price)}
+                      </div>
+                    </div>
+                  </React.Fragment>
+                ))}
+
               </div>
 
+              {/* Bundle Total Calculator Box */}
+              <div className="md:border-l border-outline-variant/30 md:pl-5 flex flex-col items-center md:items-start space-y-2">
+                <span className="text-on-surface-variant text-xs font-semibold">Total for items:</span>
+                <span className="text-sm font-black text-on-surface">{fmt(bundleTotal)}</span>
+                <button
+                  onClick={handleAddBundleToCart}
+                  className="bg-primary text-on-primary text-xs px-4 py-2 rounded-full font-bold hover:brightness-105 active:scale-95 transition-all shadow-sm cursor-pointer border-none outline-none"
+                >
+                  Add Bundle to Cart
+                </button>
+              </div>
             </div>
-
-            {/* Bundle Total Calculator Box */}
-            <div className="md:border-l border-outline-variant/30 md:pl-5 flex flex-col items-center md:items-start space-y-2">
-              <span className="text-on-surface-variant text-xs font-semibold">Total for items:</span>
-              <span className="text-sm font-black text-on-surface">{fmt(bundleTotal)}</span>
-              <button
-                onClick={handleAddBundleToCart}
-                className="bg-primary text-on-primary text-xs px-4 py-2 rounded-full font-bold hover:brightness-105 active:scale-95 transition-all shadow-sm cursor-pointer border-none outline-none"
-              >
-                Add Bundle to Cart
-              </button>
-            </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* Tabbed Detailed Content */}
         <section className="mt-8">
@@ -602,6 +715,30 @@ export default function ProductDetailsContainer({ productId }) {
         </section>
 
       </main>
+
+      {/* Sticky mobile CTA bar */}
+      <div className="fixed bottom-16 left-0 right-0 z-40 md:hidden bg-white dark:bg-surface-container-lowest border-t border-outline-variant/20 px-4 py-2.5 flex items-center gap-3 shadow-[0_-4px_12px_rgba(0,0,0,0.08)]">
+        <div className="min-w-0 shrink-0">
+          <p className="text-base font-extrabold text-on-surface leading-none">{fmt(displayPrice)}</p>
+          {discountPercent > 0 && (
+            <p className="text-[10px] text-green-600 font-bold mt-0.5">{discountPercent}% off</p>
+          )}
+        </div>
+        <div className="flex-1 flex gap-2">
+          <button
+            onClick={() => { handleAddToCart(); setInCart(true); }}
+            className="flex-1 bg-primary/10 text-primary border border-primary/30 font-bold text-xs py-2.5 rounded-lg active:scale-95 transition-all cursor-pointer"
+          >
+            Add to Cart
+          </button>
+          <button
+            onClick={handleBuyNow}
+            className="flex-1 bg-primary text-white font-bold text-xs py-2.5 rounded-lg active:scale-95 transition-all cursor-pointer border-none"
+          >
+            Buy Now
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

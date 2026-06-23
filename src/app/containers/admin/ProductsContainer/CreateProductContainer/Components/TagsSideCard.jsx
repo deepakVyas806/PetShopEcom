@@ -2,13 +2,14 @@
 import { memo, useState } from "react";
 import { IconAdd, IconClose } from "@/lib/icons";
 
-const SUGGESTIONS = [
+const DEFAULT_SUGGESTIONS = [
   "Organic", "Premium", "New Arrival", "Bestseller",
   "Sale", "Vet Approved", "Eco-Friendly", "Grain-Free",
 ];
 
-export default memo(function TagsSideCard({ tags, onAdd, onRemove }) {
+export default memo(function TagsSideCard({ tags, suggestions, onAdd, onRemove }) {
   const [input, setInput] = useState("");
+  const SUGGESTIONS = suggestions?.length ? suggestions : DEFAULT_SUGGESTIONS;
 
   const commit = () => {
     if (input.trim()) { onAdd(input.trim()); setInput(""); }

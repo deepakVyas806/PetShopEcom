@@ -9,6 +9,8 @@ export default function OrderSummary({
   subtotal,
   shipping,
   tax,
+  taxRate,
+  freeShipThreshold,
   appliedCode,
   promoDiscount,
   grandTotal,
@@ -44,7 +46,7 @@ export default function OrderSummary({
             )}
           </div>
           <div className="flex justify-between">
-            <span>Tax (8.5%)</span>
+            <span>Tax ({taxRate ?? 18}% GST)</span>
             <span className="font-semibold text-on-surface">{fmt(tax)}</span>
           </div>
           

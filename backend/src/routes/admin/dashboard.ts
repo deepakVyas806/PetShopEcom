@@ -23,7 +23,8 @@ export const adminDashboardRoutes: FastifyPluginAsync = async (app) => {
         totalOrders, totalCustomers, totalRevenue,
         todayRevenue, monthRevenue, weekRevenue,
         pendingOrders, totalProducts, totalServices, totalCoupons,
-        recentOrders, topProducts,
+        recentOrders,
+        topAllTime, topMonth, topWeek, topToday,
         monthlyRevenue, categoryRevenue,
       ] = await Promise.all([
         Order.countDocuments(),
@@ -46,11 +47,32 @@ export const adminDashboardRoutes: FastifyPluginAsync = async (app) => {
         Service.countDocuments({ active: true }),
         Coupon.countDocuments({ status: "active" }),
         Order.find().sort({ createdAt: -1 }).limit(5).populate("userId", "name email avatar").lean(),
+        // Top 5 — All Time
         Order.aggregate([
           { $unwind: "$items" },
           { $group: { _id: "$items.productId", name: { $first: "$items.name" }, image: { $first: "$items.image" }, totalSold: { $sum: "$items.quantity" }, revenue: { $sum: { $multiply: ["$items.price", "$items.quantity"] } } } },
-          { $sort: { totalSold: -1 } },
-          { $limit: 5 },
+          { $sort: { totalSold: -1 } }, { $limit: 5 },
+        ]),
+        // Top 5 — This Month
+        Order.aggregate([
+          { $match: { createdAt: { $gte: monthStart } } },
+          { $unwind: "$items" },
+          { $group: { _id: "$items.productId", name: { $first: "$items.name" }, image: { $first: "$items.image" }, totalSold: { $sum: "$items.quantity" }, revenue: { $sum: { $multiply: ["$items.price", "$items.quantity"] } } } },
+          { $sort: { totalSold: -1 } }, { $limit: 5 },
+        ]),
+        // Top 5 — This Week
+        Order.aggregate([
+          { $match: { createdAt: { $gte: weekStart } } },
+          { $unwind: "$items" },
+          { $group: { _id: "$items.productId", name: { $first: "$items.name" }, image: { $first: "$items.image" }, totalSold: { $sum: "$items.quantity" }, revenue: { $sum: { $multiply: ["$items.price", "$items.quantity"] } } } },
+          { $sort: { totalSold: -1 } }, { $limit: 5 },
+        ]),
+        // Top 5 — Today
+        Order.aggregate([
+          { $match: { createdAt: { $gte: todayStart } } },
+          { $unwind: "$items" },
+          { $group: { _id: "$items.productId", name: { $first: "$items.name" }, image: { $first: "$items.image" }, totalSold: { $sum: "$items.quantity" }, revenue: { $sum: { $multiply: ["$items.price", "$items.quantity"] } } } },
+          { $sort: { totalSold: -1 } }, { $limit: 5 },
         ]),
         // Monthly revenue for current year — one entry per month
         Order.aggregate([
@@ -92,7 +114,12 @@ export const adminDashboardRoutes: FastifyPluginAsync = async (app) => {
           totalCoupons,
         },
         recentOrders,
-        topProducts,
+        topProducts: {
+          allTime: topAllTime,
+          month:   topMonth,
+          week:    topWeek,
+          today:   topToday,
+        },
         monthlyRevenue: monthTotals,
         categoryRevenue: (categoryRevenue as { _id: string; revenue: number }[]).map(c => ({
           label:   c._id,

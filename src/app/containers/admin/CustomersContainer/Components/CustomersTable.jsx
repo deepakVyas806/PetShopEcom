@@ -46,7 +46,7 @@ const CustomersTable = memo(function CustomersTable({
   onPageChange,
 }) {
   const router = useRouter();
-  const totalPages = Math.ceil(total / perPage);
+  const totalPages = Math.max(1, Math.ceil(total / perPage));
   const start = (page - 1) * perPage + 1;
   const end   = Math.min(page * perPage, total);
 

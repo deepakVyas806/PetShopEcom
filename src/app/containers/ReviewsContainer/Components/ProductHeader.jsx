@@ -6,16 +6,17 @@ import PageHeader from "@/components/common/PageHeader";
 import { IconChevronRight } from "@/lib/icons";
 
 export default function ProductHeader({ product }) {
+  if (!product) return null;
   return (
     <>
       {/* Shared page header with breadcrumb */}
       <PageHeader
         breadcrumbs={[
-          { label: "Home",              href: "/"            },
-          { label: product.category,    href: "/marketplace" },
-          { label: product.name                              },
+          { label: "Home",                        href: "/"            },
+          { label: product.category ?? "Products", href: "/marketplace" },
+          { label: product.name ?? "Review"                            },
         ]}
-        title={product.name}
+        title={product.name ?? "Reviews"}
       />
 
       {/* Product image + rating strip */}

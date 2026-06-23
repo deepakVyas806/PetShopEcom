@@ -69,7 +69,7 @@ export default function ReviewsContainer() {
         {/* Sidebar */}
         <aside className="lg:col-span-4 space-y-4 sticky top-24 self-start">
           <RatingSummary product={product} onWriteReview={handleWriteReview} />
-          <CustomerPhotos photos={product.customerPhotos} />
+          <CustomerPhotos photos={product?.customerPhotos} />
         </aside>
 
         {/* Reviews list */}
