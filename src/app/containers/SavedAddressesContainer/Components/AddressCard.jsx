@@ -17,7 +17,14 @@ const glass = {
 };
 
 export default function AddressCard({ address, onSetDefault, onDelete }) {
-  const { name, type, label, icon, line1, line2, country, phone, isDefault } = address;
+  const id = address._id ?? address.id;
+  const { name, type, label, icon, line1, line2, city, state, country, pincode, phone, isDefault } = address;
+
+  const IC = ADDRESS_ICON_MAP[icon] ?? IconLocation;
+
+  // Full address string
+  const addressLines = [line1, line2, city && state ? `${city}, ${state}` : city || state, pincode, country]
+    .filter(Boolean);
 
   return (
     <div
@@ -38,7 +45,7 @@ export default function AddressCard({ address, onSetDefault, onDelete }) {
           </span>
         ) : (
           <span className="text-xs font-medium bg-surface-container-high text-on-surface-variant px-2.5 py-1 rounded-full">
-            {type}
+            {type || "Other"}
           </span>
         )}
 
@@ -51,7 +58,7 @@ export default function AddressCard({ address, onSetDefault, onDelete }) {
             <IconEdit size={16} weight="bold" />
           </button>
           <button
-            onClick={() => onDelete(address.id)}
+            onClick={() => onDelete(id)}
             className="w-7 h-7 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-error/10 hover:text-error transition-all cursor-pointer bg-transparent border-none"
             title="Delete"
           >
@@ -62,30 +69,32 @@ export default function AddressCard({ address, onSetDefault, onDelete }) {
 
       {/* Name + label */}
       <p className="text-sm font-bold text-on-surface mb-0.5">{name}</p>
-      <p className="text-xs text-on-surface-variant mb-4">{label}</p>
+      {label && <p className="text-xs text-on-surface-variant mb-4">{label}</p>}
 
       {/* Address details */}
       <div className="space-y-2.5">
         <div className="flex items-start gap-2.5">
           <span className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-            {(() => { const IC = ADDRESS_ICON_MAP[icon] ?? IconLocation; return <IC size={13} className="text-primary" weight="regular" />; })()}
+            <IC size={13} className="text-primary" weight="regular" />
           </span>
           <p className="text-xs text-on-surface leading-relaxed">
-            {line1}<br />{line2}<br />{country}
+            {addressLines.join(", ")}
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
-          <span className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-            <IconPhone size={13} className="text-primary" weight="regular" />
-          </span>
-          <p className="text-xs text-on-surface">{phone}</p>
-        </div>
+        {phone && (
+          <div className="flex items-center gap-2.5">
+            <span className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+              <IconPhone size={13} className="text-primary" weight="regular" />
+            </span>
+            <p className="text-xs text-on-surface">{phone}</p>
+          </div>
+        )}
       </div>
 
       {/* Footer */}
       <div className="mt-4 pt-3.5 border-t border-outline-variant/20 flex items-center justify-between">
-        <span className="text-xs font-semibold text-outline uppercase tracking-wider">{type}</span>
+        <span className="text-xs font-semibold text-outline uppercase tracking-wider">{type || "Other"}</span>
         {isDefault ? (
           <span className="inline-flex items-center gap-1 text-xs text-primary font-semibold">
             <span className="w-4 h-4 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
@@ -95,7 +104,7 @@ export default function AddressCard({ address, onSetDefault, onDelete }) {
           </span>
         ) : (
           <button
-            onClick={() => onSetDefault(address.id)}
+            onClick={() => onSetDefault(id)}
             className="text-xs text-primary font-semibold hover:underline cursor-pointer bg-transparent border-none p-0"
           >
             Set as default

@@ -1,5 +1,6 @@
 import { FastifyPluginAsync } from "fastify";
 import { CatalogItem, CATALOG_TYPES, toSlug } from "../../models/CatalogItem";
+import { Product } from "../../models/Product";
 import { adminOnly } from "../../hooks/adminOnly";
 
 export const adminCatalogRoutes: FastifyPluginAsync = async (app) => {
@@ -34,9 +35,29 @@ export const adminCatalogRoutes: FastifyPluginAsync = async (app) => {
     reply.send({ item });
   });
 
-  // DELETE /admin/catalog/:id
+  // DELETE /admin/catalog/:id — cascade-cleans product refs and string slugs
   app.delete("/:id", { preHandler: adminOnly }, async (req, reply) => {
-    await CatalogItem.findByIdAndDelete((req.params as any).id);
+    const item = await CatalogItem.findById((req.params as any).id).lean();
+    if (!item) return reply.status(404).send({ message: "Item not found" });
+
+    await CatalogItem.findByIdAndDelete(item._id);
+
+    const oid   = item._id;
+    const slug  = item.slug;
+    const name  = item.name;
+
+    // Cascade: clear ObjectId refs AND derived string fields in products
+    await Promise.all([
+      // Single-value FK fields
+      Product.updateMany({ categoryId:  oid }, { $set: { categoryId:  null, category:  "" } }),
+      Product.updateMany({ brandId:     oid }, { $set: { brandId:     null, brand:     "" } }),
+      Product.updateMany({ lifeStageId: oid }, { $set: { lifeStageId: null, lifeStage: "" } }),
+      // Array FK fields — pull both the ObjectId ref and the derived slug string
+      Product.updateMany({ petTypeIds: oid }, { $pull: { petTypeIds: oid, petTypes: slug } }),
+      // Tags are freeform strings — pull by name
+      Product.updateMany({ tags: name }, { $pull: { tags: name } }),
+    ]);
+
     reply.send({ success: true });
   });
 

@@ -53,7 +53,7 @@ export default function NotificationsContainer({ showHeader = true }) {
           <div className="space-y-2">
             {filtered.map((n) => (
               <NotificationCard
-                key={n.id}
+                key={n._id ?? n.id}
                 notification={n}
                 onMarkRead={markRead}
               />

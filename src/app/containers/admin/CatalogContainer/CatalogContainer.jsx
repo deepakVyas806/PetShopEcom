@@ -6,24 +6,36 @@ import {
   IconAdd, IconEdit, IconDelete, IconClose,
   IconCheck, IconSpinner, IconChevronRight,
 } from "@/lib/icons";
+import ImageUploadField from "@/components/admin/ImageUploadField";
 
 function toSlug(str) {
   return str.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 }
 
 const TAB_TYPES = [
-  { key: "category",  label: "Categories",  plural: "categories",  addLabel: "Add Category"  },
-  { key: "brand",     label: "Brands",       plural: "brands",      addLabel: "Add Brand"     },
-  { key: "petType",   label: "Pet Types",    plural: "pet types",   addLabel: "Add Pet Type"  },
-  { key: "lifeStage", label: "Life Stages",  plural: "life stages", addLabel: "Add Life Stage" },
-  { key: "tag",       label: "Tags",         plural: "tags",        addLabel: "Add Tag"       },
-  { key: "badge",     label: "Badges",       plural: "badges",      addLabel: "Add Badge"     },
+  { key: "category",  label: "Categories",  plural: "categories",  addLabel: "Add Category",   hasImage: true  },
+  { key: "brand",     label: "Brands",       plural: "brands",      addLabel: "Add Brand",      hasImage: false },
+  { key: "petType",   label: "Pet Types",    plural: "pet types",   addLabel: "Add Pet Type",   hasImage: true  },
+  { key: "lifeStage", label: "Life Stages",  plural: "life stages", addLabel: "Add Life Stage", hasImage: true  },
+  { key: "tag",       label: "Tags",         plural: "tags",        addLabel: "Add Tag",        hasImage: false },
+  { key: "badge",     label: "Badges",       plural: "badges",      addLabel: "Add Badge",      hasImage: false },
 ];
 
-const EMPTY_FORM = { name: "", icon: "", slug: "", color: "", logoUrl: "" };
+const EMPTY_FORM = { name: "", icon: "", slug: "", color: "", logoUrl: "", imageUrl: "" };
 
 const inp = "w-full px-3 py-2.5 bg-surface-container-low border border-outline-variant/50 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-primary/30 text-on-surface placeholder:text-on-surface-variant";
 const lbl = "block text-[10px] font-bold uppercase tracking-wide text-on-surface-variant mb-1.5";
+
+function Initials({ name, size = "w-8 h-8" }) {
+  const letters = name
+    ? name.trim().split(/\s+/).slice(0, 2).map(w => w[0]?.toUpperCase()).join("")
+    : "?";
+  return (
+    <div className={`${size} rounded-lg bg-primary/10 flex items-center justify-center text-[10px] font-black text-primary border border-outline-variant/20 flex-shrink-0`}>
+      {letters}
+    </div>
+  );
+}
 
 export default function CatalogContainer() {
   const [activeType,  setActiveType]  = useState("category");
@@ -36,7 +48,6 @@ export default function CatalogContainer() {
   const [formSaving,  setFormSaving]  = useState(false);
   const [deleteId,    setDeleteId]    = useState(null);
 
-  // Ref guard: tracks which types have been fetched to prevent double-fetching in StrictMode.
   const fetchedRef = useRef(new Set());
 
   const fetchType = useCallback(async (type, force = false) => {
@@ -50,7 +61,6 @@ export default function CatalogContainer() {
     finally { setLoading(prev => ({ ...prev, [type]: false })); }
   }, []);
 
-  // Lazy-load: only fetch the active tab when it changes (other tabs load on first visit).
   useEffect(() => {
     fetchType(activeType);
   }, [activeType, fetchType]);
@@ -63,11 +73,12 @@ export default function CatalogContainer() {
 
   const openEdit = (type, item) => {
     setForm({
-      name:    item.name    ?? "",
-      icon:    item.icon    ?? "",
-      slug:    item.slug    ?? "",
-      color:   item.color   ?? "",
-      logoUrl: item.logoUrl ?? "",
+      name:     item.name     ?? "",
+      icon:     item.icon     ?? "",
+      slug:     item.slug     ?? "",
+      color:    item.color    ?? "",
+      logoUrl:  item.logoUrl  ?? "",
+      imageUrl: item.imageUrl ?? "",
     });
     setFormError("");
     setModal({ mode: "edit", type, item });
@@ -118,6 +129,15 @@ export default function CatalogContainer() {
   const currentItems = items[activeType] ?? [];
   const currentTab   = TAB_TYPES.find(t => t.key === activeType);
   const isLoading    = loading[activeType];
+  const isBrand      = activeType === "brand";
+  const hasImage     = currentTab?.hasImage;
+
+  // Grid columns: name | [logo/image] | slug | live | actions
+  const gridCols = isBrand
+    ? "1fr 120px 160px 52px 68px"
+    : hasImage
+      ? "1fr 80px 160px 52px 68px"
+      : "1fr 160px 52px 68px";
 
   return (
     <div className="space-y-5 pb-12">
@@ -173,10 +193,12 @@ export default function CatalogContainer() {
       <div className="bg-surface-container-lowest rounded-2xl border border-outline-variant/30 shadow-sm overflow-hidden">
 
         {/* Table header */}
-        <div className="grid gap-3 px-4 py-2.5 bg-surface-container-low border-b border-outline-variant/20 text-[10px] font-bold uppercase tracking-wide text-on-surface-variant"
-          style={{ gridTemplateColumns: activeType === "brand" ? "1fr 120px 160px 52px 68px" : "1fr 160px 52px 68px" }}>
+        <div
+          className="grid gap-3 px-4 py-2.5 bg-surface-container-low border-b border-outline-variant/20 text-[10px] font-bold uppercase tracking-wide text-on-surface-variant"
+          style={{ gridTemplateColumns: gridCols }}
+        >
           <span>Name</span>
-          {activeType === "brand" && <span>Logo</span>}
+          {(isBrand || hasImage) && <span>{isBrand ? "Logo" : "Image"}</span>}
           <span>Slug</span>
           <span className="text-center">Live</span>
           <span />
@@ -203,79 +225,81 @@ export default function CatalogContainer() {
         )}
 
         {/* Rows */}
-        {!isLoading && currentItems.map(item => (
-          <div
-            key={item._id}
-            className="grid gap-3 px-4 py-3 border-b border-outline-variant/10 last:border-0 hover:bg-surface-container-low/40 group transition-colors items-center"
-            style={{ gridTemplateColumns: activeType === "brand" ? "1fr 120px 160px 52px 68px" : "1fr 160px 52px 68px" }}
-          >
-            {/* Name + icon */}
-            <div className="flex items-center gap-2.5 min-w-0">
-              {item.icon && <span className="text-xl flex-shrink-0">{item.icon}</span>}
-              {!item.icon && activeType === "tag" && item.color && (
-                <span className="w-3 h-3 rounded-full flex-shrink-0" style={{ background: item.color }} />
-              )}
-              <div className="min-w-0">
-                <p className="text-xs font-bold text-on-surface truncate">{item.name}</p>
-                {activeType === "badge" && item.color && (
-                  <span className="inline-block px-2 py-0.5 rounded-full text-[9px] font-bold mt-0.5" style={{ background: item.color + "22", color: item.color, border: `1px solid ${item.color}44` }}>
-                    preview
-                  </span>
+        {!isLoading && currentItems.map(item => {
+          const imageUrl = isBrand ? item.logoUrl : item.imageUrl;
+
+          return (
+            <div
+              key={item._id}
+              className="grid gap-3 px-4 py-3 border-b border-outline-variant/10 last:border-0 hover:bg-surface-container-low/40 group transition-colors items-center"
+              style={{ gridTemplateColumns: gridCols }}
+            >
+              {/* Name + icon */}
+              <div className="flex items-center gap-2.5 min-w-0">
+                {item.icon && <span className="text-xl flex-shrink-0">{item.icon}</span>}
+                {!item.icon && activeType === "tag" && item.color && (
+                  <span className="w-3 h-3 rounded-full flex-shrink-0" style={{ background: item.color }} />
                 )}
+                <div className="min-w-0">
+                  <p className="text-xs font-bold text-on-surface truncate">{item.name}</p>
+                  {activeType === "badge" && item.color && (
+                    <span className="inline-block px-2 py-0.5 rounded-full text-[9px] font-bold mt-0.5" style={{ background: item.color + "22", color: item.color, border: `1px solid ${item.color}44` }}>
+                      preview
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Image / logo cell */}
+              {(isBrand || hasImage) && (
+                imageUrl
+                  ? <img src={imageUrl} alt={item.name} className="w-8 h-8 object-contain rounded-lg border border-outline-variant/20 flex-shrink-0" />
+                  : <Initials name={item.name} />
+              )}
+
+              {/* Slug */}
+              <span className="font-mono text-[10px] text-on-surface-variant bg-surface-container px-2 py-1 rounded-lg truncate">
+                {item.slug}
+              </span>
+
+              {/* Toggle */}
+              <div className="flex justify-center">
+                <button
+                  onClick={() => handleToggle(activeType, item)}
+                  disabled={savingId === item._id}
+                  className={`relative rounded-full transition-colors cursor-pointer border-none flex-shrink-0 disabled:opacity-60 ${item.active ? "bg-primary" : "bg-outline-variant"}`}
+                  style={{ width: 32, height: 18 }}
+                  title={item.active ? "Deactivate" : "Activate"}
+                >
+                  <span className={`absolute top-[2px] w-[13px] h-[13px] rounded-full bg-white shadow transition-all ${item.active ? "left-[17px]" : "left-[2px]"}`} />
+                </button>
+              </div>
+
+              {/* Actions */}
+              <div className="flex items-center gap-1 justify-end opacity-0 group-hover:opacity-100 transition-opacity">
+                <button
+                  onClick={() => openEdit(activeType, item)}
+                  className="p-1.5 rounded-lg hover:bg-primary/10 text-on-surface-variant hover:text-primary transition-all cursor-pointer bg-transparent border-none"
+                  title="Edit"
+                >
+                  <IconEdit size={13} weight="bold" />
+                </button>
+                <button
+                  onClick={() => handleDelete(activeType, item._id)}
+                  disabled={deleteId === item._id}
+                  className="p-1.5 rounded-lg hover:bg-error/10 text-on-surface-variant hover:text-error transition-all cursor-pointer bg-transparent border-none disabled:opacity-50"
+                  title="Delete"
+                >
+                  {deleteId === item._id
+                    ? <IconSpinner size={13} className="animate-spin" />
+                    : <IconDelete size={13} weight="bold" />}
+                </button>
               </div>
             </div>
+          );
+        })}
 
-            {/* Brand logo */}
-            {activeType === "brand" && (
-              item.logoUrl
-                ? <img src={item.logoUrl} alt={item.name} className="w-8 h-8 object-contain rounded-lg border border-outline-variant/20" />
-                : <span className="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-[10px] font-bold text-on-surface-variant border border-outline-variant/20">
-                    {item.name.slice(0, 2).toUpperCase()}
-                  </span>
-            )}
-
-            {/* Slug */}
-            <span className="font-mono text-[10px] text-on-surface-variant bg-surface-container px-2 py-1 rounded-lg truncate">
-              {item.slug}
-            </span>
-
-            {/* Toggle */}
-            <div className="flex justify-center">
-              <button
-                onClick={() => handleToggle(activeType, item)}
-                disabled={savingId === item._id}
-                className={`relative rounded-full transition-colors cursor-pointer border-none flex-shrink-0 disabled:opacity-60 ${item.active ? "bg-primary" : "bg-outline-variant"}`}
-                style={{ width: 32, height: 18 }}
-                title={item.active ? "Deactivate" : "Activate"}
-              >
-                <span className={`absolute top-[2px] w-[13px] h-[13px] rounded-full bg-white shadow transition-all ${item.active ? "left-[17px]" : "left-[2px]"}`} />
-              </button>
-            </div>
-
-            {/* Actions */}
-            <div className="flex items-center gap-1 justify-end opacity-0 group-hover:opacity-100 transition-opacity">
-              <button
-                onClick={() => openEdit(activeType, item)}
-                className="p-1.5 rounded-lg hover:bg-primary/10 text-on-surface-variant hover:text-primary transition-all cursor-pointer bg-transparent border-none"
-                title="Edit"
-              >
-                <IconEdit size={13} weight="bold" />
-              </button>
-              <button
-                onClick={() => handleDelete(activeType, item._id)}
-                disabled={deleteId === item._id}
-                className="p-1.5 rounded-lg hover:bg-error/10 text-on-surface-variant hover:text-error transition-all cursor-pointer bg-transparent border-none disabled:opacity-50"
-                title="Delete"
-              >
-                {deleteId === item._id
-                  ? <IconSpinner size={13} className="animate-spin" />
-                  : <IconDelete size={13} weight="bold" />}
-              </button>
-            </div>
-          </div>
-        ))}
-
-        {/* Inline add row at bottom (when not using modal) */}
+        {/* Inline add at bottom */}
         {!isLoading && (
           <div className="px-4 py-3 bg-surface-container-low border-t border-outline-variant/10 flex items-center gap-2">
             <button
@@ -321,11 +345,11 @@ export default function CatalogContainer() {
                   value={form.name}
                   onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
                   placeholder={
-                    modal.type === "category"  ? "e.g. Grooming"
-                    : modal.type === "brand"   ? "e.g. Royal Canin"
-                    : modal.type === "petType" ? "e.g. Dogs"
+                    modal.type === "category"   ? "e.g. Grooming"
+                    : modal.type === "brand"    ? "e.g. Royal Canin"
+                    : modal.type === "petType"  ? "e.g. Dogs"
                     : modal.type === "lifeStage" ? "e.g. Puppy / Kitten"
-                    : modal.type === "tag"     ? "e.g. Organic"
+                    : modal.type === "tag"      ? "e.g. Organic"
                     : "e.g. Bestseller"
                   }
                   className={inp}
@@ -346,21 +370,26 @@ export default function CatalogContainer() {
                 />
               </div>
 
-              {/* Brand logo URL */}
+              {/* Brand logo upload */}
               {modal.type === "brand" && (
-                <div>
-                  <label className={lbl}>Logo URL <span className="text-on-surface-variant normal-case font-normal">(optional)</span></label>
-                  <input
-                    type="text"
-                    value={form.logoUrl}
-                    onChange={e => setForm(f => ({ ...f, logoUrl: e.target.value }))}
-                    placeholder="https://..."
-                    className={inp}
-                  />
-                  {form.logoUrl && (
-                    <img src={form.logoUrl} alt="" className="mt-2 w-10 h-10 rounded-lg object-contain border border-outline-variant/30" />
-                  )}
-                </div>
+                <ImageUploadField
+                  label="Logo"
+                  value={form.logoUrl}
+                  onChange={url => setForm(f => ({ ...f, logoUrl: url }))}
+                  name={form.name}
+                  objectFit="contain"
+                />
+              )}
+
+              {/* Image upload for category / petType / lifeStage */}
+              {TAB_TYPES.find(t => t.key === modal.type)?.hasImage && (
+                <ImageUploadField
+                  label="Image"
+                  value={form.imageUrl}
+                  onChange={url => setForm(f => ({ ...f, imageUrl: url }))}
+                  name={form.name}
+                  objectFit="cover"
+                />
               )}
 
               {/* Color (tags / badges) */}

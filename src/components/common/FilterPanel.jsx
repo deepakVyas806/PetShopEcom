@@ -20,8 +20,14 @@ const FALLBACK_CATEGORIES = [
 ];
 
 const DEFAULT_BRANDS = [
-  "Royal Canin", "Pedigree", "Purina", "Whiskas",
-  "Himalaya", "Drools", "Trixie", "Beaphar",
+  { key: "royal-canin", label: "Royal Canin" },
+  { key: "pedigree",    label: "Pedigree"    },
+  { key: "purina",      label: "Purina"      },
+  { key: "whiskas",     label: "Whiskas"     },
+  { key: "himalaya",    label: "Himalaya"    },
+  { key: "drools",      label: "Drools"      },
+  { key: "trixie",      label: "Trixie"      },
+  { key: "beaphar",     label: "Beaphar"     },
 ];
 
 const Divider = () => <div className="h-px bg-outline-variant/20" />;
@@ -171,19 +177,23 @@ export default function FilterPanel({
           <div>
             <SectionLabel>Brand</SectionLabel>
             <div className="flex flex-col gap-2">
-              {(brands.length > 0 ? brands : DEFAULT_BRANDS).map((brand) => (
-                <label key={brand} className="flex items-center gap-2 cursor-pointer group">
-                  <input
-                    type="checkbox"
-                    checked={selectedBrands.includes(brand)}
-                    onChange={() => onBrandChange?.(brand)}
-                    className="w-3.5 h-3.5 rounded border-outline-variant text-primary focus:ring-primary cursor-pointer accent-primary"
-                  />
-                  <span className={`text-xs transition-colors ${selectedBrands.includes(brand) ? "text-primary font-semibold" : "text-on-surface group-hover:text-primary"}`}>
-                    {brand}
-                  </span>
-                </label>
-              ))}
+              {(brands.length > 0 ? brands : DEFAULT_BRANDS).map((brand) => {
+                const key   = brand.key   ?? brand;
+                const label = brand.label ?? brand;
+                return (
+                  <label key={key} className="flex items-center gap-2 cursor-pointer group">
+                    <input
+                      type="checkbox"
+                      checked={selectedBrands.includes(key)}
+                      onChange={() => onBrandChange?.(key)}
+                      className="w-3.5 h-3.5 rounded border-outline-variant text-primary focus:ring-primary cursor-pointer accent-primary"
+                    />
+                    <span className={`text-xs transition-colors ${selectedBrands.includes(key) ? "text-primary font-semibold" : "text-on-surface group-hover:text-primary"}`}>
+                      {label}
+                    </span>
+                  </label>
+                );
+              })}
             </div>
           </div>
           {showRating && <Divider />}

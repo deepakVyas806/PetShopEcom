@@ -1,18 +1,17 @@
 "use client";
 import { memo } from "react";
 import { IconSearch, IconDownload, IconAdd } from "@/lib/icons";
-import { CATEGORIES as DEFAULT_CATS, BRANDS as DEFAULT_BRANDS } from "../data";
+
+const selectCls = "bg-surface-container-low border border-outline-variant/50 rounded-xl px-3 py-2.5 text-xs text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 cursor-pointer";
 
 export default memo(function ProductsToolbar({
   search, onSearch,
   category, onCategory,
   brand, onBrand,
-  categories,
-  brands,
+  categories = [],
+  brands     = [],
   onExport, onAdd,
 }) {
-  const CATEGORIES = categories ?? DEFAULT_CATS;
-  const BRANDS     = brands     ?? DEFAULT_BRANDS;
   return (
     <div className="flex flex-col lg:flex-row gap-3 mb-4">
       {/* Search */}
@@ -32,17 +31,23 @@ export default memo(function ProductsToolbar({
         <select
           value={category}
           onChange={(e) => onCategory(e.target.value)}
-          className="bg-surface-container-low border border-outline-variant/50 rounded-xl px-3 py-2.5 text-xs text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 cursor-pointer"
+          className={selectCls}
         >
-          {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
+          <option value="">All Categories</option>
+          {categories.map((c) => (
+            <option key={c.value ?? c} value={c.value ?? c}>{c.label ?? c}</option>
+          ))}
         </select>
 
         <select
           value={brand}
           onChange={(e) => onBrand(e.target.value)}
-          className="bg-surface-container-low border border-outline-variant/50 rounded-xl px-3 py-2.5 text-xs text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 cursor-pointer"
+          className={selectCls}
         >
-          {BRANDS.map((b) => <option key={b}>{b}</option>)}
+          <option value="">All Brands</option>
+          {brands.map((b) => (
+            <option key={b.value ?? b} value={b.value ?? b}>{b.label ?? b}</option>
+          ))}
         </select>
 
         <button

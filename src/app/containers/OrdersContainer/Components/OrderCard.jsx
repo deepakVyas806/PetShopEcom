@@ -52,9 +52,12 @@ export default function OrderCard({ order, isExpanded, onToggleExpand }) {
   const hasItems = order.items?.length > 0;
   const orderId  = order.orderId ?? order._id?.toString() ?? "—";
   const orderKey = order._id?.toString() ?? order.orderId;
-  const placedOn = order.createdAt
-    ? new Date(order.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })
-    : "—";
+  const placedOn = (() => {
+    if (!order.createdAt) return "—";
+    const d = new Date(order.createdAt);
+    const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+  })();
 
   // ── Handle Reorder ────────────────────────────────────────────────────────
   const handleReorder = async () => {

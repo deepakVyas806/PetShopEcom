@@ -46,9 +46,11 @@ export default function useProductsList() {
     Promise.all([
       api.get("/catalog?type=petType"),
       api.get("/catalog?type=category"),
-    ]).then(([pets, cats]) => {
-      if (pets.items?.length)  setPetTypeOptions(itemsToOptions(pets.items));
-      if (cats.items?.length)  setCategoryOptions(itemsToOptions(cats.items));
+      api.get("/catalog?type=brand"),
+    ]).then(([pets, cats, brs]) => {
+      if (pets.items?.length) setPetTypeOptions(itemsToOptions(pets.items));
+      if (cats.items?.length) setCategoryOptions(itemsToOptions(cats.items));
+      if (brs.items?.length)  setBrands(itemsToOptions(brs.items));
     }).catch(() => {}); // silently fall back to hardcoded defaults in FilterPanel
   }, []);
 
@@ -91,8 +93,6 @@ export default function useProductsList() {
         setProducts(prev => page === 1 ? newItems : [...prev, ...newItems]);
         setTotalCount(data.total ?? data.totalCount ?? 0);
         setHasMore(page < (data.totalPages ?? 1));
-        const uniqueBrands = [...new Set(newItems.map(p => p.brand).filter(Boolean))];
-        setBrands(prev => [...new Set([...prev, ...uniqueBrands])]);
       })
       .catch(() => {})
       .finally(() => { if (!cancelled) { setLoading(false); setLoadingMore(false); } });
