@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useStore } from "@/context/StoreContext";
 import { useAuth } from "@/context/AuthContext";
@@ -30,7 +30,6 @@ export default function useShoppingCart() {
   const [promoInput,       setPromoInput]       = useState("");
   const [appliedCode,      setAppliedCode]      = useState("");
   const [promoError,       setPromoError]       = useState("");
-  const [promoDiscount,    setPromoDiscount]    = useState(0);
   const [availableCoupons, setAvailableCoupons] = useState([]);
 
   // ── Fetch available coupons ────────────────────────────────────────────────
@@ -87,26 +86,41 @@ export default function useShoppingCart() {
     [cartItems, selectedIds]
   );
 
-  // ── Financials (only selected items) ──────────────────────────────────────
-  const subtotal = useMemo(
-    () => selectedItems.reduce((sum, i) => sum + i.product.price * i.quantity, 0),
-    [selectedItems]
-  );
+  // ── Backend estimate — single source of truth for all financials ──────────
+  const [estimate, setEstimate] = useState({ subtotal: 0, discount: 0, tax: 0, shipping: 0, total: 0 });
+  const debounceRef = useRef(null);
 
-  const shipping = useMemo(() => {
-    if (subtotal === 0) return 0;
-    return subtotal >= storeSettings.freeShippingThreshold ? 0 : storeSettings.baseShippingCost;
-  }, [subtotal, storeSettings.freeShippingThreshold, storeSettings.baseShippingCost]);
+  const fetchEstimate = useCallback(async (items, coupon) => {
+    if (!items.length) {
+      setEstimate({ subtotal: 0, discount: 0, tax: 0, shipping: 0, total: 0 });
+      return;
+    }
+    try {
+      const data = await api.post("/orders/estimate", {
+        items:      items.map(i => ({ productId: pid(i.product), quantity: i.quantity })),
+        couponCode: coupon || undefined,
+      });
+      setEstimate(data);
+      if (coupon && data.couponValid === false) {
+        setPromoError("Invalid or expired promo code");
+        setAppliedCode("");
+      }
+    } catch { /* keep previous estimate on network error */ }
+  }, []);
 
-  const tax = useMemo(
-    () => Number((subtotal * storeSettings.taxRate / 100).toFixed(2)),
-    [subtotal, storeSettings.taxRate]
-  );
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      fetchEstimate(selectedItems, appliedCode);
+    }, 300);
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
+  }, [selectedItems, appliedCode, fetchEstimate]);
 
-  const grandTotal = useMemo(
-    () => Math.max(0, Number((subtotal + shipping + tax - promoDiscount).toFixed(2))),
-    [subtotal, shipping, tax, promoDiscount]
-  );
+  const subtotal   = estimate.subtotal;
+  const shipping   = estimate.shipping;
+  const tax        = estimate.tax;
+  const grandTotal = estimate.total;
+  const promoDiscount = estimate.discount;
 
   const rewardsPoints = useMemo(() => Math.round(subtotal), [subtotal]);
   const cartCount     = useMemo(() => cartItems.reduce((s, i) => s + i.quantity, 0), [cartItems]);
@@ -143,26 +157,19 @@ export default function useShoppingCart() {
     storeRemove(productId);
   };
 
-  // ── Promo code ─────────────────────────────────────────────────────────────
-  const applyPromoCode = async (code) => {
+  // ── Promo code — set appliedCode to trigger estimate re-fetch with coupon ──
+  const applyPromoCode = (code) => {
     const cleanCode = code.trim().toUpperCase();
     if (!cleanCode) { setPromoError("Please enter a code"); return; }
     if (!isAuthenticated) { setPromoError("Sign in to use promo codes"); return; }
     setPromoError("");
-    try {
-      const data = await api.post("/coupons/validate", { code: cleanCode, orderTotal: subtotal });
-      setAppliedCode(cleanCode);
-      setPromoDiscount(data.discount ?? 0);
-    } catch (err) {
-      setPromoError(err.message ?? "Invalid promo code");
-    }
+    setAppliedCode(cleanCode);
   };
 
   const removePromoCode = () => {
     setAppliedCode("");
     setPromoInput("");
     setPromoError("");
-    setPromoDiscount(0);
   };
 
   // ── Checkout (only selected) ───────────────────────────────────────────────

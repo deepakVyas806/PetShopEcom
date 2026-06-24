@@ -19,23 +19,25 @@ export default function MapSection({ driver }) {
         style={{ background: "linear-gradient(to top, rgba(0,0,0,0.45) 0%, transparent 50%)" }}
       />
 
-      {/* Driver info pill */}
-      <div
-        className="absolute bottom-4 left-4 flex items-center gap-3 px-3 py-2 rounded-xl border border-white/20 shadow-lg"
-        style={{ background: "rgba(255,255,255,0.85)", backdropFilter: "blur(10px)" }}
-      >
-        <div className="w-9 h-9 bg-primary rounded-full flex items-center justify-center text-white flex-shrink-0">
-          <IconNavigate size={18} weight="fill" />
+      {/* Driver info pill — only shown when driver data is available */}
+      {driver && (
+        <div
+          className="absolute bottom-4 left-4 flex items-center gap-3 px-3 py-2 rounded-xl border border-white/20 shadow-lg"
+          style={{ background: "rgba(255,255,255,0.85)", backdropFilter: "blur(10px)" }}
+        >
+          <div className="w-9 h-9 bg-primary rounded-full flex items-center justify-center text-white flex-shrink-0">
+            <IconNavigate size={18} weight="fill" />
+          </div>
+          <div>
+            <p className="text-[10px] font-bold text-primary uppercase tracking-wider">
+              Driver: {driver.name}
+            </p>
+            <p className="text-[10px] text-on-surface-variant">
+              {driver.distance} &bull; {driver.heading}
+            </p>
+          </div>
         </div>
-        <div>
-          <p className="text-[10px] font-bold text-primary uppercase tracking-wider">
-            Driver: {driver.name}
-          </p>
-          <p className="text-[10px] text-on-surface-variant">
-            {driver.distance} &bull; {driver.heading}
-          </p>
-        </div>
-      </div>
+      )}
     </div>
   );
 }

@@ -171,7 +171,7 @@ export default function ModifiedHeader() {
         <div className="h-6 w-px bg-outline-variant/40 mx-3 flex-shrink-0" />
 
         {/* Location picker */}
-        <LocationPicker />
+        {/* <LocationPicker /> */}
 
         {/* Search — fills all middle space */}
         <SearchBar

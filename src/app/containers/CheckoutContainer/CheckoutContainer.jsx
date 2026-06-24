@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import useCheckoutContainer from "./CheckoutContainer.hook";
 import { fmt } from "@/lib/currency";
 import { Card, Button, FormField } from "@/components/ui";
 import {
   IconCheck, IconUser, IconShipping, IconClock, IconArrowRight, IconArrowLeft,
-  IconLock, IconCard, IconQR, IconWallet, IconMoney, IconLocation,
-  IconShield, IconSpinner,
+  IconLock, IconCard, IconWallet, IconMoney, IconLocation,
+  IconShield, IconSpinner, IconNetbanking,
 } from "@/lib/icons";
 
 /* ── Step navigation ──────────────────────────────────────────────────────── */
@@ -221,15 +221,18 @@ function DeliveryStep({ deliveryOption, setDeliveryOption, deliveryOptions, free
 
 /* ── Payment step ────────────────────────────────────────────────────────── */
 const PAYMENT_METHODS = [
-  { id: "card",   label: "Card",    Icon: IconCard,   sub: "Credit / Debit" },
-  { id: "upi",    label: "UPI",     Icon: IconQR,     sub: "Any UPI app"    },
-  { id: "wallet", label: "Wallets", Icon: IconWallet, sub: "Paytm / PhonePe" },
-  { id: "cod",    label: "Cash",    Icon: IconMoney,  sub: "Pay on delivery" },
+  { id: "card",       label: "Card",       Icon: IconCard,       sub: "Credit / Debit"  },
+  { id: "netbanking", label: "Netbanking", Icon: IconNetbanking, sub: "All major banks"  },
+  { id: "wallet",     label: "Wallets",    Icon: IconWallet,     sub: "Paytm / PhonePe" },
+  { id: "cod",        label: "Cash",       Icon: IconMoney,      sub: "Pay on delivery" },
 ];
 
-function PaymentStep({ goToStep, handlePay, total, isService, submitting, errorMsg }) {
-  const backStep  = isService ? 1 : 2;
-  const [method, setMethod] = useState("card");
+function PaymentStep({
+  goToStep, handlePay, total, isService, submitting, errorMsg,
+  paymentMethod, setPaymentMethod,
+}) {
+  const backStep = isService ? 1 : 2;
+  const isOnline = paymentMethod !== "cod";
 
   return (
     <section className="space-y-4">
@@ -238,71 +241,71 @@ function PaymentStep({ goToStep, handlePay, total, isService, submitting, errorM
         <h2 className="text-sm font-semibold text-on-surface">Secure Payment</h2>
       </div>
 
+      {/* Method selector */}
       <div className="grid grid-cols-4 gap-2">
         {PAYMENT_METHODS.map((m) => (
-          <button key={m.id} onClick={() => setMethod(m.id)}
+          <button
+            key={m.id}
+            onClick={() => setPaymentMethod(m.id)}
             className={`flex flex-col items-center gap-1 py-3 px-2 rounded-xl border text-center transition-all cursor-pointer outline-none ${
-              method === m.id ? "border-primary bg-primary/5 shadow-sm" : "border-outline-variant bg-surface hover:border-primary/40"
+              paymentMethod === m.id
+                ? "border-primary bg-primary/5 shadow-sm"
+                : "border-outline-variant bg-surface hover:border-primary/40"
             }`}
           >
-            <m.Icon size={20} className={method === m.id ? "text-primary" : "text-on-surface-variant"} weight="regular" />
-            <span className={`text-[10px] font-bold leading-tight ${method === m.id ? "text-primary" : "text-on-surface"}`}>{m.label}</span>
+            <m.Icon size={20} className={paymentMethod === m.id ? "text-primary" : "text-on-surface-variant"} weight="regular" />
+            <span className={`text-[10px] font-bold leading-tight ${paymentMethod === m.id ? "text-primary" : "text-on-surface"}`}>
+              {m.label}
+            </span>
             <span className="text-[9px] text-on-surface-variant leading-tight hidden sm:block">{m.sub}</span>
           </button>
         ))}
       </div>
 
-      {method === "card" && (
-        <Card className="space-y-3">
-          <div className="space-y-1">
-            <label className="text-[10px] text-on-surface-variant ml-1">Card Number</label>
-            <div className="relative">
-              <input className="w-full bg-surface-container-low border border-transparent rounded-lg focus:border-primary focus:ring-0 text-xs py-2.5 px-3 pr-12 text-on-surface" placeholder="0000 0000 0000 0000" type="text" />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant/40 font-bold italic text-[10px]">VISA</span>
+      {/* Online payment — Razorpay handles the actual form in its own modal */}
+      {isOnline && (
+        <Card className="flex items-start gap-3.5">
+          <div className="mt-0.5 w-8 h-8 rounded-lg bg-[#072654] flex items-center justify-center shrink-0">
+            <span className="text-white font-black text-[10px] tracking-tight">R₹</span>
+          </div>
+          <div className="min-w-0">
+            <p className="text-xs font-bold text-on-surface">
+              {paymentMethod === "card"       && "Pay by Credit / Debit Card"}
+              {paymentMethod === "netbanking" && "Pay via Netbanking"}
+              {paymentMethod === "wallet"     && "Pay via Wallet (Paytm / PhonePe)"}
+            </p>
+            <p className="text-[10px] text-on-surface-variant mt-0.5 leading-relaxed">
+              Clicking <strong>Pay {fmt(total)}</strong> opens a secure Razorpay popup.
+              Enter your card / UPI / wallet details there — nothing is stored on our servers.
+            </p>
+            <div className="flex items-center gap-1.5 mt-2">
+              <IconShield size={12} className="text-green-600" weight="fill" />
+              <span className="text-[10px] text-green-700 font-semibold">256-bit SSL · PCI-DSS compliant</span>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            <FormField label="Expiry" placeholder="MM / YY" />
-            <FormField label="CVV" placeholder="•••" type="password" />
-          </div>
-          <FormField label="Name on Card" placeholder="As printed on card" />
         </Card>
       )}
 
-      {method === "upi" && (
-        <Card className="space-y-3">
-          <FormField label="UPI ID" placeholder="yourname@upi" />
-          <p className="text-[10px] text-on-surface-variant">You&apos;ll receive a payment request on your UPI app.</p>
-        </Card>
-      )}
-
-      {method === "wallet" && (
-        <Card>
-          <div className="grid grid-cols-3 gap-2">
-            {["Paytm", "PhonePe", "Razorpay"].map((w) => (
-              <label key={w} className="flex flex-col items-center gap-1 p-2.5 rounded-lg border border-outline-variant cursor-pointer hover:border-primary transition-all">
-                <input type="radio" name="wallet" className="accent-primary w-3 h-3" />
-                <span className="text-[10px] font-semibold text-on-surface">{w}</span>
-              </label>
-            ))}
-          </div>
-        </Card>
-      )}
-
-      {method === "cod" && (
+      {/* COD */}
+      {paymentMethod === "cod" && (
         <Card className="flex items-start gap-3">
           <IconMoney size={20} className="text-primary mt-0.5" weight="regular" />
           <div>
             <p className="text-xs font-bold text-on-surface">Cash on Delivery</p>
             <p className="text-[10px] text-on-surface-variant mt-0.5 leading-relaxed">
-              Pay in cash when your order is delivered. No online transaction needed.
+              Pay in cash when your order arrives. No online transaction needed.
+              Your order status will be <strong>Pending</strong> until delivered.
             </p>
           </div>
         </Card>
       )}
 
+      {/* Error / cancel message */}
       {errorMsg && (
-        <p className="text-xs text-error font-semibold bg-error/5 border border-error/20 px-3 py-2 rounded-lg">{errorMsg}</p>
+        <div className="flex items-start gap-2 px-3 py-2.5 bg-error/5 border border-error/20 rounded-xl">
+          <span className="text-error text-base mt-px shrink-0">⚠</span>
+          <p className="text-xs text-error font-semibold leading-relaxed">{errorMsg}</p>
+        </div>
       )}
 
       <div className="flex justify-between items-center pt-2">
@@ -310,8 +313,12 @@ function PaymentStep({ goToStep, handlePay, total, isService, submitting, errorM
           <IconArrowLeft size={16} weight="bold" /> Back
         </Button>
         <Button onClick={handlePay} disabled={submitting} className="px-6 py-2.5 shadow-md">
-          {submitting ? <IconSpinner size={16} className="animate-spin" weight="regular" /> : <IconLock size={16} weight="bold" />}
-          {submitting ? "Processing…" : method === "cod" ? "Place Order" : `Pay ${fmt(total)}`}
+          {submitting
+            ? <><IconSpinner size={16} className="animate-spin" weight="regular" /> Processing…</>
+            : paymentMethod === "cod"
+              ? <><IconCheck size={16} weight="bold" /> Place Order</>
+              : <><IconLock size={16} weight="bold" /> Pay {fmt(total)}</>
+          }
         </Button>
       </div>
     </section>
@@ -445,7 +452,8 @@ export default function CheckoutContainer() {
           )}
           {c.isService && c.activeStep === 2 && (
             <PaymentStep goToStep={c.goToStep} handlePay={c.handlePay} total={c.total}
-              isService submitting={c.submitting} errorMsg={c.errorMsg} />
+              isService submitting={c.submitting} errorMsg={c.errorMsg}
+              paymentMethod={c.paymentMethod} setPaymentMethod={c.setPaymentMethod} />
           )}
 
           {/* Cart flow */}
@@ -474,7 +482,8 @@ export default function CheckoutContainer() {
           )}
           {!c.isService && c.activeStep === 3 && (
             <PaymentStep goToStep={c.goToStep} handlePay={c.handlePay} total={c.total}
-              isService={false} submitting={c.submitting} errorMsg={c.errorMsg} />
+              isService={false} submitting={c.submitting} errorMsg={c.errorMsg}
+              paymentMethod={c.paymentMethod} setPaymentMethod={c.setPaymentMethod} />
           )}
         </div>
 

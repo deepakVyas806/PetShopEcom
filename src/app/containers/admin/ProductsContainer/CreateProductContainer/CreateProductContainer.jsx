@@ -16,25 +16,20 @@ import SeoCard            from "./Components/SeoCard";
 import StatusSideCard     from "./Components/StatusSideCard";
 import TagsSideCard       from "./Components/TagsSideCard";
 import ProductPreviewCard from "./Components/ProductPreviewCard";
-import { CATEGORIES, BRANDS, ANIMAL_TYPES, LIFE_STAGES } from "../data";
-
 function generateSKU() {
   const n = Math.floor(10000 + Math.random() * 90000);
   const s = Math.random().toString(36).substring(2, 5).toUpperCase();
   return `APT-${n}-${s}`;
 }
 
-const FALLBACK_CATS   = CATEGORIES.filter(c => c !== "All Categories");
-const FALLBACK_BRANDS = BRANDS.filter(b => b !== "All Brands");
 
 const EMPTY_FORM = {
   name: "", stock: "0",
-  category: FALLBACK_CATS[0]   ?? "",
-  brand:    FALLBACK_BRANDS[0] ?? "",
+  category: "", brand: "",
   images: ["", "", "", "", ""],
   basePrice: "", salePrice: "",
   description: "",
-  weight: "", dimensions: "", lifeStage: "All Stages", animalTypes: [],
+  weight: "", dimensions: "", lifeStage: "", animalTypes: [],
   status: "active", isPublic: true,
   tags: [],
   metaTitle: "", metaDescription: "", urlSlug: "",
@@ -51,20 +46,27 @@ function productToForm(p) {
   let status = "active";
   if (p.status === "Out of Stock" || p.status === "draft") status = "draft";
 
+  // Populated fields arrive as objects {_id, name, slug, …}; extract _id for the select value
+  const resolveId = (field) => field?._id?.toString() ?? field?.toString?.() ?? "";
+
   return {
     name:            p.name            ?? "",
     sku:             p.sku             ?? generateSKU(),
     stock:           String(p.stock    ?? 0),
-    category:        p.category        ?? (CATEGORIES[1] ?? CATEGORIES[0]),
-    brand:           p.brand           ?? (BRANDS[1]     ?? BRANDS[0]),
+    // Use populated FK _id as the form select value
+    category:        resolveId(p.categoryId)  || p.category  || "",
+    brand:           resolveId(p.brandId)     || p.brand     || "",
     images:          imgs,
     basePrice:       String(p.mrp      ?? p.price ?? ""),
     salePrice:       p.mrp && p.price && p.price < p.mrp ? String(p.price) : "",
     description:     p.description     ?? "",
     weight:          p.weight          ?? "",
     dimensions:      p.dimensions      ?? "",
-    lifeStage:       p.lifeStage       ?? "All Stages",
-    animalTypes:     Array.isArray(p.petTypes) ? p.petTypes : [],
+    lifeStage:       resolveId(p.lifeStageId) || p.lifeStage || "",
+    // petTypeIds is an array of populated objects or ObjectId strings
+    animalTypes:     Array.isArray(p.petTypeIds)
+      ? p.petTypeIds.map(t => resolveId(t) || t?.toString?.() || "").filter(Boolean)
+      : (Array.isArray(p.petTypes) ? p.petTypes : []),
     status,
     isPublic:        p.visibility !== "private",
     tags:            Array.isArray(p.tags) ? p.tags : [],
@@ -117,19 +119,18 @@ export default function CreateProductContainer({ editId = undefined }) {
   const [error,       setError]     = useState("");
   const [notFound,    setNotFound]  = useState(false);
 
-  // Catalog options — fetched from API, fall back to hardcoded data.js values
+  // Catalog options — fully driven by API (no fallback data, _id is the stored value)
   const [catalogOpts, setCatalogOpts] = useState({
-    categories: FALLBACK_CATS,
-    brands:     FALLBACK_BRANDS,
-    petTypes:   ANIMAL_TYPES,
-    lifeStages: LIFE_STAGES,
-    tags:       ["Organic", "Premium", "New Arrival", "Bestseller", "Sale", "Vet Approved", "Grain-Free", "Natural"],
+    categories: [], brands: [], petTypes: [], lifeStages: [], tags: [],
   });
+  const [catalogLoading, setCatalogLoading] = useState(true);
 
   const catalogFetchedRef = useRef(false);
   useEffect(() => {
     if (catalogFetchedRef.current) return;
     catalogFetchedRef.current = true;
+    // Use _id as option value — this is the FK stored in the product
+    const toOpts = items => items.map(i => ({ value: i._id, label: i.name }));
     Promise.all([
       api.get("/catalog?type=category"),
       api.get("/catalog?type=brand"),
@@ -137,14 +138,14 @@ export default function CreateProductContainer({ editId = undefined }) {
       api.get("/catalog?type=lifeStage"),
       api.get("/catalog?type=tag"),
     ]).then(([cats, brands, pets, stages, tags]) => {
-      setCatalogOpts(prev => ({
-        categories: cats.items?.length   ? cats.items.map(i => i.name)   : prev.categories,
-        brands:     brands.items?.length ? brands.items.map(i => i.name) : prev.brands,
-        petTypes:   pets.items?.length   ? pets.items.map(i => i.name)   : prev.petTypes,
-        lifeStages: stages.items?.length ? stages.items.map(i => i.name) : prev.lifeStages,
-        tags:       tags.items?.length   ? tags.items.map(i => i.name)   : prev.tags,
-      }));
-    }).catch(() => {}); // graceful fallback — hardcoded data still works
+      setCatalogOpts({
+        categories: toOpts(cats.items   ?? []),
+        brands:     toOpts(brands.items ?? []),
+        petTypes:   toOpts(pets.items   ?? []),
+        lifeStages: toOpts(stages.items ?? []),
+        tags:       (tags.items ?? []).map(i => i.name),
+      });
+    }).catch(() => {}).finally(() => setCatalogLoading(false));
   }, []);
 
   // Fetch existing product when in edit mode
@@ -228,15 +229,16 @@ export default function CreateProductContainer({ editId = undefined }) {
       const payload = {
         name:            form.name,
         sku:             form.sku,
-        category:        form.category,
-        brand:           form.brand,
+        // Catalog FK ObjectIds (form fields store _id strings)
+        categoryId:      form.category   || undefined,
+        brandId:         form.brand      || undefined,
+        petTypeIds:      form.animalTypes,
+        lifeStageId:     form.lifeStage  || undefined,
         basePrice:       form.basePrice,
         salePrice:       form.salePrice,
         stock:           form.stock,
         description:     form.description,
         images:          form.images,
-        animalTypes:     form.animalTypes,
-        lifeStage:       form.lifeStage,
         weight:          form.weight,
         dimensions:      form.dimensions,
         variants:        form.variants,
@@ -341,6 +343,7 @@ export default function CreateProductContainer({ editId = undefined }) {
             category={form.category} brand={form.brand}
             categories={catalogOpts.categories}
             brands={catalogOpts.brands}
+            catalogLoading={catalogLoading}
             onField={setField} onRefreshSKU={refreshSKU}
             skuReadOnly={isEdit}
           />
@@ -352,6 +355,7 @@ export default function CreateProductContainer({ editId = undefined }) {
             lifeStage={form.lifeStage} animalTypes={form.animalTypes}
             lifeStages={catalogOpts.lifeStages}
             petTypes={catalogOpts.petTypes}
+            catalogLoading={catalogLoading}
             onField={setField} onToggleAnimalType={toggleAnimalType}
           />
           <VariantsCard
@@ -370,7 +374,9 @@ export default function CreateProductContainer({ editId = undefined }) {
           <TagsSideCard tags={form.tags} suggestions={catalogOpts.tags} onAdd={addTag} onRemove={removeTag} />
           <ProductPreviewCard
             name={form.name} basePrice={form.basePrice} salePrice={form.salePrice}
-            image={form.images[0]} category={form.category} status={form.status}
+            image={form.images[0]}
+            category={catalogOpts.categories.find(c => c.value === form.category)?.label ?? ""}
+            status={form.status}
           />
           <div className="p-4 bg-tertiary-fixed rounded-xl border border-tertiary/20 flex gap-3">
             <IconSparkle size={16} className="text-tertiary flex-shrink-0 mt-0.5" weight="duotone" />

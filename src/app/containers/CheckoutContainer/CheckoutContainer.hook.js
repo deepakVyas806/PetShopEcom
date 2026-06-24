@@ -1,15 +1,18 @@
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useStore } from "@/context/StoreContext";
 import { api } from "@/lib/api";
 import useStoreSettings from "@/lib/useStoreSettings";
+import { loadRazorpayScript, openRazorpayModal } from "@/lib/razorpay";
+
+const EMPTY_ESTIMATE = { subtotal: 0, discount: 0, tax: 0, shipping: 0, total: 0, freeShipping: false };
 
 export default function useCheckoutContainer() {
   const storeSettings = useStoreSettings();
   const router        = useRouter();
-  const searchParams = useSearchParams();
+  const searchParams  = useSearchParams();
   const { clearCart } = useStore();
 
   const isService   = searchParams.get("type") === "service";
@@ -37,15 +40,13 @@ export default function useCheckoutContainer() {
         }
       }
     } catch { /* ignore */ }
-    // fallback: nothing (user should come from cart page)
   }, []);
 
   // ── Saved addresses ───────────────────────────────────────────────────────
-  const [savedAddresses,   setSavedAddresses]   = useState([]);
-  const [addressesLoading, setAddressesLoading] = useState(false);
+  const [savedAddresses,    setSavedAddresses]    = useState([]);
+  const [addressesLoading,  setAddressesLoading]  = useState(false);
   const [selectedAddressId, setSelectedAddressId] = useState(null);
 
-  // New address form (used when typing manually or no saved addresses)
   const [newAddress, setNewAddress] = useState({
     name: "", line1: "", city: "", state: "", pincode: "", phone: "",
   });
@@ -76,46 +77,60 @@ export default function useCheckoutContainer() {
 
   // ── Delivery option ───────────────────────────────────────────────────────
   const [deliveryOption, setDeliveryOption] = useState("standard");
-  // Active delivery options from settings (admin-configurable)
-  const activeDeliveryOptions = useMemo(
-    () => (storeSettings.deliveryOptions ?? []).filter(o => o.active),
-    [storeSettings.deliveryOptions]
-  );
-  const deliveryCost = useMemo(() => {
-    const opt = storeSettings.deliveryOptions?.find(o => o.key === deliveryOption);
-    return opt?.cost ?? 0;
-  }, [deliveryOption, storeSettings.deliveryOptions]);
+  const activeDeliveryOptions = (storeSettings.deliveryOptions ?? []).filter(o => o.active);
+
+  // ── Payment method ────────────────────────────────────────────────────────
+  const [paymentMethod, setPaymentMethod] = useState("card");
 
   // ── Coupon ────────────────────────────────────────────────────────────────
-  const [couponCode,  setCouponCode]  = useState("");
-  const [couponError, setCouponError] = useState(null);
-  const [discount,    setDiscount]    = useState(0);
+  const [couponCode,     setCouponCode]     = useState("");
+  const [couponError,    setCouponError]    = useState(null);
+  const [appliedCoupon,  setAppliedCoupon]  = useState("");
 
-  // ── Order form state ──────────────────────────────────────────────────────
+  // ── Backend estimate — single source of truth for all financials ──────────
+  const [estimate,        setEstimate]        = useState(EMPTY_ESTIMATE);
+  const [estimateLoading, setEstimateLoading] = useState(false);
+
+  const fetchEstimate = useCallback(async (items, option, coupon) => {
+    if (!items.length) { setEstimate(EMPTY_ESTIMATE); return; }
+    setEstimateLoading(true);
+    try {
+      const data = await api.post("/orders/estimate", {
+        items: items.map(i => ({
+          productId: i.product._id ?? i.product.id,
+          quantity:  i.quantity,
+        })),
+        deliveryOption: option,
+        couponCode:     coupon || undefined,
+      });
+      setEstimate(data);
+      if (coupon && data.couponValid === false) {
+        setCouponError("Coupon is not valid for this order");
+        setAppliedCoupon("");
+      }
+    } catch {
+      setEstimate(EMPTY_ESTIMATE);
+    } finally {
+      setEstimateLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isService) return;
+    fetchEstimate(checkoutItems, deliveryOption, appliedCoupon);
+  }, [checkoutItems, deliveryOption, appliedCoupon, isService, fetchEstimate]);
+
+  // ── Service contact form ──────────────────────────────────────────────────
   const [contactForm, setContactForm] = useState({
     firstName: "", lastName: "", phone: "", email: "", notes: "",
   });
 
-  // ── Financials ────────────────────────────────────────────────────────────
-  const subtotal = useMemo(() => {
-    if (isService) return service?.price ?? 0;
-    return checkoutItems.reduce((sum, i) => sum + i.product.price * i.quantity, 0);
-  }, [isService, service, checkoutItems]);
-
-  const shipping = isService ? null : (subtotal >= storeSettings.freeShippingThreshold ? 0 : deliveryCost);
-  const tax      = +(subtotal * storeSettings.taxRate / 100).toFixed(2);
-  const total    = Math.max(0, subtotal + (shipping ?? 0) + tax - discount);
-
+  // ── Coupon apply — validates then triggers estimate re-fetch ──────────────
   const applyCoupon = async () => {
     setCouponError(null);
     if (!couponCode.trim()) { setCouponError("Please enter a coupon code"); return; }
-    try {
-      const data = await api.post("/coupons/validate", { code: couponCode.trim(), orderTotal: subtotal });
-      if (data.valid === false) { setCouponError(data.message ?? "Invalid coupon"); return; }
-      setDiscount(data.discount ?? 0);
-    } catch (err) {
-      setCouponError(err.message ?? "Invalid coupon");
-    }
+    // Attempt to apply: estimate endpoint validates coupon and returns couponValid flag
+    setAppliedCoupon(couponCode.trim().toUpperCase());
   };
 
   // ── Save a new address then proceed ──────────────────────────────────────
@@ -131,7 +146,6 @@ export default function useCheckoutContainer() {
       setSelectedAddressId(saved._id);
       setShowNewAddressForm(false);
     } catch (err) {
-      // surface error to UI
       console.error("Address save failed:", err.message);
     }
   };
@@ -143,39 +157,98 @@ export default function useCheckoutContainer() {
   const handlePay = async () => {
     setSubmitting(true);
     setErrorMsg(null);
+
     try {
+      // ── Service appointment ───────────────────────────────────────────────
       if (isService) {
         await api.post("/appointments", { serviceId, date: bookingDate, timeSlot: bookingTime });
         router.push("/appointments");
-      } else {
-        const shippingAddress =
-          selectedAddressId
-            ? savedAddresses.find(a => a._id === selectedAddressId)
-            : { ...newAddress, country: "India" };
+        return;
+      }
 
-        const data = await api.post("/orders", {
-          items: checkoutItems.map(i => ({
-            productId: i.product._id ?? i.product.id,
-            quantity:  i.quantity,
-          })),
-          shippingAddress,
-          paymentMethod: "Credit / Debit Card",
-          couponCode:    couponCode.trim() || undefined,
-        });
+      const shippingAddress = selectedAddressId
+        ? savedAddresses.find(a => a._id === selectedAddressId)
+        : { ...newAddress, country: "India" };
 
-        // Clear cart and sessionStorage
+      const orderPayload = {
+        items: checkoutItems.map(i => ({
+          productId: i.product._id ?? i.product.id,
+          quantity:  i.quantity,
+        })),
+        shippingAddress,
+        paymentMethod,
+        deliveryOption,
+        couponCode: appliedCoupon || undefined,
+      };
+
+      // ── Cash on delivery — no payment gateway ─────────────────────────────
+      if (paymentMethod === "cod") {
+        const data = await api.post("/orders", orderPayload);
         clearCart();
         try { sessionStorage.removeItem("checkout_items"); } catch { /**/ }
-
-        const oid = data.order?._id;
-        router.push(oid ? `/order-confirmation?orderId=${oid}` : "/order-confirmation");
+        router.push(`/order-confirmation?orderId=${data.order._id}`);
+        return;
       }
+
+      // ── Online payment via Razorpay ───────────────────────────────────────
+      const loaded = await loadRazorpayScript();
+      if (!loaded) {
+        setErrorMsg("Payment gateway could not be loaded. Check your internet connection and try again.");
+        setSubmitting(false);
+        return;
+      }
+
+      // Use the backend-calculated total for Razorpay — no frontend math
+      const rzpData = await api.post("/payment/create-order", { amount: estimate.total });
+
+      setSubmitting(false);
+
+      const prefillAddress = shippingAddress ?? {};
+      openRazorpayModal({
+        razorpayOrderId: rzpData.razorpayOrderId,
+        amount:          rzpData.amount,
+        keyId:           rzpData.keyId,
+        storeName:       "artPet Shop",
+        method:          paymentMethod,
+        prefill: {
+          name:    prefillAddress.name  ?? "",
+          contact: prefillAddress.phone ?? "",
+        },
+        onSuccess: async (response) => {
+          setSubmitting(true);
+          setErrorMsg(null);
+          try {
+            const data = await api.post("/orders", {
+              ...orderPayload,
+              razorpayOrderId:   response.razorpay_order_id,
+              razorpayPaymentId: response.razorpay_payment_id,
+              razorpaySignature: response.razorpay_signature,
+            });
+            clearCart();
+            try { sessionStorage.removeItem("checkout_items"); } catch { /**/ }
+            router.push(`/order-confirmation?orderId=${data.order._id}`);
+          } catch (err) {
+            setErrorMsg(
+              err.message ??
+              "Your payment was received but order creation failed. Please contact support with your payment ID."
+            );
+            setSubmitting(false);
+          }
+        },
+        onDismiss: () => {
+          setErrorMsg("Payment was cancelled. Click 'Pay' to try again.");
+          setSubmitting(false);
+        },
+      });
+
     } catch (err) {
-      setErrorMsg(err.message ?? "Payment failed. Please try again.");
-    } finally {
+      setErrorMsg(err.message ?? "Something went wrong. Please try again.");
       setSubmitting(false);
     }
   };
+
+  // For service bookings, use the service price directly
+  const serviceTotal = isService ? (service?.price ?? 0) : 0;
 
   return {
     isService, service, bookingDate, bookingTime,
@@ -191,12 +264,21 @@ export default function useCheckoutContainer() {
 
     deliveryOption, setDeliveryOption,
     activeDeliveryOptions,
-    taxRate:           storeSettings.taxRate,
-    freeShipThreshold: storeSettings.freeShippingThreshold,
 
-    couponCode, setCouponCode, couponError, applyCoupon, discount,
+    paymentMethod, setPaymentMethod,
 
-    subtotal, shipping, tax, total,
+    couponCode, setCouponCode, couponError, applyCoupon,
+    appliedCoupon,
+
+    // All financials come from backend estimate
+    subtotal:  isService ? serviceTotal : estimate.subtotal,
+    discount:  estimate.discount,
+    tax:       estimate.tax,
+    shipping:  isService ? null : estimate.shipping,
+    total:     isService ? serviceTotal : estimate.total,
+    freeShipping: estimate.freeShipping,
+    taxRate:   storeSettings.taxRate,
+    estimateLoading,
 
     submitting, errorMsg, handlePay,
   };

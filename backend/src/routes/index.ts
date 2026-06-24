@@ -18,10 +18,16 @@ import { adminAppointmentRoutes } from "./admin/appointments";
 import { adminPromotionRoutes }  from "./admin/promotions";
 import { wishlistRoutes }        from "./wishlists";
 import { cartRoutes }            from "./cart";
+import { paymentRoutes }         from "./payment";
 import { catalogRoutes }         from "./catalog";
 import { settingsRoutes }        from "./settings";
 import { adminCatalogRoutes }    from "./admin/catalog";
 import { adminSettingsRoutes }   from "./admin/settings";
+import { adminOfferRoutes }      from "./admin/offers";
+import { adminHeroRoutes }       from "./admin/hero";
+import { adminUploadRoutes } from "./admin/upload";
+import { offerRoutes }           from "./offers";
+import { heroRoutes }            from "./hero";
 
 export const registerRoutes: FastifyPluginAsync = async (app) => {
   // ── Public / customer routes ────────────────────────────────────────────────
@@ -37,6 +43,7 @@ export const registerRoutes: FastifyPluginAsync = async (app) => {
   await app.register(couponRoutes,        { prefix: "/coupons"         });
   await app.register(wishlistRoutes,      { prefix: "/wishlists"       });
   await app.register(cartRoutes,          { prefix: "/cart"            });
+  await app.register(paymentRoutes,       { prefix: "/payment"         });
 
   // ── Admin routes ────────────────────────────────────────────────────────────
   await app.register(adminDashboardRoutes,  { prefix: "/admin/dashboard"    });
@@ -48,8 +55,13 @@ export const registerRoutes: FastifyPluginAsync = async (app) => {
   await app.register(adminPromotionRoutes,  { prefix: "/admin/promotions"   });
   await app.register(adminCatalogRoutes,    { prefix: "/admin/catalog"      });
   await app.register(adminSettingsRoutes,   { prefix: "/admin/settings"     });
+  await app.register(adminOfferRoutes,      { prefix: "/admin/offers"       });
+  await app.register(adminHeroRoutes,       { prefix: "/admin/hero"         });
+  await app.register(adminUploadRoutes,     { prefix: "/admin/upload"       });
 
   // ── Public utility routes ───────────────────────────────────────────────────
   await app.register(catalogRoutes,         { prefix: "/catalog"            });
   await app.register(settingsRoutes,        { prefix: "/settings"           });
+  await app.register(offerRoutes,           { prefix: "/offers"             });
+  await app.register(heroRoutes,            { prefix: "/hero"               });
 };

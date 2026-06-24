@@ -19,7 +19,7 @@ export default function PaymentMethodsContainer() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {cards.map((card) => (
           <PaymentCard
-            key={card.id}
+            key={card._id ?? card.id}
             card={card}
             onSetDefault={setDefault}
             onDelete={deleteCard}

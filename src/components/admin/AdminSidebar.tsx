@@ -6,21 +6,23 @@ import { useAuth } from "@/context/AuthContext";
 import { cn } from "@/lib/utils";
 import {
   IconChart, IconBag, IconCart, IconUser, IconCalendar,
-  IconLogout, IconTag, IconGrid, IconSliders,
+  IconLogout, IconTag, IconGrid, IconSliders, IconStar, IconImage,
 } from "@/lib/icons";
 import UserAvatar from "@/components/common/UserAvatar";
 import BrandLogo from "@/components/common/BrandLogo";
 
 const NAV = [
-  { label: "Dashboard",    href: "/admin",             icon: IconChart    },
-  { label: "Orders",       href: "/admin/orders",       icon: IconCart     },
-  { label: "Products",     href: "/admin/products",     icon: IconBag      },
-  { label: "Services",     href: "/admin/services",     icon: IconCalendar },
-  { label: "Customers",    href: "/admin/customers",    icon: IconUser     },
-  { label: "Promotions",   href: "/admin/promotions",   icon: IconTag      },
-  { label: "Appointments", href: "/admin/appointments", icon: IconCalendar },
-  { label: "Catalog",     href: "/admin/catalog",      icon: IconGrid     },
-  { label: "Settings",    href: "/admin/settings",     icon: IconSliders  },
+  { label: "Dashboard",    href: "/admin",              icon: IconChart    },
+  { label: "Orders",       href: "/admin/orders",        icon: IconCart     },
+  { label: "Products",     href: "/admin/products",      icon: IconBag      },
+  { label: "Services",     href: "/admin/services",      icon: IconCalendar },
+  { label: "Customers",    href: "/admin/customers",     icon: IconUser     },
+  { label: "Promotions",   href: "/admin/promotions",    icon: IconTag      },
+  { label: "Appointments", href: "/admin/appointments",  icon: IconCalendar },
+  { label: "Catalog",      href: "/admin/catalog",       icon: IconGrid     },
+  { label: "Offers",       href: "/admin/offers",        icon: IconStar     },
+  { label: "Hero Slides",  href: "/admin/hero",          icon: IconImage    },
+  { label: "Settings",     href: "/admin/settings",      icon: IconSliders  },
 ];
 
 interface Props {

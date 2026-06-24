@@ -18,7 +18,7 @@ export default function SavedAddressesContainer() {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {addresses.map((addr) => (
           <AddressCard
-            key={addr.id}
+            key={addr._id ?? addr.id}
             address={addr}
             onSetDefault={setAsDefault}
             onDelete={deleteAddress}

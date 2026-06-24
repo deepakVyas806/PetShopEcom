@@ -2,6 +2,7 @@ import Fastify from "fastify";
 import helmet from "@fastify/helmet";
 import cors from "@fastify/cors";
 import rateLimit from "@fastify/rate-limit";
+import multipart from "@fastify/multipart";
 import { env } from "./config/env";
 import { mongoPlugin } from "./plugins/mongodb";
 import { redisPlugin } from "./plugins/redis";
@@ -48,6 +49,11 @@ export async function buildApp() {
       error: "Too Many Requests",
       message: "Slow down — too many requests. Please wait before retrying.",
     }),
+  });
+
+  // ── File uploads ────────────────────────────────────────────────────────────
+  await app.register(multipart, {
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB per file
   });
 
   // ── Data stores ─────────────────────────────────────────────────────────────

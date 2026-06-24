@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { useStore } from "@/context/StoreContext";
 import { api } from "@/lib/api";
 
@@ -39,6 +40,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 const SESSION_KEY = "petshop_auth";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
   const { login: storeLogin, logout: storeLogout } = useStore();
   const storeLoginRef  = useRef(storeLogin);
   const storeLogoutRef = useRef(storeLogout);
@@ -165,7 +167,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem(SESSION_KEY);
     document.cookie = "artpet_role=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
     storeLogoutRef.current();
-  }, []);
+    router.push("/signin");
+  }, [router]);
 
   const clearError = useCallback(() => setError(null), []);
 

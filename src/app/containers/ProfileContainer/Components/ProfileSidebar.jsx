@@ -5,13 +5,13 @@ import { usePathname } from "next/navigation";
 import { IconUser, IconReceipt, IconCalendar, IconHeart, IconLocation, IconMoney, IconBellActive, IconLogout } from "@/lib/icons";
 
 const NAV_ITEMS = [
-  { Icon: IconUser,        label: "My Profile",       href: "/profile",  fill: true  },
-  { Icon: IconReceipt,     label: "Orders",           href: "/orders"                },
-  { Icon: IconCalendar,    label: "Appointments",     href: "#"                      },
-  { Icon: IconHeart,       label: "Wishlist",         href: "/wishlist"              },
-  { Icon: IconLocation,    label: "Saved Addresses",  href: "#"                      },
-  { Icon: IconMoney,       label: "Payment Methods",  href: "#"                      },
-  { Icon: IconBellActive,  label: "Notifications",    href: "#"                      },
+  { Icon: IconUser,        label: "My Profile",       href: "/profile",          fill: true },
+  { Icon: IconReceipt,     label: "Orders",           href: "/orders"                       },
+  { Icon: IconCalendar,    label: "Appointments",     href: "/appointments"                 },
+  { Icon: IconHeart,       label: "Wishlist",         href: "/wishlist"                     },
+  { Icon: IconLocation,    label: "Saved Addresses",  href: "/saved-addresses"              },
+  { Icon: IconMoney,       label: "Payment Methods",  href: "/payment-methods"              },
+  { Icon: IconBellActive,  label: "Notifications",    href: "/notifications"                },
 ];
 
 export default function ProfileSidebar({ logout }) {

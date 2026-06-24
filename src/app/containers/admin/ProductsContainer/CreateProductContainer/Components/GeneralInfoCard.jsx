@@ -1,17 +1,12 @@
 "use client";
 import { memo } from "react";
 import { IconInfo, IconRefresh } from "@/lib/icons";
-import { CATEGORIES, BRANDS } from "../../data";
-
-const FALLBACK_CATS   = CATEGORIES.filter((c) => c !== CATEGORIES[0]);
-const FALLBACK_BRANDS = BRANDS.filter((b) => b !== BRANDS[0]);
 
 const inp = "w-full px-3 py-2.5 bg-surface-container-low border border-outline-variant/50 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-primary/30 text-on-surface placeholder:text-on-surface-variant";
 const lbl = "block text-[10px] font-bold uppercase tracking-wide text-on-surface-variant mb-1.5";
+const loadingCls = `${inp} opacity-50 cursor-not-allowed animate-pulse`;
 
-export default memo(function GeneralInfoCard({ name, sku, stock, category, brand, categories, brands, onField, onRefreshSKU, skuReadOnly }) {
-  const CONTENT_CATS   = categories?.length   ? categories   : FALLBACK_CATS;
-  const CONTENT_BRANDS = brands?.length       ? brands       : FALLBACK_BRANDS;
+export default memo(function GeneralInfoCard({ name, sku, stock, category, brand, categories, brands, catalogLoading, onField, onRefreshSKU, skuReadOnly }) {
   return (
     <section className="bg-surface-container-lowest rounded-xl p-5 border border-outline-variant/30 shadow-sm">
       <h3 className="text-xs font-bold text-on-surface mb-5 flex items-center gap-2">
@@ -72,23 +67,37 @@ export default memo(function GeneralInfoCard({ name, sku, stock, category, brand
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className={lbl}>Category *</label>
-            <select
-              value={category}
-              onChange={(e) => onField("category", e.target.value)}
-              className={`${inp} cursor-pointer`}
-            >
-              {CONTENT_CATS.map((c) => <option key={c}>{c}</option>)}
-            </select>
+            {catalogLoading ? (
+              <div className={loadingCls}>Loading catalog…</div>
+            ) : (
+              <select
+                value={category}
+                onChange={(e) => onField("category", e.target.value)}
+                className={`${inp} cursor-pointer`}
+              >
+                <option value="">Select category…</option>
+                {(categories ?? []).map((c) => (
+                  <option key={c.value ?? c} value={c.value ?? c}>{c.label ?? c}</option>
+                ))}
+              </select>
+            )}
           </div>
           <div>
             <label className={lbl}>Brand *</label>
-            <select
-              value={brand}
-              onChange={(e) => onField("brand", e.target.value)}
-              className={`${inp} cursor-pointer`}
-            >
-              {CONTENT_BRANDS.map((b) => <option key={b}>{b}</option>)}
-            </select>
+            {catalogLoading ? (
+              <div className={loadingCls}>Loading catalog…</div>
+            ) : (
+              <select
+                value={brand}
+                onChange={(e) => onField("brand", e.target.value)}
+                className={`${inp} cursor-pointer`}
+              >
+                <option value="">Select brand…</option>
+                {(brands ?? []).map((b) => (
+                  <option key={b.value ?? b} value={b.value ?? b}>{b.label ?? b}</option>
+                ))}
+              </select>
+            )}
           </div>
         </div>
       </div>

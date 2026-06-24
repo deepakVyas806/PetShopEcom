@@ -11,8 +11,6 @@ import ProductsPagination from "./Components/ProductsPagination";
 import BulkActionBar      from "./Components/BulkActionBar";
 import DeleteConfirmModal from "./Components/DeleteConfirmModal";
 
-const ALL_CATS   = "All Categories";
-const ALL_BRANDS = "All Brands";
 
 function toUiProduct(p) {
   return {
@@ -34,15 +32,15 @@ function toUiProduct(p) {
 export default function ProductsContainer() {
   const router = useRouter();
 
-  const [products,    setProducts]    = useState([]);
-  const [categories,  setCategories]  = useState([ALL_CATS]);
-  const [brands,      setBrands]      = useState([ALL_BRANDS]);
-  const [total,       setTotal]       = useState(0);
-  const [loading,     setLoading]     = useState(true);
+  const [products,     setProducts]     = useState([]);
+  const [total,        setTotal]        = useState(0);
+  const [loading,      setLoading]      = useState(true);
+  const [catalogCats,  setCatalogCats]  = useState([]);
+  const [catalogBrands,setCatalogBrands]= useState([]);
 
-  const [search,       setSearch]      = useState("");
-  const [category,     setCategory]    = useState(ALL_CATS);
-  const [brand,        setBrand]       = useState(ALL_BRANDS);
+  const [search,   setSearch]   = useState("");
+  const [category, setCategory] = useState("");  // "" = all
+  const [brand,    setBrand]    = useState("");  // "" = all
   const [selectedIds,  setSelectedIds] = useState(new Set());
   const [selectAll,    setSelectAll]   = useState(false);
   const [page,         setPage]        = useState(1);
@@ -54,14 +52,12 @@ export default function ProductsContainer() {
     try {
       const data = await api.get(`/admin/products${qs({
         page, limit: perPage,
-        ...(search                        ? { search }          : {}),
-        ...(category !== ALL_CATS         ? { category }        : {}),
-        ...(brand    !== ALL_BRANDS       ? { brand }           : {}),
+        ...(search   ? { search }   : {}),
+        ...(category ? { category } : {}),
+        ...(brand    ? { brand }    : {}),
       })}`);
       setProducts((data.products ?? []).map(toUiProduct));
       setTotal(data.total ?? 0);
-      if (data.categories?.length) setCategories([ALL_CATS, ...data.categories]);
-      if (data.brands?.length)     setBrands([ALL_BRANDS, ...data.brands]);
     } catch {
       setProducts([]);
     } finally {
@@ -70,6 +66,18 @@ export default function ProductsContainer() {
   }, [page, perPage, search, category, brand]);
 
   useEffect(() => { fetchProducts(); }, [fetchProducts]);
+
+  // Fetch catalog for toolbar filter dropdowns (labels from catalog, values = slugs)
+  useEffect(() => {
+    Promise.all([
+      api.get("/catalog?type=category"),
+      api.get("/catalog?type=brand"),
+    ]).then(([cats, brs]) => {
+      const toOpts = items => (items ?? []).map(i => ({ value: i.slug, label: i.name }));
+      setCatalogCats(toOpts(cats.items));
+      setCatalogBrands(toOpts(brs.items));
+    }).catch(() => {});
+  }, []);
 
   const lowStockCount = products.filter(p => p.status === "Low Stock").length;
 
@@ -145,8 +153,8 @@ export default function ProductsContainer() {
         search={search}     onSearch={v => { setSearch(v); setPage(1); }}
         category={category} onCategory={v => { setCategory(v); setPage(1); }}
         brand={brand}       onBrand={v => { setBrand(v); setPage(1); }}
-        categories={categories}
-        brands={brands}
+        categories={catalogCats}
+        brands={catalogBrands}
         onExport={() => {}}
         onAdd={() => router.push("/admin/products/create")}
       />

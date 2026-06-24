@@ -1,14 +1,14 @@
 "use client";
 import { memo } from "react";
 import { IconSliders, IconPaw } from "@/lib/icons";
-import { ANIMAL_TYPES, LIFE_STAGES } from "../../data";
 
 const inp = "w-full px-3 py-2.5 bg-surface-container-low border border-outline-variant/50 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-primary/30 text-on-surface placeholder:text-on-surface-variant";
 const lbl = "block text-[10px] font-bold uppercase tracking-wide text-on-surface-variant mb-1.5";
 
-export default memo(function SpecificationsCard({ weight, dimensions, lifeStage, animalTypes, lifeStages, petTypes, onField, onToggleAnimalType }) {
-  const STAGES   = lifeStages?.length ? lifeStages : LIFE_STAGES;
-  const PET_OPTS = petTypes?.length   ? petTypes   : ANIMAL_TYPES;
+export default memo(function SpecificationsCard({ weight, dimensions, lifeStage, animalTypes, lifeStages, petTypes, catalogLoading, onField, onToggleAnimalType }) {
+  // Normalize to {value, label} — catalog API returns {_id → value, name → label}
+  const stageOpts = (lifeStages ?? []).map(s => typeof s === "string" ? { value: s, label: s } : s);
+  const petOpts   = (petTypes   ?? []).map(p => typeof p === "string" ? { value: p, label: p } : p);
   return (
     <section className="bg-surface-container-lowest rounded-xl p-5 border border-outline-variant/30 shadow-sm">
       <h3 className="text-xs font-bold text-on-surface mb-5 flex items-center gap-2">
@@ -40,13 +40,20 @@ export default memo(function SpecificationsCard({ weight, dimensions, lifeStage,
         </div>
         <div>
           <label className={lbl}>Life Stage</label>
-          <select
-            value={lifeStage}
-            onChange={(e) => onField("lifeStage", e.target.value)}
-            className={`${inp} cursor-pointer`}
-          >
-            {STAGES.map((s) => <option key={s}>{s}</option>)}
-          </select>
+          {catalogLoading ? (
+            <div className={`${inp} opacity-50 animate-pulse`}>Loading…</div>
+          ) : (
+            <select
+              value={lifeStage}
+              onChange={(e) => onField("lifeStage", e.target.value)}
+              className={`${inp} cursor-pointer`}
+            >
+              <option value="">Select stage…</option>
+              {stageOpts.map(({ value, label }) => (
+                <option key={value} value={value}>{label}</option>
+              ))}
+            </select>
+          )}
         </div>
       </div>
 
@@ -55,31 +62,39 @@ export default memo(function SpecificationsCard({ weight, dimensions, lifeStage,
         <label className={`${lbl} flex items-center gap-1.5`}>
           <IconPaw size={11} className="text-primary" weight="fill" />
           Suitable For
-          {animalTypes.length > 0 && (
+          {animalTypes.length > 0 && !catalogLoading && (
             <span className="ml-auto text-[10px] font-normal normal-case tracking-normal text-primary">
-              {animalTypes.join(", ")}
+              {petOpts.filter(o => animalTypes.includes(o.value)).map(o => o.label).join(", ")}
             </span>
           )}
         </label>
+        {catalogLoading ? (
+          <div className="flex gap-2">
+            {[1,2,3,4].map(i => (
+              <div key={i} className="h-7 w-14 rounded-full bg-surface-container-high animate-pulse" />
+            ))}
+          </div>
+        ) : (
         <div className="flex flex-wrap gap-2">
-          {PET_OPTS.map((type) => {
-            const active = animalTypes.includes(type);
+          {petOpts.map(({ value, label }) => {
+            const active = animalTypes.includes(value);
             return (
               <button
-                key={type}
+                key={value}
                 type="button"
-                onClick={() => onToggleAnimalType(type)}
+                onClick={() => onToggleAnimalType(value)}
                 className={`px-3 py-1.5 rounded-full text-[10px] font-semibold border transition-all cursor-pointer ${
                   active
                     ? "bg-primary text-on-primary border-primary shadow-sm"
                     : "bg-surface-container-low text-on-surface-variant border-outline-variant/50 hover:border-primary hover:text-primary"
                 }`}
               >
-                {type}
+                {label}
               </button>
             );
           })}
         </div>
+        )}
       </div>
     </section>
   );

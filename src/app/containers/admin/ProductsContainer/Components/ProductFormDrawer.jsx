@@ -1,22 +1,28 @@
 "use client";
-import { memo, useState, useCallback } from "react";
+import { memo, useState, useCallback, useEffect, useRef } from "react";
 import { IconClose, IconAdd, IconEdit } from "@/lib/icons";
-import { CATEGORIES, BRANDS } from "../data";
+import { api } from "@/lib/api";
 
-const CONTENT_CATS  = CATEGORIES.filter((c) => c !== CATEGORIES[0]);
-const CONTENT_BRANDS = BRANDS.filter((b) => b !== BRANDS[0]);
+const FALLBACK_CATEGORIES = [
+  { value: "food",        label: "Food & Treats"   },
+  { value: "toys",        label: "Toys & Play"     },
+  { value: "grooming",    label: "Grooming"        },
+  { value: "beds",        label: "Beds & Houses"   },
+  { value: "accessories", label: "Accessories"     },
+  { value: "health",      label: "Health & Pharma" },
+];
+const FALLBACK_BRANDS = [
+  { value: "royal-canin", label: "Royal Canin" },
+  { value: "pedigree",    label: "Pedigree"    },
+  { value: "purina",      label: "Purina"      },
+  { value: "himalaya",    label: "Himalaya"    },
+  { value: "drools",      label: "Drools"      },
+];
 
 const EMPTY_FORM = {
-  id: "",
-  name: "",
-  variant: "",
-  sku: "",
-  category: CONTENT_CATS[0],
-  brand: CONTENT_BRANDS[0],
-  priceRaw: "",
-  stock: "",
-  maxStock: "",
-  image: "",
+  id: "", name: "", variant: "", sku: "",
+  category: "", brand: "",
+  priceRaw: "", stock: "", maxStock: "", image: "",
 };
 
 const inputCls  = "w-full px-3 py-2.5 bg-surface-container-low border border-outline-variant/50 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-primary/30 text-on-surface placeholder:text-on-surface-variant";
@@ -42,15 +48,42 @@ export default memo(function ProductFormDrawer({ product, onSave, onClose }) {
     priceRaw: product?.priceRaw ?? "",
     stock:    product?.stock    ?? "",
     maxStock: product?.maxStock ?? "",
-    category: product?.category ?? CONTENT_CATS[0],
-    brand:    product?.brand    ?? CONTENT_BRANDS[0],
+    category: product?.category ?? "",
+    brand:    product?.brand    ?? "",
   }));
+
+  const [catalogOpts, setCatalogOpts] = useState({
+    categories: FALLBACK_CATEGORIES,
+    brands:     FALLBACK_BRANDS,
+  });
+
+  const catalogFetchedRef = useRef(false);
+  useEffect(() => {
+    if (catalogFetchedRef.current) return;
+    catalogFetchedRef.current = true;
+    Promise.all([
+      api.get("/catalog?type=category"),
+      api.get("/catalog?type=brand"),
+    ]).then(([cats, brands]) => {
+      // Use _id as option value — FK stored in product
+      const toOpts = items => items.map(i => ({ value: i._id, label: i.name }));
+      setCatalogOpts({
+        categories: cats.items?.length   ? toOpts(cats.items)   : FALLBACK_CATEGORIES,
+        brands:     brands.items?.length ? toOpts(brands.items) : FALLBACK_BRANDS,
+      });
+    }).catch(() => {});
+  }, []);
 
   const set = useCallback((key, val) => setForm((f) => ({ ...f, [key]: val })), []);
 
   const handleSubmit = useCallback((e) => {
     e.preventDefault();
-    onSave(form);
+    // Map form fields to backend FK field names
+    onSave({
+      ...form,
+      categoryId: form.category || undefined,
+      brandId:    form.brand    || undefined,
+    });
   }, [form, onSave]);
 
   return (
@@ -107,12 +140,18 @@ export default memo(function ProductFormDrawer({ product, onSave, onClose }) {
           <div className="grid grid-cols-2 gap-3">
             <Field label="Category *">
               <select value={form.category} onChange={(e) => set("category", e.target.value)} className={selectCls}>
-                {CONTENT_CATS.map((c) => <option key={c}>{c}</option>)}
+                <option value="">Select category…</option>
+                {catalogOpts.categories.map(({ value, label }) => (
+                  <option key={value} value={value}>{label}</option>
+                ))}
               </select>
             </Field>
             <Field label="Brand *">
               <select value={form.brand} onChange={(e) => set("brand", e.target.value)} className={selectCls}>
-                {CONTENT_BRANDS.map((b) => <option key={b}>{b}</option>)}
+                <option value="">Select brand…</option>
+                {catalogOpts.brands.map(({ value, label }) => (
+                  <option key={value} value={value}>{label}</option>
+                ))}
               </select>
             </Field>
           </div>

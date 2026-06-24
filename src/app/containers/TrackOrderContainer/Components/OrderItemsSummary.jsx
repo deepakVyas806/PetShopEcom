@@ -16,13 +16,13 @@ export default function OrderItemsSummary({ items, subtotal, shipping, total }) 
 
       {/* Items list */}
       <div className="divide-y divide-outline-variant/20">
-        {items.map((item) => (
-          <div key={item.id} className="p-4 flex gap-3 items-center">
+        {items.map((item, idx) => (
+          <div key={item.sku ?? item.productId?.toString() ?? idx} className="p-4 flex gap-3 items-center">
             {/* Thumbnail */}
             <div className="w-14 h-14 rounded-lg bg-surface-variant flex-shrink-0 overflow-hidden">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={item.image}
+                src={item.image || null}
                 alt={item.name}
                 className="w-full h-full object-cover"
               />
@@ -31,13 +31,13 @@ export default function OrderItemsSummary({ items, subtotal, shipping, total }) 
             {/* Info */}
             <div className="flex-grow min-w-0">
               <h4 className="text-xs font-semibold text-on-surface truncate">{item.name}</h4>
-              <p className="text-[10px] text-on-surface-variant mt-0.5">{item.variant}</p>
+              {item.sku && <p className="text-[10px] text-on-surface-variant mt-0.5">SKU: {item.sku}</p>}
             </div>
 
             {/* Price */}
             <div className="text-right flex-shrink-0">
               <p className="text-xs font-bold text-primary">{fmt(item.price)}</p>
-              <p className="text-[10px] text-on-surface-variant">Qty: {item.qty}</p>
+              <p className="text-[10px] text-on-surface-variant">Qty: {item.quantity ?? item.qty}</p>
             </div>
           </div>
         ))}

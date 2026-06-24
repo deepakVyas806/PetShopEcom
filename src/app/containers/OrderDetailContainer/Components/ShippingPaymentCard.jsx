@@ -2,7 +2,26 @@
 
 import { IconLocation, IconMoney } from "@/lib/icons";
 
-export default function ShippingPaymentCard({ shipping, payment }) {
+const METHOD_LABELS = {
+  card:       "Credit / Debit Card",
+  netbanking: "Net Banking",
+  wallet:     "Wallet",
+  cod:        "Cash on Delivery",
+};
+
+export default function ShippingPaymentCard({ shippingAddress, paymentMethod }) {
+  const addr = shippingAddress ?? {};
+  const addrLines = [
+    addr.name,
+    addr.line1,
+    addr.line2,
+    `${addr.city ?? ""}${addr.state ? ", " + addr.state : ""}${addr.pincode ? " - " + addr.pincode : ""}`,
+    addr.country,
+    addr.phone ? `📞 ${addr.phone}` : null,
+  ].filter(Boolean).join("\n");
+
+  const methodLabel = METHOD_LABELS[paymentMethod] ?? paymentMethod ?? "—";
+
   return (
     <section
       className="p-5 rounded-xl space-y-4"
@@ -15,7 +34,7 @@ export default function ShippingPaymentCard({ shipping, payment }) {
           <h3 className="text-[10px] font-bold uppercase tracking-wider">Shipping Address</h3>
         </div>
         <p className="text-xs text-on-surface leading-relaxed whitespace-pre-line">
-          {shipping.address}
+          {addrLines || "—"}
         </p>
       </div>
 
@@ -27,12 +46,7 @@ export default function ShippingPaymentCard({ shipping, payment }) {
           <IconMoney size={16} weight="regular" />
           <h3 className="text-[10px] font-bold uppercase tracking-wider">Payment Method</h3>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-7 rounded bg-surface-container flex items-center justify-center border border-outline-variant/20 flex-shrink-0">
-            <span className="text-[9px] font-bold text-primary">VISA</span>
-          </div>
-          <p className="text-xs text-on-surface">{payment.label}</p>
-        </div>
+        <p className="text-xs text-on-surface">{methodLabel}</p>
       </div>
     </section>
   );
