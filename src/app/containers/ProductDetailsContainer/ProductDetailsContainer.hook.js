@@ -54,12 +54,14 @@ export default function useProductDetails(productId) {
       .catch(() => {});
   }, [product, productId]);
 
-  // Fetch active coupons for the offers section
+  // Fetch applicable coupons once the product is loaded (global + product/category scoped)
   useEffect(() => {
-    api.get("/coupons")
+    if (!product) return;
+    if (!product._id) return;
+    api.get(`/coupons/applicable?productIds=${product._id}`)
       .then(data => setCoupons(data.coupons ?? []))
       .catch(() => {});
-  }, []);
+  }, [product]);
 
   // Gallery
   const gallery = useMemo(() => {

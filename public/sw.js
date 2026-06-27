@@ -65,6 +65,12 @@ self.addEventListener('fetch', (event) => {
 });
 
 // ── Strategies ────────────────────────────────────────────────────────────────
+async function tryCache(cache, request, response) {
+  try {
+    await cache.put(request, response);
+  } catch { /* no-store responses and opaque redirects are not cacheable */ }
+}
+
 async function cacheFirst(request) {
   const cached = await caches.match(request);
   if (cached) return cached;
@@ -73,7 +79,7 @@ async function cacheFirst(request) {
     const response = await fetch(request);
     if (response.ok) {
       const cache = await caches.open(CACHE_NAME);
-      cache.put(request, response.clone());
+      tryCache(cache, request, response.clone());
     }
     return response;
   } catch {
@@ -86,7 +92,7 @@ async function networkFirst(request) {
     const response = await fetch(request);
     if (response.ok) {
       const cache = await caches.open(CACHE_NAME);
-      cache.put(request, response.clone());
+      tryCache(cache, request, response.clone());
     }
     return response;
   } catch {

@@ -6,7 +6,7 @@ const MENU_ITEMS = [
   { label: "View Details",  icon: IconEye,     action: "view" },
   { label: "Update Status", icon: IconEdit,    action: "status" },
   { label: "Print Invoice", icon: IconReceipt, action: "print" },
-  { label: "Cancel Order",  icon: IconCancel,  action: "cancel", danger: true },
+  // { label: "Cancel Order",  icon: IconCancel,  action: "cancel", danger: true },
 ];
 
 export default memo(function OrderRowMenu({ order, onAction, onClose }) {

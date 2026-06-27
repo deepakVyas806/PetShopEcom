@@ -1,6 +1,7 @@
 "use client";
 import { memo, useState } from "react";
-import { IconMoreVert } from "@/lib/icons";
+import { IconMoreVert, IconTag } from "@/lib/icons";
+import { fmt } from "@/lib/currency";
 import { STATUS_STYLES } from "../data";
 import OrderRowMenu from "./OrderRowMenu";
 
@@ -49,7 +50,25 @@ const OrderRow = memo(function OrderRow({ order, selected, onSelect, onMenuActio
         </div>
       </td>
       <td className="px-4 py-3 text-xs text-on-surface-variant whitespace-nowrap">{order.date}</td>
-      <td className="px-4 py-3 text-xs font-bold text-on-surface whitespace-nowrap">{order.amount}</td>
+      <td className="px-4 py-3 whitespace-nowrap">
+        <div className="flex flex-col gap-0.5">
+          {order.discount > 0 && (
+            <div className="text-[10px] text-on-surface-variant line-through">
+              {fmt(order.totalRaw + order.discount)}
+            </div>
+          )}
+          {order.discount > 0 && (
+            <div className="flex items-center gap-1 text-[10px] text-green-600 font-bold">
+              <IconTag size={9} weight="fill" />
+              {order.couponCode ?? "Discount"}
+              <span>−{fmt(order.discount)}</span>
+            </div>
+          )}
+          <div className="text-xs font-extrabold text-primary">
+            {order.amount}
+          </div>
+        </div>
+      </td>
       <td className="px-4 py-3">
         <StatusBadge status={order.status} />
       </td>
@@ -74,7 +93,7 @@ const OrderRow = memo(function OrderRow({ order, selected, onSelect, onMenuActio
   );
 });
 
-const TABLE_HEADERS = ["Order ID", "Customer", "Date", "Amount", "Status", ""];
+const TABLE_HEADERS = ["Order ID", "Customer", "Date", "Amount / Total", "Status", ""];
 
 export default memo(function OrdersTable({ orders, selectedIds, selectAll, onSelectAll, onSelectRow, onMenuAction }) {
   return (

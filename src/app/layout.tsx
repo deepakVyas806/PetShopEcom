@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { siteConfig } from "@/config/site";
 import { StoreProvider } from "@/context/StoreContext";
@@ -85,11 +86,6 @@ export default function RootLayout({
       className={`${inter.variable} ${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <head>
-        {/* Dark-mode flash prevention */}
-        <script dangerouslySetInnerHTML={{
-          __html: `(function(){try{var s=localStorage.getItem("theme"),d=window.matchMedia("(prefers-color-scheme: dark)").matches;if(s==="dark"||(!s&&d)){document.documentElement.classList.add("dark")}else{document.documentElement.classList.remove("dark")}}catch(e){}})();`
-        }} />
-
         {/* ── iOS PWA: splash screens & standalone chrome ─────────────────── */}
 
         {/* Status bar overlay — purple tint on iOS notch */}
@@ -121,6 +117,8 @@ export default function RootLayout({
       </head>
 
       <body className="min-h-full flex flex-col font-sans selection:bg-brand-primary selection:text-white bg-brand-background text-brand-foreground pb-20 md:pb-0">
+        {/* Dark-mode flash prevention — runs before first paint, served as a separate file to avoid React 19 inline-script warning */}
+        {/* <Script src="/theme-init.js" strategy="beforeInteractive" /> */}
         <GoogleProvider>
           <StoreProvider>
             <AuthProvider>

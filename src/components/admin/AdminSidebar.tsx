@@ -6,7 +6,7 @@ import { useAuth } from "@/context/AuthContext";
 import { cn } from "@/lib/utils";
 import {
   IconChart, IconBag, IconCart, IconUser, IconCalendar,
-  IconLogout, IconTag, IconGrid, IconSliders, IconStar, IconImage,
+  IconLogout, IconTag, IconGrid, IconSliders, IconStar, IconImage, IconReceipt,
 } from "@/lib/icons";
 import UserAvatar from "@/components/common/UserAvatar";
 import BrandLogo from "@/components/common/BrandLogo";
@@ -19,6 +19,7 @@ const NAV = [
   { label: "Customers",    href: "/admin/customers",     icon: IconUser     },
   { label: "Promotions",   href: "/admin/promotions",    icon: IconTag      },
   { label: "Appointments", href: "/admin/appointments",  icon: IconCalendar },
+  { label: "Transactions", href: "/admin/transactions",  icon: IconReceipt  },
   { label: "Catalog",      href: "/admin/catalog",       icon: IconGrid     },
   { label: "Offers",       href: "/admin/offers",        icon: IconStar     },
   { label: "Hero Slides",  href: "/admin/hero",          icon: IconImage    },

@@ -51,6 +51,11 @@ export function proxy(req: NextRequest) {
     if (role === "customer") return redirect(req, "/");
   }
 
+  // ── /signup is a legacy path — unauthenticated users go to signin signup view ─
+  if (pathname === "/signup") {
+    return redirect(req, "/signin?view=signup");
+  }
+
   return NextResponse.next();
 }
 

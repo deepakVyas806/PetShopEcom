@@ -3,16 +3,15 @@ import { FastifyPluginAsync }                    from "fastify";
 import { Order }                                 from "../../models/Order";
 import { Product }                               from "../../models/Product";
 import { Coupon }                                from "../../models/Coupon";
+import { Transaction }                           from "../../models/Transaction";
 import { authenticate }                          from "../../hooks/authenticate";
 import { parsePagination, paginationMeta }       from "../../utils/paginate";
-import { generateOrderId }                       from "../../utils/id";
+import { generateOrderId, generateTransactionId } from "../../utils/id";
 import { env }                                   from "../../config/env";
 import { getOrCreateSettings }                   from "../../models/StoreSettings";
 
 const COD_METHOD = "cod";
 
-// Resolve shipping fee from settings + chosen delivery option.
-// "standard" always maps to baseShippingCost; premium options use their configured cost.
 function resolveShippingFee(settings: any, deliveryOption?: string): number {
   if (!deliveryOption || deliveryOption === "standard") return settings.baseShippingCost;
   const opt = settings.deliveryOptions?.find((o: any) => o.key === deliveryOption && o.active);
@@ -59,8 +58,7 @@ export const orderRoutes: FastifyPluginAsync = async (app) => {
     reply.send({ order });
   });
 
-  // POST /orders/estimate — calculate totals without placing the order.
-  // Frontend uses this as the single source of truth for all price display.
+  // POST /orders/estimate — calculate totals without placing the order
   app.post("/estimate", {
     preHandler: authenticate,
     schema: {
@@ -108,12 +106,12 @@ export const orderRoutes: FastifyPluginAsync = async (app) => {
       }
     }
 
-    const taxRate     = settings.taxRate / 100;
-    const tax         = (subtotal - discount) * taxRate;
-    const shippingFee = resolveShippingFee(settings, deliveryOption);
+    const taxRate      = settings.taxRate / 100;
+    const tax          = (subtotal - discount) * taxRate;
+    const shippingFee  = resolveShippingFee(settings, deliveryOption);
     const freeShipping = subtotal >= settings.freeShippingThreshold;
-    const shipping    = freeShipping ? 0 : shippingFee;
-    const total       = subtotal - discount + tax + shipping;
+    const shipping     = freeShipping ? 0 : shippingFee;
+    const total        = subtotal - discount + tax + shipping;
 
     reply.send({
       subtotal,
@@ -128,9 +126,7 @@ export const orderRoutes: FastifyPluginAsync = async (app) => {
   });
 
   // POST /orders — place an order
-  // • paymentMethod === "cod"     → create with status "Pending" (no payment verification)
-  // • paymentMethod === anything else → must include razorpay* fields; signature is verified
-  //   server-side before creating the order (status "Confirmed")
+  // COD → status "Pending"; online → verify Razorpay signature first, then "Confirmed"
   app.post("/", {
     preHandler: authenticate,
     schema: {
@@ -154,7 +150,6 @@ export const orderRoutes: FastifyPluginAsync = async (app) => {
           paymentMethod:      { type: "string" },
           deliveryOption:     { type: "string" },
           couponCode:         { type: "string" },
-          // Razorpay fields — required for non-COD orders
           razorpayOrderId:    { type: "string" },
           razorpayPaymentId:  { type: "string" },
           razorpaySignature:  { type: "string" },
@@ -173,12 +168,11 @@ export const orderRoutes: FastifyPluginAsync = async (app) => {
       razorpaySignature,
     } = req.body as any;
 
-    // Load live store settings — single source of truth for all business rules
     const settings = await getOrCreateSettings();
 
     const isCod = paymentMethod === COD_METHOD;
 
-    // For non-COD: verify Razorpay payment signature before touching DB
+    // For non-COD: verify Razorpay signature before touching DB
     if (!isCod) {
       if (!razorpayOrderId || !razorpayPaymentId || !razorpaySignature) {
         return reply.status(400).send({ message: "Payment verification fields are required for online payments." });
@@ -201,16 +195,36 @@ export const orderRoutes: FastifyPluginAsync = async (app) => {
 
     let subtotal = orderItems.reduce((s: number, i: any) => s + i.price * i.quantity, 0);
 
-    // Coupon validation
     let discount    = 0;
     let validCoupon: string | undefined;
     if (couponCode) {
       const coupon = await Coupon.findOne({ code: couponCode.toUpperCase(), status: "active" });
       if (coupon && subtotal >= coupon.minOrder) {
-        if (coupon.discountType === "percent") discount = subtotal * (coupon.value / 100);
-        if (coupon.discountType === "fixed")   discount = Math.min(coupon.value, subtotal);
-        validCoupon = coupon.code;
-        await Coupon.findByIdAndUpdate(coupon._id, { $inc: { usageCount: 1, revenue: subtotal - discount } });
+        // Calculate discountable amount based on coupon scope
+        let discountableAmount = subtotal;
+        if (coupon.scope === "product" && coupon.productIds?.length) {
+          const ids = new Set(coupon.productIds.map(id => id.toString()));
+          discountableAmount = orderItems
+            .filter((i: any) => ids.has(i.productId.toString()))
+            .reduce((s: number, i: any) => s + i.price * i.quantity, 0);
+        } else if (coupon.scope === "category" && coupon.categoryIds?.length) {
+          const catIds = new Set(coupon.categoryIds.map(id => id.toString()));
+          // products already fetched — filter by categoryId field
+          const matchingProductIds = new Set(
+            products.filter((p: any) => p.categoryId && catIds.has(p.categoryId.toString()))
+                    .map((p: any) => p._id.toString())
+          );
+          discountableAmount = orderItems
+            .filter((i: any) => matchingProductIds.has(i.productId.toString()))
+            .reduce((s: number, i: any) => s + i.price * i.quantity, 0);
+        }
+
+        if (discountableAmount > 0) {
+          if (coupon.discountType === "percent") discount = discountableAmount * (coupon.value / 100);
+          if (coupon.discountType === "fixed")   discount = Math.min(coupon.value, discountableAmount);
+          validCoupon = coupon.code;
+          await Coupon.findByIdAndUpdate(coupon._id, { $inc: { usageCount: 1, revenue: discountableAmount - discount } });
+        }
       }
     }
 
@@ -220,7 +234,6 @@ export const orderRoutes: FastifyPluginAsync = async (app) => {
     const shipping    = subtotal >= settings.freeShippingThreshold ? 0 : shippingFee;
     const total       = subtotal - discount + tax + shipping;
 
-    // Build structured payment details for each payment method
     const paymentDetails: Record<string, any> = { method: paymentMethod };
     if (isCod) {
       paymentDetails.codNote = `Collect ₹${Math.round(total)} on delivery`;
@@ -228,10 +241,8 @@ export const orderRoutes: FastifyPluginAsync = async (app) => {
       paymentDetails.razorpayOrderId   = razorpayOrderId;
       paymentDetails.razorpayPaymentId = razorpayPaymentId;
       paymentDetails.razorpaySignature = razorpaySignature;
-      // card / upi / netbanking / wallet — method-specific fields populated
-      // from Razorpay webhook enrichment later; stubs present from the start
       if (paymentMethod === "upi") {
-        paymentDetails.upiVpa = undefined; // enriched via webhook
+        paymentDetails.upiVpa = undefined;
         paymentDetails.upiApp = undefined;
       } else if (paymentMethod === "netbanking") {
         paymentDetails.bankName = undefined;
@@ -239,7 +250,6 @@ export const orderRoutes: FastifyPluginAsync = async (app) => {
       } else if (paymentMethod === "wallet") {
         paymentDetails.walletName = undefined;
       } else {
-        // card / emi
         paymentDetails.cardLast4   = undefined;
         paymentDetails.cardBrand   = undefined;
         paymentDetails.cardNetwork = undefined;
@@ -261,12 +271,25 @@ export const orderRoutes: FastifyPluginAsync = async (app) => {
       paymentMethod,
       paymentDetails,
       couponCode:        validCoupon,
-      // Top-level Razorpay fields kept for backward-compat
       razorpayOrderId:   isCod ? undefined : razorpayOrderId,
       razorpayPaymentId: isCod ? undefined : razorpayPaymentId,
       razorpaySignature: isCod ? undefined : razorpaySignature,
-      // COD orders are "Pending" until delivered; online orders are "Confirmed" (payment verified)
       status:            isCod ? "Pending" : "Confirmed",
+    });
+
+    // Record a transaction for every order regardless of payment method
+    await Transaction.create({
+      transactionId:     generateTransactionId(),
+      orderId:           order._id,
+      orderRef:          order.orderId,
+      userId:            req.user.userId,
+      amount:            total,
+      currency:          "INR",
+      status:            isCod ? "pending" : "success",
+      method:            paymentMethod,
+      razorpayOrderId:   isCod ? undefined : razorpayOrderId,
+      razorpayPaymentId: isCod ? undefined : razorpayPaymentId,
+      razorpaySignature: isCod ? undefined : razorpaySignature,
     });
 
     reply.status(201).send({ order });

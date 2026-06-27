@@ -7,7 +7,6 @@ import { fmt } from "@/lib/currency";
 import PageHeader from "@/components/common/PageHeader";
 import {
   IconArrowLeft,
-  IconTag,
   IconCalendar,
   IconLock,
   IconShipping,
@@ -24,7 +23,6 @@ export default function ShoppingCartContainer() {
     cart,
     cartCount,
     loading,
-    availableCoupons,
     selectedIds,
     selectedItems,
     selectedCount,
@@ -36,16 +34,9 @@ export default function ShoppingCartContainer() {
     tax,
     taxRate,
     freeShipThreshold,
-    promoDiscount,
     grandTotal,
     rewardsPoints,
     totalSavings,
-    promoInput,
-    setPromoInput,
-    appliedCode,
-    promoError,
-    applyPromoCode,
-    removePromoCode,
     handleUpdateQuantity,
     handleRemoveItem,
     handleProceedToCheckout,
@@ -213,21 +204,6 @@ export default function ShoppingCartContainer() {
                       <span>Tax ({taxRate ?? 18}% GST)</span>
                       <span className="font-semibold text-on-surface">{fmt(tax)}</span>
                     </div>
-                    {appliedCode && (
-                      <div className="flex justify-between text-green-600 font-bold">
-                        <span className="flex items-center gap-1">
-                          <IconTag size={11} weight="regular" />
-                          {appliedCode}
-                          <button
-                            onClick={removePromoCode}
-                            className="text-error text-[9px] hover:underline border-none bg-transparent cursor-pointer p-0"
-                          >
-                            ✕
-                          </button>
-                        </span>
-                        <span>−{fmt(promoDiscount)}</span>
-                      </div>
-                    )}
                   </div>
 
                   {/* Total */}
@@ -243,52 +219,6 @@ export default function ShoppingCartContainer() {
                       <span className="text-xs font-black text-green-700">{fmt(totalSavings)} 🎉</span>
                     </div>
                   )}
-
-                  {/* Promo code */}
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] font-semibold text-on-surface-variant">Promo Code</label>
-                    <div className="flex gap-1.5">
-                      <input
-                        className="flex-grow bg-surface-container-low border border-outline-variant/30 rounded-lg px-2.5 py-1.5 text-xs focus:ring-1 focus:ring-primary focus:border-primary outline-none text-on-surface placeholder:text-on-surface-variant/40"
-                        placeholder="e.g. NEWPET10"
-                        type="text"
-                        value={promoInput}
-                        onChange={(e) => setPromoInput(e.target.value)}
-                        disabled={!!appliedCode}
-                      />
-                      <button
-                        onClick={() => applyPromoCode(promoInput)}
-                        disabled={!!appliedCode}
-                        className="bg-secondary-container text-on-secondary-container px-3 py-1.5 rounded-lg text-[10px] font-bold hover:bg-secondary-container/80 disabled:opacity-40 transition-colors cursor-pointer border-none outline-none"
-                      >
-                        Apply
-                      </button>
-                    </div>
-                    {promoError  && <p className="text-[10px] text-error font-semibold">{promoError}</p>}
-                    {appliedCode && <p className="text-[10px] text-green-600 font-semibold">Promo applied!</p>}
-                    {!appliedCode && availableCoupons.length > 0 && (
-                      <div className="space-y-1 pt-1">
-                        <p className="text-[10px] text-on-surface-variant font-semibold">Available coupons</p>
-                        {availableCoupons.slice(0, 4).map((c) => (
-                          <button
-                            key={c.code}
-                            onClick={() => { setPromoInput(c.code); applyPromoCode(c.code); }}
-                            className="w-full flex items-center justify-between px-2.5 py-1.5 border border-dashed border-primary/40 rounded-lg bg-primary/3 hover:bg-primary/8 text-left transition-colors cursor-pointer outline-none"
-                          >
-                            <span className="text-[10px] text-on-surface-variant">
-                              {c.description ||
-                                (c.discountType === "percent"
-                                  ? `${c.value}% off${c.minOrder > 0 ? ` on ₹${c.minOrder}+` : ""}`
-                                  : `₹${c.value} off${c.minOrder > 0 ? ` on ₹${c.minOrder}+` : ""}`)}
-                            </span>
-                            <span className="text-[10px] font-black text-primary border border-primary/30 px-1.5 py-0.5 rounded bg-white">
-                              {c.code}
-                            </span>
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
 
                   {/* Estimated delivery */}
                   <div className="flex items-center gap-1.5 bg-primary/5 rounded-lg px-3 py-2">

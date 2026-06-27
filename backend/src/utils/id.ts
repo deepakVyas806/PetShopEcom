@@ -7,3 +7,8 @@ export function generateOrderId(): string {
 export function generateBookingId(): string {
   return `BK-${Math.floor(100000 + Math.random() * 900000)}`;
 }
+
+/** Generate a transaction ID like TXN-123456789 */
+export function generateTransactionId(): string {
+  return `TXN-${Math.floor(100000000 + Math.random() * 900000000)}`;
+}

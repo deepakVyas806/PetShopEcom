@@ -23,6 +23,10 @@ function toUiCoupon(c) {
     endDate:      c.endDate ?? "",
     status:       c.status,
     revenueRaw:   c.revenue ?? 0,
+    scope:        c.scope ?? "global",
+    productIds:   (c.productIds  ?? []).map(id => typeof id === "object" ? { id: String(id._id ?? id), name: id.name ?? String(id._id ?? id) } : { id: String(id), name: String(id) }),
+    categoryIds:  (c.categoryIds ?? []).map(id => typeof id === "object" ? { id: String(id._id ?? id), name: id.name ?? String(id._id ?? id) } : { id: String(id), name: String(id) }),
+    serviceIds:   (c.serviceIds  ?? []).map(id => typeof id === "object" ? { id: String(id._id ?? id), name: id.name ?? String(id._id ?? id) } : { id: String(id), name: String(id) }),
   };
 }
 
@@ -77,6 +81,10 @@ export default function PromotionsContainer() {
       startDate:    formData.startDate,
       endDate:      formData.endDate,
       status:       formData.status ?? "active",
+      scope:        formData.scope ?? "global",
+      productIds:   formData.productIds  ?? [],
+      categoryIds:  formData.categoryIds ?? [],
+      serviceIds:   formData.serviceIds  ?? [],
     };
     try {
       if (formData.id) {
@@ -110,6 +118,10 @@ export default function PromotionsContainer() {
       startDate:    coupon.startDate,
       endDate:      coupon.endDate,
       status:       "paused",
+      scope:        coupon.scope ?? "global",
+      productIds:   (coupon.productIds  ?? []).map(p => p.id ?? p),
+      categoryIds:  (coupon.categoryIds ?? []).map(c => c.id ?? c),
+      serviceIds:   (coupon.serviceIds  ?? []).map(s => s.id ?? s),
     };
     try {
       const data = await api.post("/admin/promotions", payload);

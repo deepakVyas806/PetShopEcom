@@ -1,6 +1,7 @@
 "use client";
 import { memo } from "react";
-import { IconClose, IconDownload, IconEdit, IconPaw, IconCard, IconCheck } from "@/lib/icons";
+import { IconClose, IconDownload, IconEdit, IconPaw, IconCard, IconCheck, IconTag } from "@/lib/icons";
+import { fmt } from "@/lib/currency";
 import { STATUS_STYLES, MOCK_ORDER_ITEMS, STATUS_FLOW } from "../data";
 
 const Section = ({ title, children }) => (
@@ -148,9 +149,25 @@ export default memo(function OrderDetailDrawer({ order, onClose, onUpdateStatus 
           {/* Summary */}
           <Section title="Order Summary">
             <div className="bg-surface-container-low rounded-xl p-3 space-y-2">
-              <SummaryRow label="Subtotal" value="₹14,997" />
-              <SummaryRow label="Shipping" value="₹99" />
-              <SummaryRow label="Discount" value="−₹500" />
+              <SummaryRow label="Subtotal" value={fmt(order.subtotal)} />
+              <SummaryRow label="Shipping" value={order.shipping === 0 ? "FREE" : fmt(order.shipping)} />
+              <SummaryRow label="Tax" value={fmt(order.tax)} />
+              {order.discount > 0 && (
+                <div className="flex justify-between items-center">
+                  <span className="text-[10px] text-green-600 flex items-center gap-1">
+                    <IconTag size={10} weight="fill" />
+                    {order.couponCode ? (
+                      <span>
+                        Discount&nbsp;
+                        <span className="font-bold bg-green-100 text-green-700 border border-green-200 px-1.5 py-0.5 rounded text-[9px]">
+                          {order.couponCode}
+                        </span>
+                      </span>
+                    ) : "Discount"}
+                  </span>
+                  <span className="text-[10px] font-bold text-green-600">−{fmt(order.discount)}</span>
+                </div>
+              )}
               <hr className="border-outline-variant/30 my-1" />
               <SummaryRow label="Total" value={order.amount} bold />
             </div>

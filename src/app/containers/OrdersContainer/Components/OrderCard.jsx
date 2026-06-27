@@ -6,7 +6,7 @@ import OrderItemsList from "./OrderItemsList";
 import { fmt } from "@/lib/currency";
 import { useStore } from "@/context/StoreContext";
 import { OrderStatusBadge, Button } from "@/components/ui";
-import { IconShipping, IconNavigate, IconCheckCircle, IconPending, IconDownload, IconReorder, IconRefresh, IconWarning, IconCancel, IconChevronDown } from "@/lib/icons";
+import { IconShipping, IconNavigate, IconCheckCircle, IconPending, IconDownload, IconReorder, IconRefresh, IconWarning, IconCancel, IconChevronDown, IconTag } from "@/lib/icons";
 
 // ─── Status icon config (kept for the icon display in header) ──────────────────
 const STATUS_CONFIG = {
@@ -42,8 +42,8 @@ const DEFAULT_STATUS = {
 export default function OrderCard({ order, isExpanded, onToggleExpand }) {
   const { addToCart } = useStore();
 
-  // Cancel state
-  const [cancelStep, setCancelStep] = useState("idle"); // "idle" | "confirm" | "done"
+  // Cancel state — disabled for now
+  // const [cancelStep, setCancelStep] = useState("idle");
 
   // Reorder state
   const [reorderStep, setReorderStep] = useState("idle"); // "idle" | "adding" | "done"
@@ -136,8 +136,8 @@ export default function OrderCard({ order, isExpanded, onToggleExpand }) {
               View Details
             </Button>
 
-            {/* Cancel — inline confirmation flow */}
-            {cancelStep === "idle" && (
+            {/* Cancel order — disabled for now */}
+            {/* {cancelStep === "idle" && (
               <Button
                 variant="danger"
                 size="md"
@@ -168,7 +168,7 @@ export default function OrderCard({ order, isExpanded, onToggleExpand }) {
                 <IconCancel size={14} className="leading-none" weight="regular" />
                 Order Cancelled
               </span>
-            )}
+            )} */}
           </>
         );
     }
@@ -176,9 +176,7 @@ export default function OrderCard({ order, isExpanded, onToggleExpand }) {
 
   return (
     <div
-      className={`bg-surface-container-lowest border border-outline-variant/50 rounded-2xl transition-all duration-300 overflow-hidden ${
-        order.status === "Order Confirmed" && cancelStep !== "done" ? "opacity-80 hover:opacity-100" : ""
-      }`}
+      className="bg-surface-container-lowest border border-outline-variant/50 rounded-2xl transition-all duration-300 overflow-hidden"
       style={{ boxShadow: "0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03)" }}
     >
       <div className="p-4">
@@ -192,10 +190,7 @@ export default function OrderCard({ order, isExpanded, onToggleExpand }) {
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold text-on-surface">#{orderId}</span>
-                {cancelStep === "done"
-                  ? <OrderStatusBadge status="Cancelled" />
-                  : <OrderStatusBadge status={order.status} />
-                }
+                <OrderStatusBadge status={order.status} />
               </div>
               <p className="text-[10px] text-on-surface-variant mt-0.5">
                 Placed on {placedOn}
@@ -203,10 +198,23 @@ export default function OrderCard({ order, isExpanded, onToggleExpand }) {
             </div>
           </div>
 
-          {/* Right: total */}
-          <div className="text-right">
-            <p className="text-[10px] text-on-surface-variant">Total Amount</p>
-            <p className="text-sm font-bold text-primary">{fmt(order.total)}</p>
+          {/* Right: financial breakdown */}
+          <div className="text-right shrink-0">
+            <div className="inline-flex flex-col items-end gap-0.5">
+              {order.discount > 0 && (
+                <span className="text-[10px] text-on-surface-variant line-through">
+                  {fmt(order.total + order.discount)}
+                </span>
+              )}
+              {order.discount > 0 && (
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-green-600">
+                  <IconTag size={9} weight="fill" />
+                  {order.couponCode ?? "Discount"}
+                  &nbsp;−{fmt(order.discount)}
+                </span>
+              )}
+              <span className="text-sm font-extrabold text-primary">{fmt(order.total)}</span>
+            </div>
           </div>
         </div>
 

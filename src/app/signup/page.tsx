@@ -1,13 +1,5 @@
-"use client";
-
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-
-// Signup now lives inside /signin — redirect immediately
+// Signup lives inside /signin. The proxy.ts redirects /signup → /signin?view=signup
+// for unauthenticated users before this page even renders, so this is just a fallback.
 export default function SignupPage() {
-  const router = useRouter();
-  useEffect(() => {
-    router.replace("/signin?view=signup");
-  }, [router]);
   return null;
 }

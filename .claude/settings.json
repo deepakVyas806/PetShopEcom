@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(artifact-design)",
+      "Skill(artifact-design:*)",
+      "Bash(xargs grep -l \"18%\")",
+      "Bash(grep -r \"500\\\\|1000\\\\|999\" \"c:\\\\DeepakVyas\\\\PetShopEcom\\\\src\" --include=\"*.tsx\" --include=\"*.jsx\" --include=\"*.ts\" --include=\"*.js\" ! -path \"*admin*\")",
+      "Bash(xargs ls -la)",
+      "Bash(grep -r \"Premium\\\\|Standard\\\\|Budget\\\\|Luxury\" \"c:\\\\DeepakVyas\\\\PetShopEcom\\\\src\" --include=\"*.tsx\" --include=\"*.jsx\" --include=\"*.ts\" --include=\"*.js\" ! -path \"*admin*\")",
+      "Bash(grep -rn \"const.*\\\\\\(CATEGORIES\\\\|BRANDS\\\\|PET_TYPES\\\\|LIFE_STAGES\\\\|PAYMENT\\\\|DELIVERY\\\\\\)\" \"c:\\\\DeepakVyas\\\\PetShopEcom\\\\src\" --include=\"*.tsx\" --include=\"*.jsx\" --include=\"*.ts\" --include=\"*.js\" ! -path \"*admin*\")",
+      "Bash(xargs grep -l \"razorpay\\\\|Razorpay\")",
+      "Bash(git -C \"c:\\\\DeepakVyas\\\\PetShopEcom\" branch -a)",
+      "Bash(git -C \"c:\\\\DeepakVyas\\\\PetShopEcom\" log razorpay-integration --oneline -10)",
+      "Bash(git -C \"c:\\\\DeepakVyas\\\\PetShopEcom\" show razorpay-integration:backend/src/routes/orders/index.ts)",
+      "Bash(git -C \"c:\\\\DeepakVyas\\\\PetShopEcom\" show razorpay-integration:backend/src/models/Order.ts)",
+      "Bash(git -C \"c:\\\\DeepakVyas\\\\PetShopEcom\" show razorpay-integration:src/app/containers/CheckoutContainer/CheckoutContainer.hook.js)",
+      "Bash(git -C \"c:\\\\DeepakVyas\\\\PetShopEcom\" show razorpay-integration:backend/src/routes/payment/index.ts)",
+      "Bash(git -C \"c:\\\\DeepakVyas\\\\PetShopEcom\" show razorpay-integration:backend/src/lib/razorpay.ts)"
+    ]
+  }
+}

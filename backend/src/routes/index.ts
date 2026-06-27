@@ -9,25 +9,26 @@ import { notificationRoutes }  from "./notifications";
 import { addressRoutes }       from "./addresses";
 import { paymentMethodRoutes } from "./payment-methods";
 import { couponRoutes }        from "./coupons";
-import { adminDashboardRoutes }  from "./admin/dashboard";
-import { adminCustomerRoutes }   from "./admin/customers";
-import { adminOrderRoutes }      from "./admin/orders";
-import { adminProductRoutes }    from "./admin/products";
-import { adminServiceRoutes }    from "./admin/services";
+import { adminDashboardRoutes }   from "./admin/dashboard";
+import { adminCustomerRoutes }    from "./admin/customers";
+import { adminOrderRoutes }       from "./admin/orders";
+import { adminProductRoutes }     from "./admin/products";
+import { adminServiceRoutes }     from "./admin/services";
 import { adminAppointmentRoutes } from "./admin/appointments";
-import { adminPromotionRoutes }  from "./admin/promotions";
-import { wishlistRoutes }        from "./wishlists";
-import { cartRoutes }            from "./cart";
-import { paymentRoutes }         from "./payment";
-import { catalogRoutes }         from "./catalog";
-import { settingsRoutes }        from "./settings";
-import { adminCatalogRoutes }    from "./admin/catalog";
-import { adminSettingsRoutes }   from "./admin/settings";
-import { adminOfferRoutes }      from "./admin/offers";
-import { adminHeroRoutes }       from "./admin/hero";
-import { adminUploadRoutes } from "./admin/upload";
-import { offerRoutes }           from "./offers";
-import { heroRoutes }            from "./hero";
+import { adminPromotionRoutes }   from "./admin/promotions";
+import { wishlistRoutes }         from "./wishlists";
+import { cartRoutes }             from "./cart";
+import { paymentRoutes }          from "./payment";
+import { catalogRoutes }          from "./catalog";
+import { settingsRoutes }         from "./settings";
+import { adminCatalogRoutes }     from "./admin/catalog";
+import { adminSettingsRoutes }    from "./admin/settings";
+import { adminOfferRoutes }       from "./admin/offers";
+import { adminHeroRoutes }        from "./admin/hero";
+import { adminUploadRoutes }      from "./admin/upload";
+import { adminTransactionRoutes } from "./admin/transactions";
+import { offerRoutes }            from "./offers";
+import { heroRoutes }             from "./hero";
 
 export const registerRoutes: FastifyPluginAsync = async (app) => {
   // ── Public / customer routes ────────────────────────────────────────────────
@@ -46,22 +47,23 @@ export const registerRoutes: FastifyPluginAsync = async (app) => {
   await app.register(paymentRoutes,       { prefix: "/payment"         });
 
   // ── Admin routes ────────────────────────────────────────────────────────────
-  await app.register(adminDashboardRoutes,  { prefix: "/admin/dashboard"    });
-  await app.register(adminCustomerRoutes,   { prefix: "/admin/customers"    });
-  await app.register(adminOrderRoutes,      { prefix: "/admin/orders"       });
-  await app.register(adminProductRoutes,    { prefix: "/admin/products"     });
-  await app.register(adminServiceRoutes,    { prefix: "/admin/services"     });
-  await app.register(adminAppointmentRoutes,{ prefix: "/admin/appointments" });
-  await app.register(adminPromotionRoutes,  { prefix: "/admin/promotions"   });
-  await app.register(adminCatalogRoutes,    { prefix: "/admin/catalog"      });
-  await app.register(adminSettingsRoutes,   { prefix: "/admin/settings"     });
-  await app.register(adminOfferRoutes,      { prefix: "/admin/offers"       });
-  await app.register(adminHeroRoutes,       { prefix: "/admin/hero"         });
-  await app.register(adminUploadRoutes,     { prefix: "/admin/upload"       });
+  await app.register(adminDashboardRoutes,   { prefix: "/admin/dashboard"    });
+  await app.register(adminCustomerRoutes,    { prefix: "/admin/customers"    });
+  await app.register(adminOrderRoutes,       { prefix: "/admin/orders"       });
+  await app.register(adminProductRoutes,     { prefix: "/admin/products"     });
+  await app.register(adminServiceRoutes,     { prefix: "/admin/services"     });
+  await app.register(adminAppointmentRoutes, { prefix: "/admin/appointments" });
+  await app.register(adminPromotionRoutes,   { prefix: "/admin/promotions"   });
+  await app.register(adminCatalogRoutes,     { prefix: "/admin/catalog"      });
+  await app.register(adminSettingsRoutes,    { prefix: "/admin/settings"     });
+  await app.register(adminOfferRoutes,       { prefix: "/admin/offers"       });
+  await app.register(adminHeroRoutes,        { prefix: "/admin/hero"         });
+  await app.register(adminUploadRoutes,      { prefix: "/admin/upload"       });
+  await app.register(adminTransactionRoutes, { prefix: "/admin/transactions" });
 
   // ── Public utility routes ───────────────────────────────────────────────────
-  await app.register(catalogRoutes,         { prefix: "/catalog"            });
-  await app.register(settingsRoutes,        { prefix: "/settings"           });
-  await app.register(offerRoutes,           { prefix: "/offers"             });
-  await app.register(heroRoutes,            { prefix: "/hero"               });
+  await app.register(catalogRoutes,          { prefix: "/catalog"            });
+  await app.register(settingsRoutes,         { prefix: "/settings"           });
+  await app.register(offerRoutes,            { prefix: "/offers"             });
+  await app.register(heroRoutes,             { prefix: "/hero"               });
 };

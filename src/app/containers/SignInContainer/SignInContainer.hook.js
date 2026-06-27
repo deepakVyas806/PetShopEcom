@@ -15,12 +15,9 @@ export default function useSignInContainer() {
   // Redirect away once the user is authenticated
   useEffect(() => {
     if (!isAuthenticated || !hydrated) return;
-
     if (user?.role === "admin") {
-      // Admin always goes to the admin panel
       router.replace("/admin");
     } else {
-      // Customer goes to the requested redirect or homepage
       router.replace(redirectTo || "/");
     }
   }, [isAuthenticated, hydrated, user, router, redirectTo]);

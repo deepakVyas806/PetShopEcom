@@ -157,4 +157,4 @@ export {
   ListChecksIcon        as IconChecklist,
   FolderUserIcon        as IconFolderUser,
   HexagonIcon           as IconHexagon,
-} from "@phosphor-icons/react";
+} from "@phosphor-icons/react/ssr";

@@ -326,7 +326,7 @@ function PaymentStep({
 }
 
 /* ── Order summary sidebar ────────────────────────────────────────────────── */
-function OrderSummary({ isService, service, bookingDate, bookingTime, checkoutItems, subtotal, shipping, tax, taxRate, total, couponCode, setCouponCode, applyCoupon, couponError, discount }) {
+function OrderSummary({ isService, service, bookingDate, bookingTime, checkoutItems, subtotal, shipping, tax, taxRate, total, couponCode, setCouponCode, applyCoupon, couponError, discount, availableOffers, applyCouponFromOffer, appliedCoupon }) {
   return (
     <aside className="lg:col-span-4 space-y-4">
       <Card className="sticky top-24">
@@ -402,6 +402,39 @@ function OrderSummary({ isService, service, bookingDate, bookingTime, checkoutIt
             <span>Total</span><span className="text-primary font-black">{fmt(total)}</span>
           </div>
         </div>
+
+        {/* Available offers */}
+        {availableOffers.length > 0 && (
+          <div className="mb-3 space-y-1.5">
+            <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Available Offers</p>
+            <div className="flex flex-wrap gap-1.5">
+              {availableOffers.map(offer => {
+                const isApplied = appliedCoupon === offer.code;
+                const label = offer.discountType === "percent"
+                  ? `${offer.value}% off`
+                  : offer.discountType === "fixed"
+                  ? `₹${offer.value} off`
+                  : offer.discountType === "freeship" ? "Free Ship" : "BOGO";
+                return (
+                  <button
+                    key={offer.code}
+                    type="button"
+                    onClick={() => !isApplied && applyCouponFromOffer(offer.code)}
+                    title={offer.description || offer.name}
+                    className={`inline-flex flex-col items-start px-2.5 py-1.5 rounded-xl border text-[9px] font-bold transition-all cursor-pointer ${
+                      isApplied
+                        ? "bg-green-50 border-green-400 text-green-700"
+                        : "bg-primary/5 border-primary/30 text-primary hover:bg-primary/10"
+                    }`}
+                  >
+                    <span className="font-mono text-[10px]">{offer.code}</span>
+                    <span className="font-normal">{label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Coupon */}
         <div className="space-y-1.5">
@@ -503,6 +536,9 @@ export default function CheckoutContainer() {
           applyCoupon={c.applyCoupon}
           couponError={c.couponError}
           discount={c.discount}
+          availableOffers={c.availableOffers}
+          applyCouponFromOffer={c.applyCouponFromOffer}
+          appliedCoupon={c.appliedCoupon}
         />
       </main>
     </div>

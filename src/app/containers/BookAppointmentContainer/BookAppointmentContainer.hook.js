@@ -13,10 +13,11 @@ export const TIME_SLOTS = {
 export default function useBookAppointment(serviceId) {
   const router = useRouter();
 
-  const [service,  setService]  = useState(null);
-  const [loading,  setLoading]  = useState(true);
-  const [booked,   setBooked]   = useState(false);
-  const [error,    setError]    = useState(null);
+  const [service,         setService]         = useState(null);
+  const [loading,         setLoading]         = useState(true);
+  const [booked,          setBooked]          = useState(false);
+  const [error,           setError]           = useState(null);
+  const [serviceOffers,   setServiceOffers]   = useState([]);
 
   useEffect(() => {
     if (!serviceId) return;
@@ -24,6 +25,14 @@ export default function useBookAppointment(serviceId) {
       .then(d => setService(d.service))
       .catch(() => {})
       .finally(() => setLoading(false));
+  }, [serviceId]);
+
+  // Fetch service-scoped offers once serviceId is known
+  useEffect(() => {
+    if (!serviceId) return;
+    api.get(`/coupons/applicable?serviceId=${serviceId}`)
+      .then(d => setServiceOffers(d.coupons ?? []))
+      .catch(() => {});
   }, [serviceId]);
 
   const todayRaw = new Date();
@@ -98,5 +107,6 @@ export default function useBookAppointment(serviceId) {
     petName, setPetName,
     isSlotUnavailable,
     booked, error, submitting, handleBook,
+    serviceOffers,
   };
 }

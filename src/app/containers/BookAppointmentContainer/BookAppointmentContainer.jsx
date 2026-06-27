@@ -29,6 +29,7 @@ export default function BookAppointmentContainer() {
     selectedTime,
     setSelectedTime,
     isSlotUnavailable,
+    serviceOffers,
   } = useBookAppointment(serviceId);
 
   return (
@@ -219,6 +220,33 @@ export default function BookAppointmentContainer() {
                   </div>
                   <p className="text-[10px] text-on-surface-variant">Excl. taxes and optional gratuity</p>
                 </div>
+
+                {/* Service offers */}
+                {serviceOffers.length > 0 && (
+                  <div className="space-y-1.5">
+                    <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Available Offers</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {serviceOffers.map(offer => {
+                        const label = offer.discountType === "percent"
+                          ? `${offer.value}% off`
+                          : offer.discountType === "fixed"
+                          ? `₹${offer.value} off`
+                          : offer.discountType === "freeship" ? "Free Ship" : "BOGO";
+                        return (
+                          <span
+                            key={offer.code}
+                            title={offer.description || offer.name}
+                            className="inline-flex flex-col items-start px-2.5 py-1.5 rounded-xl border bg-primary/5 border-primary/30 text-[9px] font-bold text-primary"
+                          >
+                            <span className="font-mono text-[10px]">{offer.code}</span>
+                            <span className="font-normal">{label}</span>
+                          </span>
+                        );
+                      })}
+                    </div>
+                    <p className="text-[10px] text-on-surface-variant">Apply at checkout</p>
+                  </div>
+                )}
 
                 {/* Proceed to Checkout */}
                 <button

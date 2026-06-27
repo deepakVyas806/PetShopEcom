@@ -83,9 +83,10 @@ export default function useCheckoutContainer() {
   const [paymentMethod, setPaymentMethod] = useState("card");
 
   // ── Coupon ────────────────────────────────────────────────────────────────
-  const [couponCode,     setCouponCode]     = useState("");
-  const [couponError,    setCouponError]    = useState(null);
-  const [appliedCoupon,  setAppliedCoupon]  = useState("");
+  const [couponCode,       setCouponCode]       = useState("");
+  const [couponError,      setCouponError]      = useState(null);
+  const [appliedCoupon,    setAppliedCoupon]    = useState("");
+  const [availableOffers,  setAvailableOffers]  = useState([]);
 
   // ── Backend estimate — single source of truth for all financials ──────────
   const [estimate,        setEstimate]        = useState(EMPTY_ESTIMATE);
@@ -125,13 +126,35 @@ export default function useCheckoutContainer() {
     firstName: "", lastName: "", phone: "", email: "", notes: "",
   });
 
+  // Fetch offers applicable to all products in the cart (backend resolves categories)
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (isService && serviceId) {
+      params.set("serviceId", serviceId);
+    } else if (checkoutItems.length > 0) {
+      const productIds = [...new Set(checkoutItems.map(i => i.product?._id ?? i.product?.id).filter(Boolean))];
+      if (productIds.length) params.set("productIds", productIds.join(","));
+    }
+    const qs = params.toString();
+    if (!qs) return;
+    api.get(`/coupons/applicable?${qs}`)
+      .then(data => setAvailableOffers(data.coupons ?? []))
+      .catch(() => {});
+  }, [checkoutItems, isService, serviceId]);
+
   // ── Coupon apply — validates then triggers estimate re-fetch ──────────────
   const applyCoupon = async () => {
     setCouponError(null);
     if (!couponCode.trim()) { setCouponError("Please enter a coupon code"); return; }
-    // Attempt to apply: estimate endpoint validates coupon and returns couponValid flag
     setAppliedCoupon(couponCode.trim().toUpperCase());
   };
+
+  // One-click apply from an offer chip
+  const applyCouponFromOffer = useCallback((code) => {
+    setCouponError(null);
+    setCouponCode(code);
+    setAppliedCoupon(code);
+  }, []);
 
   // ── Save a new address then proceed ──────────────────────────────────────
   const saveAndSelectAddress = async () => {
@@ -268,7 +291,7 @@ export default function useCheckoutContainer() {
     paymentMethod, setPaymentMethod,
 
     couponCode, setCouponCode, couponError, applyCoupon,
-    appliedCoupon,
+    appliedCoupon, availableOffers, applyCouponFromOffer,
 
     // All financials come from backend estimate
     subtotal:  isService ? serviceTotal : estimate.subtotal,
