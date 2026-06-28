@@ -139,7 +139,7 @@ export const reviewRoutes: FastifyPluginAsync = async (app) => {
     const filter: any = { serviceId };
     if (q.minRating) filter.rating = { $gte: parseInt(q.minRating) };
 
-    const sort = { createdAt: -1 };
+    const sort: Record<string, 1 | -1> = { createdAt: -1 };
 
     const [reviews, totalCount, ratingAgg] = await Promise.all([
       Review.find(filter).sort(sort).skip(skip).limit(limit).lean(),

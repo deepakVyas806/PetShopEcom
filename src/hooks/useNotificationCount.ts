@@ -11,7 +11,7 @@ export function useNotificationCount() {
   const fetch = useCallback(() => {
     if (!isAuthenticated) { setUnreadCount(0); return; }
     api.get("/notifications/unread-count")
-      .then(data => setUnreadCount(data.count ?? 0))
+      .then((data: any) => setUnreadCount(data.count ?? 0))
       .catch(() => {});
   }, [isAuthenticated]);
 
