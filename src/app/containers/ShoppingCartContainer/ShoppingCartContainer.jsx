@@ -167,7 +167,7 @@ export default function ShoppingCartContainer() {
                       return (
                         <div key={id} className="relative shrink-0">
                           <div className="w-10 h-10 rounded-lg overflow-hidden bg-surface-container border border-outline-variant/20">
-                            <img src={item.product.image} alt={item.product.name} className="w-full h-full object-cover" />
+                            {item.product.image && <img src={item.product.image} alt={item.product.name} className="w-full h-full object-cover" />}
                           </div>
                           {item.quantity > 1 && (
                             <span className="absolute -top-1 -right-1 bg-primary text-white text-[8px] font-bold w-3.5 h-3.5 rounded-full flex items-center justify-center">

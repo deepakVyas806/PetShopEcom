@@ -21,11 +21,13 @@ function ResultCard({ item }: { item: SearchItem }) {
     >
       {/* Image */}
       <div className="relative aspect-[4/3] bg-surface-container-low overflow-hidden">
-        <img
-          src={item.image}
-          alt={item.title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-        />
+        {item.image && (
+          <img
+            src={item.image}
+            alt={item.title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+        )}
         <span className={cn(
           "absolute top-2 left-2 text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide",
           item.type === "product"

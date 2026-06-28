@@ -326,7 +326,8 @@ function OrderSummary({ isService, service, bookingDate, bookingTime, checkoutIt
             {service && (
               <>
                 <div className="flex gap-3">
-                  <img src={service.image} alt={service.title} className="w-16 h-16 rounded-xl object-cover bg-surface-container-low flex-shrink-0" />
+                  {service.image && <img src={service.image} alt={service.title} className="w-16 h-16 rounded-xl object-cover bg-surface-container-low flex-shrink-0" />}
+                  {!service.image && <div className="w-16 h-16 rounded-xl bg-surface-container-low flex-shrink-0" />}
                   <div className="min-w-0">
                     <h4 className="text-xs font-bold text-on-surface">{service.title}</h4>
                     <span className="inline-block mt-0.5 px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-bold rounded-full">{service.category}</span>
@@ -354,7 +355,11 @@ function OrderSummary({ isService, service, bookingDate, bookingTime, checkoutIt
               const id = item.product._id ?? item.product.id;
               return (
                 <div className="flex gap-3" key={id}>
-                  <img alt={item.product.name} className="w-14 h-14 rounded-xl object-cover bg-surface-container-low shrink-0" src={item.product.image} />
+                  {item.product.image ? (
+                    <img alt={item.product.name} className="w-14 h-14 rounded-xl object-cover bg-surface-container-low shrink-0" src={item.product.image} />
+                  ) : (
+                    <div className="w-14 h-14 rounded-xl bg-surface-container-low shrink-0" />
+                  )}
                   <div className="flex-grow min-w-0">
                     <h4 className="text-xs font-bold text-on-surface truncate">{item.product.name}</h4>
                     <p className="text-[10px] text-on-surface-variant">Qty: {item.quantity}</p>

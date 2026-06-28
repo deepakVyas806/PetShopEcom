@@ -24,7 +24,7 @@ export default function ProductHeader({ product }) {
         <div className="md:col-span-2">
           <div className="rounded-xl overflow-hidden aspect-square border border-outline-variant/30 w-20 md:w-full">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+            {product.image && <img src={product.image} alt={product.name} className="w-full h-full object-cover" />}
           </div>
         </div>
         <div className="md:col-span-10 space-y-2">

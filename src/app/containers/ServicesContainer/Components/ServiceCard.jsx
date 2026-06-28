@@ -17,11 +17,13 @@ export default function ServiceCard({ service }) {
 
       {/* Image — clicking navigates to detail page */}
       <Link href={`/services/${service._id ?? service.id}`} className="relative h-52 overflow-hidden block">
-        <img
-          src={service.image}
-          alt={service.title}
-          className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
-        />
+        {service.image && (
+          <img
+            src={service.image}
+            alt={service.title}
+            className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+          />
+        )}
         {service.badge && (
           <span className="absolute top-3 left-3 px-2.5 py-0.5 bg-green-100 text-green-800 text-xs font-bold rounded-full uppercase tracking-tight shadow-sm">
             {service.badge}

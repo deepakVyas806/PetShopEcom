@@ -76,10 +76,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsAuthenticated(true);
     setUser(userData);
     storeLoginRef.current(userData.role, userData.email);
-    // Store token alongside user so api.ts can pick it up
     localStorage.setItem(SESSION_KEY, JSON.stringify({ user: userData, token }));
     document.cookie = `artpet_role=${userData.role}; path=/; SameSite=Lax`;
     setError(null);
+    const params = new URLSearchParams(window.location.search);
+    const redirect = params.get("redirect");
+    if (userData.role === "admin") {
+      router.push("/admin");
+    } else {
+      router.push(redirect ?? "/profile");
+    }
   };
 
   const login = async (email: string, password: string) => {

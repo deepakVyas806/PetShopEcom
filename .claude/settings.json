@@ -15,7 +15,22 @@
       "Bash(git -C \"c:\\\\DeepakVyas\\\\PetShopEcom\" show razorpay-integration:backend/src/models/Order.ts)",
       "Bash(git -C \"c:\\\\DeepakVyas\\\\PetShopEcom\" show razorpay-integration:src/app/containers/CheckoutContainer/CheckoutContainer.hook.js)",
       "Bash(git -C \"c:\\\\DeepakVyas\\\\PetShopEcom\" show razorpay-integration:backend/src/routes/payment/index.ts)",
-      "Bash(git -C \"c:\\\\DeepakVyas\\\\PetShopEcom\" show razorpay-integration:backend/src/lib/razorpay.ts)"
+      "Bash(git -C \"c:\\\\DeepakVyas\\\\PetShopEcom\" show razorpay-integration:backend/src/lib/razorpay.ts)",
+      "PowerShell($pkg = Get-Content \"c:\\\\DeepakVyas\\\\PetShopEcom\\\\node_modules\\\\@phosphor-icons\\\\react\\\\package.json\" | ConvertFrom-Json; $pkg.exports | ConvertTo-Json -Depth 4 | Select-String \"ssr\" | Select-Object -First 10)",
+      "Bash(git commit -m ' *)",
+      "Bash(grep -r \"from.*[/\\\\\\\\]data\" \"c:/DeepakVyas/PetShopEcom/src/app/containers/admin/\" --include=\"*.js\" --include=\"*.jsx\" --include=\"*.ts\" --include=\"*.tsx\")",
+      "Bash(xargs grep -l \"profile\\\\|Profile\")",
+      "Bash(grep -rn \"View Details\\\\|viewDetails\\\\|/orders/\\\\${\" \"c:/DeepakVyas/PetShopEcom/backend/src\" --include=\"*.ts\" -l)",
+      "Bash(grep -n \"View Details\\\\|/orders/\\\\$\\\\|href.*orders\\\\|actions.*href\" \"c:/DeepakVyas/PetShopEcom/backend/src/routes/orders/index.ts\")",
+      "Bash(grep -n \"View Details\\\\|/orders/\\\\$\\\\|href.*orders\\\\|actions.*href\" \"c:/DeepakVyas/PetShopEcom/backend/src/routes/admin/orders.ts\")",
+      "Read(//c/Users/Deepak_Vyas/Desktop/PetShopEcom2/src/**)",
+      "Bash(xargs grep -l \"search\")",
+      "Bash(ls -la .env*)",
+      "Bash(ls -la backend/.env*)",
+      "Bash(grep -n \"env\" backend/.gitignore)"
+    ],
+    "additionalDirectories": [
+      "\\dev"
     ]
   }
 }

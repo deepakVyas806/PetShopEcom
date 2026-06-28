@@ -38,9 +38,10 @@ async function uploadAvatar(file) {
 }
 
 function AvatarPickerPortal({ anchorRef, current, onChange, onClose }) {
-  const [pos,       setPos]       = useState({ top: 0, left: 0 });
-  const [mounted,   setMounted]   = useState(false);
-  const [uploading, setUploading] = useState(false);
+  const [pos,         setPos]         = useState({ top: 0, left: 0 });
+  const [mounted,     setMounted]     = useState(false);
+  const [uploading,   setUploading]   = useState(false);
+  const [uploadError, setUploadError] = useState(null);
   const fileRef = useRef(null);
 
   useEffect(() => { setMounted(true); }, []);
@@ -60,12 +61,16 @@ function AvatarPickerPortal({ anchorRef, current, onChange, onClose }) {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
+    setUploadError(null);
     try {
       const url = await uploadAvatar(file);
       onChange(url);
       onClose();
-    } catch { /* silent — user can retry */ }
-    finally { setUploading(false); }
+    } catch (err) {
+      setUploadError(err?.message ?? "Upload failed. Please try again.");
+    } finally {
+      setUploading(false);
+    }
   }, [onChange, onClose]);
 
   if (!mounted) return null;
@@ -92,6 +97,9 @@ function AvatarPickerPortal({ anchorRef, current, onChange, onClose }) {
             }
           </button>
           <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/gif,image/webp" className="hidden" onChange={handleFile} />
+          {uploadError && (
+            <p className="text-[10px] text-error font-medium mt-1.5 leading-snug">{uploadError}</p>
+          )}
         </div>
         <div>
           <p className="text-[9px] font-bold text-outline uppercase tracking-wider mb-2">Quick Pick</p>

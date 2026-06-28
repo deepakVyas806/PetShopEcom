@@ -23,7 +23,7 @@ const EMPTY_FORM = {
 const inp = "w-full px-3 py-2.5 bg-surface-container-low border border-outline-variant/50 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-primary/30 text-on-surface placeholder:text-on-surface-variant";
 const lbl = "block text-[10px] font-bold uppercase tracking-wide text-on-surface-variant mb-1.5";
 
-function GradientPreview({ from, to, emoji, headline, badge, ctaLabel }) {
+function GradientPreview({ from, to, emoji, headline, subtitle, badge, ctaLabel }) {
   return (
     <div
       className="relative rounded-xl p-4 overflow-hidden flex flex-col justify-between min-h-[110px]"
@@ -37,6 +37,7 @@ function GradientPreview({ from, to, emoji, headline, badge, ctaLabel }) {
       <div className="absolute -bottom-2 -right-1 text-6xl opacity-15 select-none pointer-events-none">{emoji || "🎁"}</div>
       <div className="mt-2">
         <p className="text-white font-black text-lg leading-tight drop-shadow-sm">{headline || "Headline"}</p>
+        {subtitle && <p className="text-white/80 text-[11px] mt-0.5 leading-snug">{subtitle}</p>}
       </div>
       <span className="mt-3 self-start bg-white text-gray-900 text-[10px] font-black px-3 py-1 rounded-full shadow-sm">
         {ctaLabel || "Shop Now"} →
@@ -314,6 +315,7 @@ export default function OffersContainer() {
                 to={form.gradientTo}
                 emoji={form.emoji}
                 headline={form.headline}
+                subtitle={form.subtitle}
                 badge={form.badge}
                 ctaLabel={form.ctaLabel}
               />

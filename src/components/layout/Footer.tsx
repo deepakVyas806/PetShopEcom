@@ -33,7 +33,7 @@ export default function Footer() {
     "text-on-surface-variant hover:text-primary hover:translate-x-1 transition-all inline-block text-xs font-medium";
 
   return (
-    <footer className="bg-surface-container-lowest dark:bg-inverse-surface border-t border-outline-variant/35 transition-colors duration-300">
+    <footer className="bg-surface-container-lowest border-t border-outline-variant/35 transition-colors duration-300">
 
       {/* Grid columns */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 px-4 md:px-10 py-6 max-w-[1280px] mx-auto text-left">
@@ -107,7 +107,7 @@ export default function Footer() {
           </p>
           <div className="flex gap-2">
             <input
-              className="bg-surface-container-low border border-outline-variant/40 rounded-lg px-3 py-1.5 text-xs w-full focus:ring-1 focus:ring-primary focus:border-primary outline-none text-on-surface placeholder:text-on-surface-variant/50"
+              className="bg-surface-container border border-outline-variant/40 rounded-lg px-3 py-1.5 text-xs w-full focus:ring-1 focus:ring-primary focus:border-primary outline-none text-on-surface placeholder:text-on-surface-variant/50"
               placeholder="Your email"
               type="email"
             />
@@ -151,13 +151,13 @@ export default function Footer() {
             {["VISA", "MC", "UPI", "Paytm", "GPay", "COD"].map((p) => (
               <span
                 key={p}
-                className={`text-[9px] font-black px-2 py-0.5 rounded border border-outline-variant/40 select-none ${
-                  p === "VISA"   ? "text-blue-700 bg-blue-50"    :
-                  p === "MC"     ? "text-red-600 bg-red-50"       :
-                  p === "UPI"    ? "text-green-700 bg-green-50"   :
-                  p === "Paytm"  ? "text-sky-700 bg-sky-50"       :
-                  p === "GPay"   ? "text-indigo-700 bg-indigo-50" :
-                                   "text-gray-600 bg-gray-50"
+                className={`text-[9px] font-black px-2 py-0.5 rounded border select-none ${
+                  p === "VISA"   ? "text-blue-600 dark:text-blue-400 bg-blue-500/10 border-blue-500/20"     :
+                  p === "MC"     ? "text-red-600 dark:text-red-400 bg-red-500/10 border-red-500/20"         :
+                  p === "UPI"    ? "text-green-600 dark:text-green-400 bg-green-500/10 border-green-500/20" :
+                  p === "Paytm"  ? "text-sky-600 dark:text-sky-400 bg-sky-500/10 border-sky-500/20"         :
+                  p === "GPay"   ? "text-indigo-600 dark:text-indigo-400 bg-indigo-500/10 border-indigo-500/20" :
+                                   "text-on-surface-variant bg-surface-container border-outline-variant/40"
                 }`}
               >
                 {p === "MC" ? "Mastercard" : p}

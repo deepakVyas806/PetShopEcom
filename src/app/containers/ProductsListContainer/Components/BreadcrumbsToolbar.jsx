@@ -1,6 +1,6 @@
 "use client";
 
-import { IconFilter, IconGrid, IconList } from "@/lib/icons";
+import { IconFilter, IconGrid, IconList, IconClose } from "@/lib/icons";
 import SearchInput from "@/components/common/SearchInput";
 
 const SORT_OPTIONS = [

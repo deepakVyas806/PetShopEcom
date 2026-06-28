@@ -276,11 +276,13 @@ export default function ProductDetailsContainer({ productId }) {
           <div className="lg:col-span-7 flex flex-col md:flex-row-reverse gap-4">
             {/* Main Image View */}
             <div className="flex-1 zoom-area relative aspect-square bg-surface-container-lowest rounded-xl border border-outline-variant/30 shadow-sm overflow-hidden group">
-              <img
-                alt={product.name}
-                className="w-full h-full object-cover rounded-xl transition-transform duration-300 ease-out group-hover:scale-150 cursor-zoom-in"
-                src={activeImage || product.image}
-              />
+              {(activeImage || product.image) && (
+                <img
+                  alt={product.name}
+                  className="w-full h-full object-cover rounded-xl transition-transform duration-300 ease-out group-hover:scale-150 cursor-zoom-in"
+                  src={activeImage || product.image}
+                />
+              )}
             </div>
             
             {/* Gallery Thumbnails */}
@@ -494,11 +496,13 @@ export default function ProductDetailsContainer({ productId }) {
 
                 {/* Product Card 1: Current Item */}
                 <div className="w-28 h-28 bg-surface-container-lowest rounded-xl shadow-card-sm border border-outline-variant/30 p-2.5 relative flex items-center justify-center">
-                  <img
-                    alt="Current Item"
-                    className="w-full h-full object-contain rounded-lg"
-                    src={product.image}
-                  />
+                  {product.image && (
+                    <img
+                      alt="Current Item"
+                      className="w-full h-full object-contain rounded-lg"
+                      src={product.image}
+                    />
+                  )}
                   <div className="absolute bottom-[-10px] left-1/2 -translate-x-1/2 bg-primary text-white text-[9px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap uppercase tracking-wider shadow-sm">
                     This Item
                   </div>
@@ -513,11 +517,13 @@ export default function ProductDetailsContainer({ productId }) {
                         checkedBundleItems[item.id] ? "border-primary" : "border-outline-variant/30"
                       }`}
                     >
-                      <img
-                        alt={item.name}
-                        className="w-full h-full object-contain rounded-lg"
-                        src={item.image}
-                      />
+                      {item.image && (
+                        <img
+                          alt={item.name}
+                          className="w-full h-full object-contain rounded-lg"
+                          src={item.image}
+                        />
+                      )}
                       <div className="absolute top-1.5 right-1.5">
                         <IconCheckCircle size={18} weight={checkedBundleItems[item.id] ? "fill" : "regular"} className={checkedBundleItems[item.id] ? "text-primary" : "text-outline-variant/60"} />
                       </div>

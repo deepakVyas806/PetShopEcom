@@ -73,11 +73,15 @@ export default function CartItemRow({
           href={`/marketplace/${productId}`}
           className="relative w-24 h-24 rounded-xl overflow-hidden bg-surface-container flex-shrink-0 block"
         >
-          <img
-            src={product.image}
-            alt={product.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-          />
+          {product.image ? (
+            <img
+              src={product.image}
+              alt={product.name}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+          ) : (
+            <div className="w-full h-full bg-surface-container" />
+          )}
           {hasDiscount && (
             <span className="absolute top-1.5 left-1.5">
               <DiscountBadge pct={discountPct} />

@@ -167,7 +167,7 @@ export default function BookAppointmentContainer() {
                 {/* Service image + title */}
                 <div className="flex gap-3">
                   <div className="w-16 h-16 rounded-xl bg-surface-container-high overflow-hidden flex-shrink-0">
-                    <img src={service.image} alt={service.title} className="w-full h-full object-cover" />
+                    {service.image && <img src={service.image} alt={service.title} className="w-full h-full object-cover" />}
                   </div>
                   <div className="min-w-0">
                     <h3 className="text-xs font-bold text-on-surface leading-tight">{service.title}</h3>
