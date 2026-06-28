@@ -3,7 +3,7 @@
 /** Base shimmer block */
 export function Sk({ w = "w-full", h = "h-4", rounded = "rounded-lg", className = "" }) {
   return (
-    <div className={`animate-pulse bg-on-surface/8 ${w} ${h} ${rounded} ${className}`} />
+    <div className={`animate-shimmer ${w} ${h} ${rounded} ${className}`} />
   );
 }
 
@@ -11,8 +11,8 @@ export function Sk({ w = "w-full", h = "h-4", rounded = "rounded-lg", className 
 export function SkStatCard() {
   return (
     <div className="relative bg-surface-container-lowest border border-outline-variant/20 rounded-2xl p-3.5 flex items-center gap-3 overflow-hidden">
-      <div className="absolute left-0 inset-y-0 w-[3px] rounded-r-full bg-on-surface/10 animate-pulse" />
-      <div className="w-8 h-8 rounded-xl bg-on-surface/8 animate-pulse shrink-0 ml-1" />
+      <div className="absolute left-0 inset-y-0 w-[3px] rounded-r-full animate-shimmer" />
+      <div className="w-8 h-8 rounded-xl animate-shimmer shrink-0 ml-1" />
       <div className="flex-1 space-y-2 min-w-0">
         <Sk h="h-2" w="w-16" />
         <Sk h="h-4" w="w-24" />
@@ -28,18 +28,18 @@ export function SkTableRow({ cols = 5, hasCheckbox = true, hasAvatar = false }) 
     <tr>
       {hasCheckbox && (
         <td className="px-4 py-3.5">
-          <div className="w-4 h-4 rounded bg-on-surface/8 animate-pulse" />
+          <div className="w-4 h-4 rounded animate-shimmer" />
         </td>
       )}
       {hasAvatar && (
         <td className="px-4 py-3.5">
-          <div className="w-8 h-8 rounded-xl bg-on-surface/8 animate-pulse" />
+          <div className="w-8 h-8 rounded-xl animate-shimmer" />
         </td>
       )}
       {Array.from({ length: cols }).map((_, i) => (
         <td key={i} className="px-4 py-3.5">
           <div
-            className="h-3 rounded-lg bg-on-surface/8 animate-pulse"
+            className="h-3 rounded-lg animate-shimmer"
             style={{ width: `${50 + ((i * 37) % 40)}%` }}
           />
         </td>
@@ -54,11 +54,11 @@ export function SkTable({ rows = 8, cols = 5, hasCheckbox = true, hasAvatar = fa
     <table className="w-full text-xs">
       <thead>
         <tr className="border-b border-outline-variant/20">
-          {hasCheckbox && <th className="px-4 py-3 w-8"><div className="w-4 h-4 rounded bg-on-surface/8 animate-pulse" /></th>}
+          {hasCheckbox && <th className="px-4 py-3 w-8"><div className="w-4 h-4 rounded animate-shimmer" /></th>}
           {hasAvatar   && <th className="px-4 py-3 w-12" />}
           {Array.from({ length: cols }).map((_, i) => (
             <th key={i} className="px-4 py-3 text-left">
-              <div className="h-2.5 w-16 rounded bg-on-surface/8 animate-pulse" />
+              <div className="h-2.5 w-16 rounded animate-shimmer" />
             </th>
           ))}
         </tr>

@@ -184,12 +184,13 @@ export default function ProductsContainer() {
         />
       </div>
 
-      <BulkActionBar
+      {/* BulkActionBar — hidden for now */}
+      {/* <BulkActionBar
         count={selectedIds.size}
         onBulkDelete={handleBulkDelete}
         onBulkCategory={() => {}}
         onClose={() => { setSelectedIds(new Set()); setSelectAll(false); }}
-      />
+      /> */}
 
       {deleteTarget && (
         <DeleteConfirmModal

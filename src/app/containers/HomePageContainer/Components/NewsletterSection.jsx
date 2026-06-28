@@ -35,11 +35,11 @@ export default function NewsletterSection() {
               <span className="text-xs text-purple-700 font-semibold">50,000+ happy pet parents</span>
             </div>
 
-            <h2 className="text-xl md:text-2xl font-black text-gray-900 leading-tight">
+            <h2 className="text-xl md:text-2xl font-black text-on-surface leading-tight">
               Join the artPet<br />
               <span className="text-primary">Community</span>
             </h2>
-            <p className="text-xs text-gray-600 mt-2 max-w-xs md:max-w-none leading-relaxed">
+            <p className="text-xs text-on-surface-variant mt-2 max-w-xs md:max-w-none leading-relaxed">
               Get weekly pet care tips, exclusive deals, new arrival alerts, and vet Q&amp;A straight to your inbox.
             </p>
 
@@ -70,7 +70,7 @@ export default function NewsletterSection() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="your@email.com"
                   required
-                  className="flex-1 bg-white border border-purple-200 rounded-xl px-4 py-2.5 text-xs outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 text-on-surface placeholder:text-on-surface-variant/50"
+                  className="flex-1 bg-white border border-primary/20 rounded-xl px-4 py-2.5 text-xs outline-none focus:border-primary focus:shadow-[0_0_0_3px_rgba(99,14,212,0.10)] transition-all duration-150 text-on-surface placeholder:text-on-surface-variant/50"
                 />
                 <button
                   type="submit"
@@ -84,7 +84,7 @@ export default function NewsletterSection() {
 
             {/* Social links */}
             <div className="flex items-center gap-3 justify-center md:justify-start pt-1">
-              <span className="text-[10px] text-gray-500 font-medium">Follow us:</span>
+              <span className="text-[10px] text-on-surface-variant font-medium">Follow us:</span>
               {[
                 { Icon: IconInstagram, label: "Instagram", color: "text-pink-600 hover:bg-pink-50" },
                 { Icon: IconCamera,    label: "YouTube",   color: "text-red-500 hover:bg-red-50"   },
@@ -93,7 +93,7 @@ export default function NewsletterSection() {
                 <button
                   key={label}
                   title={label}
-                  className={`w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center transition-colors cursor-pointer ${color}`}
+                  className={`w-8 h-8 rounded-full bg-white border border-outline-variant/30 flex items-center justify-center transition-colors cursor-pointer ${color}`}
                 >
                   <Icon size={15} weight="regular" />
                 </button>

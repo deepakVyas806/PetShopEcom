@@ -34,7 +34,7 @@ export default function HomePageContainer() {
       <HeroSection />
 
       {/* 2. Flash Sale / Deal of the Day */}
-      <FlashSaleSection addedItems={addedItems} handleAddToCart={handleAddToCart} />
+      {/* <FlashSaleSection addedItems={addedItems} handleAddToCart={handleAddToCart} /> */}
 
       {/* 3. Shop by Pet (circles) */}
       <ShopByPet />
@@ -64,16 +64,16 @@ export default function HomePageContainer() {
       <LifeStageSection />
 
       {/* 10. Seasonal campaign banner */}
-      <SeasonalBanner />
+      {/* <SeasonalBanner /> */}
 
       {/* 11. Services */}
       <ServicesSection />
 
       {/* 12. Pet Care Blog */}
-      <BlogTipsSection />
+      {/* <BlogTipsSection /> */}
 
       {/* 13. Bundle promo */}
-      <BundlePromo />
+      {/* <BundlePromo /> */}
 
       {/* 14. Trust indicators */}
       <TrustBar />

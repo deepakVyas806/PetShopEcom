@@ -83,7 +83,7 @@ export default function PageHeader({
           </nav>
         )}
 
-        <h1 className="text-sm font-extrabold text-on-surface tracking-tight">{title}</h1>
+        <h1 className="text-base font-extrabold text-on-surface tracking-tight">{title}</h1>
 
         {subtitle && (
           <p className="text-xs text-on-surface-variant leading-relaxed max-w-md">

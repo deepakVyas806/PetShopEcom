@@ -133,7 +133,7 @@ export default function ServicesContainer() {
         </button>
         <button
           onClick={() => router.push("/admin/services/create")}
-          className="flex items-center gap-1.5 px-5 py-2 bg-primary text-on-primary rounded-xl text-xs font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
+          className="flex items-center gap-1.5 px-5 py-2 bg-primary text-on-primary rounded-xl text-xs font-bold shadow-brand-md hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
         >
           <IconAdd size={14} weight="bold" /> Add New Service
         </button>
@@ -152,7 +152,7 @@ export default function ServicesContainer() {
         />
       )}
 
-      <div className="bg-surface-container-lowest rounded-2xl border border-outline-variant/30 shadow-sm overflow-hidden">
+      <div className="bg-surface-container-lowest rounded-2xl border border-outline-variant/30 shadow-card-sm overflow-hidden">
         {isInitial ? (
           <div className="overflow-x-auto">
             <SkTable rows={8} cols={5} hasCheckbox hasAvatar />

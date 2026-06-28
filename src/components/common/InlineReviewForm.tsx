@@ -78,7 +78,7 @@ export default function InlineReviewForm({ onSubmit, onCancel, context = "produc
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white/80 dark:bg-surface-container-lowest backdrop-blur-xl border border-[#F3E8FF] dark:border-outline-variant/20 rounded-2xl p-5 space-y-4"
+      className="bg-surface-container-lowest border border-outline-variant/20 rounded-2xl p-5 space-y-4"
     >
       {/* Header */}
       <div className="flex items-center justify-between">
@@ -113,7 +113,7 @@ export default function InlineReviewForm({ onSubmit, onCancel, context = "produc
           onChange={(e) => setTitle(e.target.value)}
           placeholder={context === "service" ? "Summarise your experience…" : "What's most important to know?"}
           maxLength={80}
-          className="w-full bg-surface-container-low border border-transparent rounded-lg focus:border-primary focus:ring-0 text-xs py-2.5 px-3 text-on-surface placeholder:text-on-surface-variant/50 outline-none"
+          className="w-full bg-surface-container-low border border-transparent rounded-xl focus:border-primary focus:ring-0 text-xs py-2.5 px-3 text-on-surface placeholder:text-on-surface-variant/50 outline-none"
         />
       </div>
 
@@ -131,7 +131,7 @@ export default function InlineReviewForm({ onSubmit, onCancel, context = "produc
               : "Tell others what you liked or didn't like…"
           }
           rows={3}
-          className="w-full bg-surface-container-low border border-transparent rounded-lg focus:border-primary focus:ring-0 text-xs py-2.5 px-3 text-on-surface placeholder:text-on-surface-variant/50 outline-none resize-none"
+          className="w-full bg-surface-container-low border border-transparent rounded-xl focus:border-primary focus:ring-0 text-xs py-2.5 px-3 text-on-surface placeholder:text-on-surface-variant/50 outline-none resize-none"
         />
       </div>
 
@@ -140,7 +140,7 @@ export default function InlineReviewForm({ onSubmit, onCancel, context = "produc
         <button
           type="submit"
           disabled={!canSubmit}
-          className="flex-1 py-2 bg-primary text-on-primary rounded-full text-xs font-bold hover:shadow-md active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer border-none"
+          className="flex-1 py-2 bg-primary text-on-primary rounded-full text-xs font-bold hover:shadow-brand-sm active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer border-none"
         >
           Post Review
         </button>

@@ -23,9 +23,9 @@ type TextareaFieldProps = BaseFieldProps &
 type FieldProps = InputFieldProps | TextareaFieldProps;
 
 const INPUT_CLS =
-  "w-full bg-surface-container-low border border-transparent rounded-lg " +
-  "focus:border-primary focus:ring-0 text-xs py-2.5 px-3 " +
-  "text-on-surface placeholder:text-on-surface-variant/50 outline-none transition-colors";
+  "w-full bg-surface-container-low border border-outline-variant/50 rounded-lg " +
+  "focus:border-primary focus:ring-0 focus:shadow-[0_0_0_3px_rgba(99,14,212,0.10)] text-xs py-2.5 px-3 " +
+  "text-on-surface placeholder:text-on-surface-variant/50 outline-none transition-all duration-150";
 
 export default function FormField(props: FieldProps) {
   const { label, error, className, multiline, ...rest } = props;

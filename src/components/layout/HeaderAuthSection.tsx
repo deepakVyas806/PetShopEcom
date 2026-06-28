@@ -56,7 +56,7 @@ export function DesktopAuthIcons() {
     return (
       <Link
         href="/signin"
-        className="flex items-center gap-1.5 px-3 h-9 rounded-full bg-primary text-on-primary hover:shadow-md hover:brightness-105 active:scale-95 transition-all text-xs font-bold"
+        className="flex items-center gap-1.5 px-3 h-9 rounded-full bg-primary text-on-primary hover:shadow-brand-sm hover:brightness-105 active:scale-95 transition-all text-xs font-bold"
       >
         <IconUser size={16} weight="bold" />
         Sign In
@@ -90,7 +90,7 @@ export function DesktopAuthIcons() {
         </button>
 
         {menuOpen && (
-          <div className="absolute right-0 top-full mt-2 w-44 bg-surface rounded-2xl shadow-xl border border-outline-variant/20 overflow-hidden z-50">
+          <div className="absolute right-0 top-full mt-2 w-44 bg-surface rounded-2xl shadow-card-lg border border-outline-variant/20 overflow-hidden z-50">
             <div className="px-3 pt-3 pb-2">
               <p className="text-xs font-bold text-on-surface truncate">{user?.name}</p>
               <p className="text-[10px] text-on-surface-variant truncate">{user?.email}</p>

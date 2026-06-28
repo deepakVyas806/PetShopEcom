@@ -9,20 +9,9 @@ const SERVICE_ICON_MAP = {
   pets:             IconPaw,
 };
 
-const glass = {
-  background: "rgba(255,255,255,0.85)",
-  backdropFilter: "blur(14px)",
-  WebkitBackdropFilter: "blur(14px)",
-  border: "1px solid #F3E8FF",
-  boxShadow: "0 4px 20px -4px rgba(124,58,237,0.07)",
-};
-
 export default function AppointmentCard({ appt }) {
   return (
-    <div
-      className="flex items-center gap-4 px-4 py-4 rounded-2xl hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
-      style={glass}
-    >
+    <div className="flex items-center gap-4 px-4 py-4 rounded-2xl bg-surface-container-lowest border border-outline-variant/20 shadow-card-sm hover:shadow-card-md hover:-translate-y-0.5 transition-all duration-200">
       {/* Pet avatar with circular service badge */}
       <div className="relative flex-shrink-0">
         {/* eslint-disable-next-line @next/next/no-img-element */}

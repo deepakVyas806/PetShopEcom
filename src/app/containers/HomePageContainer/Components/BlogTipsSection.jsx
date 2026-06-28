@@ -77,7 +77,7 @@ export default function BlogTipsSection() {
         {/* Featured article — spans 1 col on mobile, 1 wider col on desktop */}
         <Link
           href="/blog"
-          className="group relative rounded-2xl overflow-hidden bg-white border border-outline-variant/15 shadow-sm hover:shadow-xl transition-all duration-200 md:col-span-1 flex flex-col"
+          className="group relative rounded-2xl overflow-hidden bg-surface-container-lowest border border-outline-variant/20 shadow-card-sm hover:shadow-card-lg transition-all duration-200 md:col-span-1 flex flex-col"
         >
           <div className="relative w-full overflow-hidden" style={{ height: 200 }}>
             <img
@@ -121,7 +121,7 @@ export default function BlogTipsSection() {
             <Link
               key={article.id}
               href="/blog"
-              className="group rounded-2xl overflow-hidden bg-white border border-outline-variant/15 shadow-sm hover:shadow-xl transition-all duration-200 flex flex-col"
+              className="group rounded-2xl overflow-hidden bg-surface-container-lowest border border-outline-variant/20 shadow-card-sm hover:shadow-card-lg transition-all duration-200 flex flex-col"
             >
               {/* Image */}
               <div className="relative overflow-hidden" style={{ height: 130 }}>

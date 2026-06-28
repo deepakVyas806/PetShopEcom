@@ -15,7 +15,7 @@ export default function UserAvatar({
   textSize = "text-lg",
   className = "",
 }: UserAvatarProps) {
-  const isUrl = avatar?.startsWith("http");
+  const isUrl = !!(avatar && (avatar.startsWith("http") || avatar.startsWith("/")));
 
   const base = `${size} rounded-full flex items-center justify-center shrink-0 bg-primary/10 overflow-hidden ${className}`;
 

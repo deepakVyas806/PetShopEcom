@@ -8,15 +8,7 @@ const ADDRESS_ICON_MAP = {
   business:    IconLocation,
 };
 
-const glass = {
-  background: "rgba(255,255,255,0.88)",
-  backdropFilter: "blur(14px)",
-  WebkitBackdropFilter: "blur(14px)",
-  border: "1px solid #F3E8FF",
-  boxShadow: "0 4px 20px -4px rgba(124,58,237,0.07)",
-};
-
-export default function AddressCard({ address, onSetDefault, onDelete }) {
+export default function AddressCard({ address, onSetDefault, onDelete, onEdit }) {
   const id = address._id ?? address.id;
   const { name, type, label, icon, line1, line2, city, state, country, pincode, phone, isDefault } = address;
 
@@ -27,10 +19,7 @@ export default function AddressCard({ address, onSetDefault, onDelete }) {
     .filter(Boolean);
 
   return (
-    <div
-      className="relative overflow-hidden rounded-2xl p-5 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 group"
-      style={glass}
-    >
+    <div className="relative overflow-hidden rounded-2xl p-5 bg-surface-container-lowest border border-outline-variant/20 shadow-card-sm hover:shadow-card-md hover:-translate-y-0.5 transition-all duration-200 group">
       {/* Decorative bg blob on default card */}
       {isDefault && (
         <div className="absolute -top-10 -right-10 w-28 h-28 bg-primary/5 rounded-full pointer-events-none group-hover:scale-110 transition-transform duration-500" />
@@ -52,6 +41,7 @@ export default function AddressCard({ address, onSetDefault, onDelete }) {
         {/* Circular action buttons */}
         <div className="flex gap-1.5">
           <button
+            onClick={() => onEdit?.(address)}
             className="w-7 h-7 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-primary/10 hover:text-primary transition-all cursor-pointer bg-transparent border-none"
             title="Edit"
           >

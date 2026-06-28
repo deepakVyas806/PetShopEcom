@@ -229,14 +229,7 @@ export default memo(function ServicesTable({
           </div>
           <span className="text-[10px] text-on-surface-variant">6 staff members assigned to these services</span>
         </div>
-        <div className="flex items-center gap-1">
-          <button className="flex items-center gap-1 px-3 py-1.5 text-primary text-xs font-bold hover:bg-primary/10 rounded-xl transition-colors cursor-pointer">
-            <IconDownload size={13} weight="bold" /> Export CSV
-          </button>
-          <button className="px-3 py-1.5 text-primary text-xs font-bold hover:bg-primary/10 rounded-xl transition-colors cursor-pointer">
-            Print List
-          </button>
-        </div>
+        {/* Export CSV / Print List — hidden for now */}
       </div>
     </div>
   );

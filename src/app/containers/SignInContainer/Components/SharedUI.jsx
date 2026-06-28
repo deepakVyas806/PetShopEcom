@@ -23,7 +23,7 @@ export function Field({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           required={required}
-          className="w-full px-3 py-2 bg-surface-container-low border border-outline-variant rounded-lg focus:ring-1 focus:border-primary outline-none transition-all text-xs text-on-surface placeholder:text-on-surface-variant/50"
+          className="w-full px-3 py-2.5 bg-surface-container-low border border-outline-variant/60 rounded-xl focus:border-primary focus:shadow-[0_0_0_3px_rgba(99,14,212,0.10)] outline-none transition-all duration-150 text-xs text-on-surface placeholder:text-on-surface-variant/50"
         />
         {children}
       </div>
@@ -45,7 +45,7 @@ export function SubmitButton({ loading, label, loadingLabel, disabled }) {
     <button
       type="submit"
       disabled={loading || disabled}
-      className="w-full py-2 rounded-lg bg-primary text-on-primary text-xs font-semibold transition-all active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 border-none cursor-pointer"
+      className="w-full py-2.5 rounded-xl bg-primary text-on-primary text-xs font-bold tracking-wide transition-all duration-200 active:scale-95 hover:shadow-brand-sm hover:brightness-105 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 border-none cursor-pointer"
     >
       {loading ? (
         <>

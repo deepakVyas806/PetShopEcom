@@ -7,6 +7,19 @@ import NotificationCard           from "./Components/NotificationCard";
 import NotificationsEmpty         from "./Components/NotificationsEmpty";
 import Pagination                 from "@/components/common/Pagination";
 
+function NotificationSkeleton() {
+  return (
+    <div className="flex items-start gap-3 p-4 rounded-2xl border border-outline-variant/20 bg-surface-container-lowest">
+      <div className="w-10 h-10 rounded-xl animate-shimmer flex-shrink-0" />
+      <div className="flex-1 space-y-2">
+        <div className="h-3 w-2/3 rounded-full animate-shimmer" />
+        <div className="h-2.5 w-full rounded-full animate-shimmer" />
+        <div className="h-2.5 w-4/5 rounded-full animate-shimmer" />
+      </div>
+    </div>
+  );
+}
+
 export default function NotificationsContainer({ showHeader = true }) {
   const {
     filtered,
@@ -15,6 +28,11 @@ export default function NotificationsContainer({ showHeader = true }) {
     setActiveFilter,
     markRead,
     markAllRead,
+    deleteNotification,
+    loading,
+    page,
+    totalPages,
+    goToPage,
   } = useNotificationsContainer();
 
   return (
@@ -26,40 +44,38 @@ export default function NotificationsContainer({ showHeader = true }) {
         />
       )}
 
-      {/* 1. Join ArtRewards — full width on all screens */}
-      <div className="p-4 rounded-xl bg-primary/5 border border-primary/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <h4 className="text-xs font-bold text-primary mb-0.5">Join ArtRewards</h4>
-          <p className="text-xs text-on-surface-variant leading-relaxed">
-            Earn paw-points for every notification you engage with and redeem for discounts.
-          </p>
-        </div>
-        <button className="sm:shrink-0 px-4 py-2 bg-primary text-on-primary rounded-full text-xs font-semibold hover:shadow-md transition-all cursor-pointer border-none whitespace-nowrap">
-          Learn More
-        </button>
-      </div>
-
-      {/* 2. Filter pills — full width */}
+      {/* Filter pills */}
       <NotificationsFilter
         activeFilter={activeFilter}
         onFilter={setActiveFilter}
       />
 
-      {/* 3. Notifications list — full width */}
-      {filtered.length === 0 ? (
+      {/* Notification list */}
+      {loading ? (
+        <div className="space-y-2">
+          {[0, 1, 2].map(i => <NotificationSkeleton key={i} />)}
+        </div>
+      ) : filtered.length === 0 ? (
         <NotificationsEmpty />
       ) : (
         <>
           <div className="space-y-2">
             {filtered.map((n) => (
               <NotificationCard
-                key={n._id ?? n.id}
+                key={n.id}
                 notification={n}
                 onMarkRead={markRead}
+                onDelete={deleteNotification}
               />
             ))}
           </div>
-          <Pagination currentPage={1} totalPages={3} />
+          {totalPages > 1 && (
+            <Pagination
+              currentPage={page}
+              totalPages={totalPages}
+              onPageChange={goToPage}
+            />
+          )}
         </>
       )}
     </div>

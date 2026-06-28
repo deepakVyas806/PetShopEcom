@@ -5,6 +5,12 @@ import { parsePagination, paginationMeta } from "../../utils/paginate";
 
 export const notificationRoutes: FastifyPluginAsync = async (app) => {
 
+  // GET /notifications/unread-count — lightweight badge count for header
+  app.get("/unread-count", { preHandler: authenticate }, async (req, reply) => {
+    const count = await Notification.countDocuments({ userId: req.user.userId, read: false });
+    reply.send({ count });
+  });
+
   // GET /notifications
   app.get("/", { preHandler: authenticate }, async (req, reply) => {
     const q = req.query as any;

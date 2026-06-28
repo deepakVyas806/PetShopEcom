@@ -6,10 +6,10 @@ import { IconReceipt, IconSearch, IconWallet, IconTag } from "@/lib/icons";
 
 // ── Status badge ────────────────────────────────────────────────────────────────
 const STATUS_STYLES = {
-  success:  { bg: "bg-green-100",   text: "text-green-700",  dot: "bg-green-500"  },
-  pending:  { bg: "bg-amber-100",   text: "text-amber-700",  dot: "bg-amber-500"  },
-  refunded: { bg: "bg-blue-100",    text: "text-blue-700",   dot: "bg-blue-500"   },
-  failed:   { bg: "bg-red-100",     text: "text-red-700",    dot: "bg-red-500"    },
+  success:  { bg: "bg-success/10",   text: "text-success",          dot: "bg-success"          },
+  pending:  { bg: "bg-warning/10",   text: "text-warning",          dot: "bg-warning"           },
+  refunded: { bg: "bg-secondary/10", text: "text-secondary",        dot: "bg-secondary"         },
+  failed:   { bg: "bg-error/10",     text: "text-error",            dot: "bg-error"             },
 };
 
 function StatusBadge({ status }) {
@@ -37,7 +37,7 @@ function methodLabel(m) {
 // ── Summary card ────────────────────────────────────────────────────────────────
 function SummaryCard({ label, value, sub, accent }) {
   return (
-    <div className={`px-4 py-3 rounded-xl border shadow-sm flex items-center gap-3 ${accent}`}>
+    <div className={`px-4 py-3 rounded-xl border shadow-card-sm flex items-center gap-3 ${accent}`}>
       <div>
         <p className="text-[10px] uppercase tracking-wider font-semibold text-on-surface-variant">{label}</p>
         <p className="text-sm font-bold text-on-surface mt-0.5">{value}</p>
@@ -95,22 +95,22 @@ export default function TransactionsContainer() {
           <SummaryCard
             label="Successful"
             value={summary.successCount ?? 0}
-            accent="bg-green-50 border-green-200"
+            accent="bg-success/10 border-success/20"
           />
           <SummaryCard
             label="Pending (COD)"
             value={summary.pendingCount ?? 0}
-            accent="bg-amber-50 border-amber-200"
+            accent="bg-warning/10 border-warning/20"
           />
           <SummaryCard
             label="Refunded"
             value={summary.refundCount ?? 0}
-            accent="bg-blue-50 border-blue-200"
+            accent="bg-secondary/10 border-secondary/20"
           />
           <SummaryCard
             label="Failed"
             value={summary.failedCount ?? 0}
-            accent="bg-red-50 border-red-200"
+            accent="bg-error/10 border-error/20"
           />
         </div>
       )}
@@ -147,7 +147,7 @@ export default function TransactionsContainer() {
       </div>
 
       {/* Table */}
-      <div className="bg-surface-container-lowest rounded-2xl border border-outline-variant/30 shadow-sm overflow-hidden">
+      <div className="bg-surface-container-lowest rounded-2xl border border-outline-variant/30 shadow-card-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
@@ -165,7 +165,7 @@ export default function TransactionsContainer() {
                   <tr key={i}>
                     {Array.from({ length: 7 }).map((_, j) => (
                       <td key={j} className="px-4 py-3">
-                        <div className="h-3 rounded bg-on-surface/8 animate-pulse" style={{ width: `${60 + (j * 13) % 40}%` }} />
+                        <div className="h-3 rounded bg-on-surface/10 animate-shimmer" style={{ width: `${60 + (j * 13) % 40}%` }} />
                       </td>
                     ))}
                   </tr>
@@ -186,7 +186,7 @@ export default function TransactionsContainer() {
                       {/* Transaction ID */}
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
-                          <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                          <div className="w-7 h-7 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
                             <IconReceipt size={13} className="text-primary" weight="bold" />
                           </div>
                           <span className="font-mono font-semibold text-on-surface">{txn.transactionId}</span>
@@ -240,7 +240,7 @@ export default function TransactionsContainer() {
                                 </div>
                               )}
                               {discount > 0 && (
-                                <div className="flex items-center gap-1 text-[10px] text-green-600 font-bold">
+                                <div className="flex items-center gap-1 text-[10px] text-success font-bold">
                                   <IconTag size={9} weight="fill" />
                                   {couponCode ?? "Discount"}
                                   <span>−{fmt(discount)}</span>
@@ -282,14 +282,14 @@ export default function TransactionsContainer() {
               <button
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="px-3 py-1.5 rounded-lg text-xs border border-outline-variant/40 text-on-surface-variant hover:bg-surface-container disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                className="px-3 py-1.5 rounded-xl text-xs border border-outline-variant/40 text-on-surface-variant hover:bg-surface-container disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
               >
                 Prev
               </button>
               <button
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
-                className="px-3 py-1.5 rounded-lg text-xs border border-outline-variant/40 text-on-surface-variant hover:bg-surface-container disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                className="px-3 py-1.5 rounded-xl text-xs border border-outline-variant/40 text-on-surface-variant hover:bg-surface-container disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
               >
                 Next
               </button>

@@ -37,22 +37,12 @@ export default function ServicesContainer() {
   } = useServices();
 
   const [localQuery, setLocalQuery] = useState("");
+  const setInlineSearchRef = useRef(setInlineSearch);
+  useEffect(() => { setInlineSearchRef.current = setInlineSearch; });
   useEffect(() => {
-    const t = setTimeout(() => setInlineSearch(localQuery), 350);
+    const t = setTimeout(() => setInlineSearchRef.current(localQuery), 350);
     return () => clearTimeout(t);
-  }, [localQuery, setInlineSearch]);
-
-  const sentinelRef = useRef(null);
-  useEffect(() => {
-    const el = sentinelRef.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) loadMore(); },
-      { rootMargin: "200px" }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [loadMore]);
+  }, [localQuery]);
 
   return (
     <div className="w-full bg-background text-on-background transition-colors duration-300">
@@ -69,7 +59,7 @@ export default function ServicesContainer() {
         >
           <div className="flex items-center gap-1.5">
             <span className="text-xs text-on-surface-variant font-medium hidden sm:block">Sort:</span>
-            <select className="bg-surface-container-lowest border border-outline-variant rounded-lg px-2 py-1.5 text-xs focus:border-primary focus:ring-1 focus:ring-primary outline-none text-on-surface cursor-pointer font-medium">
+            <select className="bg-surface-container-lowest border border-outline-variant/40 rounded-xl px-2 py-1.5 text-xs focus:border-primary outline-none text-on-surface cursor-pointer font-medium">
               <option>Popularity</option>
               <option>Price ↑</option>
               <option>Price ↓</option>
@@ -78,14 +68,14 @@ export default function ServicesContainer() {
           </div>
           <button
             onClick={() => setMobileFiltersOpen(true)}
-            className="md:hidden flex items-center gap-1.5 px-3 py-1.5 border border-outline-variant rounded-lg bg-surface text-xs font-medium text-on-surface hover:bg-primary/5 active:scale-95 transition-all cursor-pointer"
+            className="md:hidden flex items-center gap-1.5 px-3 py-1.5 border border-outline-variant/40 rounded-xl bg-surface-container-lowest text-xs font-medium text-on-surface hover:bg-primary/5 active:scale-95 transition-all cursor-pointer"
           >
             <IconFilter size={15} className="leading-none" weight="regular" />
             Filter
           </button>
         </PageHeader>
 
-        <div className="mt-3 mb-4 flex items-center bg-surface-container-low rounded-full px-3 py-2 border border-outline-variant/50 focus-within:border-primary transition-colors gap-2">
+        <div className="mt-3 mb-4 flex items-center bg-surface-container-low rounded-xl px-3 py-2 border border-outline-variant/40 focus-within:border-primary focus-within:shadow-[0_0_0_3px_rgba(99,14,212,0.08)] transition-all duration-150 gap-2">
           <IconSearch size={16} className="text-on-surface-variant flex-shrink-0" weight="regular" />
           <input
             type="text"
@@ -147,7 +137,7 @@ export default function ServicesContainer() {
             {loading ? (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} className="rounded-2xl bg-surface-container-low animate-pulse h-64" />
+                  <div key={i} className="rounded-2xl animate-shimmer h-64" />
                 ))}
               </div>
             ) : services.length > 0 ? (
@@ -158,12 +148,20 @@ export default function ServicesContainer() {
                   ))}
                 </div>
 
-                {/* Infinite scroll sentinel */}
-                <div ref={sentinelRef} className="h-1" />
-
-                {loadingMore && (
-                  <div className="flex justify-center py-8">
-                    <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                {hasMore && (
+                  <div className="flex justify-center mt-8">
+                    <button
+                      onClick={loadMore}
+                      disabled={loadingMore}
+                      className="flex items-center gap-2 px-8 py-2.5 rounded-full bg-primary text-white text-xs font-bold hover:brightness-110 active:scale-95 transition-all disabled:opacity-60 disabled:cursor-not-allowed border-none cursor-pointer shadow-brand-sm"
+                    >
+                      {loadingMore ? (
+                        <>
+                          <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          Loading…
+                        </>
+                      ) : "Load More"}
+                    </button>
                   </div>
                 )}
 
@@ -226,7 +224,7 @@ export default function ServicesContainer() {
             <div className="p-6 border-t border-outline-variant/30 bg-surface-container-lowest">
               <button
                 onClick={() => setMobileFiltersOpen(false)}
-                className="w-full py-2.5 bg-primary text-white rounded-lg font-bold text-xs shadow-md cursor-pointer border-none outline-none"
+                className="w-full py-2.5 bg-primary text-white rounded-xl font-bold text-xs shadow-brand-sm hover:brightness-105 cursor-pointer border-none outline-none"
               >
                 Apply Filters
               </button>

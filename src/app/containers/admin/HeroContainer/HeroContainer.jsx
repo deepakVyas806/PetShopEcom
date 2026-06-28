@@ -388,6 +388,7 @@ export default function HeroContainer() {
                 label="Background Image"
                 value={form.imageUrl}
                 onChange={url => setField("imageUrl", url)}
+                context="hero"
                 name={form.headline}
                 shape="wide"
                 objectFit="cover"

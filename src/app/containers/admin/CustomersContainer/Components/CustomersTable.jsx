@@ -58,7 +58,7 @@ const CustomersTable = memo(function CustomersTable({
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   return (
-    <div className="bg-surface-container-lowest rounded-2xl border border-outline-variant/30 shadow-sm overflow-hidden">
+    <div className="bg-surface-container-lowest rounded-2xl border border-outline-variant/30 shadow-card-sm overflow-hidden">
       {/* Table wrapper */}
       <div className="overflow-x-auto">
         <table className="w-full min-w-[680px]">
@@ -141,7 +141,7 @@ const CustomersTable = memo(function CustomersTable({
               type="button"
               disabled={page === 1}
               onClick={() => onPageChange(page - 1)}
-              className="p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-low disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
+              className="p-1.5 rounded-xl text-on-surface-variant hover:bg-surface-container-low disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
             >
               <IconChevronLeft size={13} weight="bold" />
             </button>
@@ -150,7 +150,7 @@ const CustomersTable = memo(function CustomersTable({
                 key={p}
                 type="button"
                 onClick={() => onPageChange(p)}
-                className={`w-7 h-7 rounded-lg text-[10px] font-bold transition-all cursor-pointer ${
+                className={`w-7 h-7 rounded-xl text-[10px] font-bold transition-all cursor-pointer ${
                   p === page
                     ? "bg-primary text-on-primary"
                     : "text-on-surface-variant hover:bg-surface-container-low"
@@ -163,7 +163,7 @@ const CustomersTable = memo(function CustomersTable({
               type="button"
               disabled={page === totalPages}
               onClick={() => onPageChange(page + 1)}
-              className="p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-low disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
+              className="p-1.5 rounded-xl text-on-surface-variant hover:bg-surface-container-low disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
             >
               <IconChevronRight size={13} weight="bold" />
             </button>

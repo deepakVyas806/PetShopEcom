@@ -49,7 +49,7 @@ function OffersSection({ coupons = [] }) {
   const visible = expanded ? coupons : coupons.slice(0, 2);
 
   return (
-    <div className="border border-outline-variant/30 rounded-xl overflow-hidden bg-white dark:bg-surface-container-lowest">
+    <div className="border border-outline-variant/30 rounded-xl overflow-hidden bg-surface-container-lowest">
       <div className="flex items-center gap-2 px-3 py-2.5 border-b border-outline-variant/20 bg-surface-container/40">
         <IconTag size={14} className="text-primary" weight="fill" />
         <span className="text-xs font-bold text-on-surface">Available Offers</span>
@@ -124,12 +124,12 @@ function DeliveryCheck() {
           value={pin}
           onChange={(e) => { setPin(e.target.value.replace(/\D/g, "")); setResult(null); }}
           placeholder="Enter 6-digit pincode"
-          className="flex-1 border border-outline-variant/40 rounded-lg px-3 py-2 text-xs outline-none focus:border-primary text-on-surface bg-white dark:bg-surface-container-lowest placeholder:text-on-surface-variant/50"
+          className="flex-1 border border-outline-variant/40 rounded-xl px-3 py-2 text-xs outline-none focus:border-primary text-on-surface bg-surface-container-lowest placeholder:text-on-surface-variant/50"
         />
         <button
           onClick={checkPin}
           disabled={pin.length !== 6}
-          className="px-4 py-2 bg-primary text-white text-xs font-bold rounded-lg disabled:opacity-40 cursor-pointer border-none transition-opacity"
+          className="px-4 py-2 bg-primary text-white text-xs font-bold rounded-xl disabled:opacity-40 cursor-pointer border-none transition-opacity"
         >
           Check
         </button>
@@ -231,14 +231,14 @@ export default function ProductDetailsContainer({ productId }) {
     return (
       <div className="w-full bg-background">
         <div className="max-w-container-max mx-auto px-margin-desktop py-stack-lg">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter animate-pulse">
-            <div className="lg:col-span-7 aspect-square rounded-2xl bg-surface-container-low" />
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+            <div className="lg:col-span-7 aspect-square rounded-2xl animate-shimmer" />
             <div className="lg:col-span-5 space-y-4">
-              <div className="h-6 w-2/3 rounded bg-surface-container-low" />
-              <div className="h-4 w-1/2 rounded bg-surface-container-low" />
-              <div className="h-10 w-1/3 rounded bg-surface-container-low" />
-              <div className="h-12 rounded-xl bg-surface-container-low" />
-              <div className="h-12 rounded-xl bg-surface-container-low" />
+              <div className="h-6 w-2/3 rounded-xl animate-shimmer" />
+              <div className="h-4 w-1/2 rounded-xl animate-shimmer" />
+              <div className="h-10 w-1/3 rounded-xl animate-shimmer" />
+              <div className="h-12 rounded-xl animate-shimmer" />
+              <div className="h-12 rounded-xl animate-shimmer" />
             </div>
           </div>
         </div>
@@ -289,7 +289,7 @@ export default function ProductDetailsContainer({ productId }) {
                 <button
                   key={idx}
                   onClick={() => setActiveImage(img)}
-                  className={`w-16 h-16 md:w-20 md:h-20 flex-shrink-0 rounded-lg overflow-hidden bg-white active:scale-95 transition-all cursor-pointer ${
+                  className={`w-16 h-16 md:w-20 md:h-20 flex-shrink-0 rounded-lg overflow-hidden bg-surface-container-lowest active:scale-95 transition-all cursor-pointer ${
                     activeImage === img
                       ? "border-2 border-primary shadow-sm"
                       : "border border-outline-variant/30 hover:border-primary"
@@ -345,7 +345,7 @@ export default function ProductDetailsContainer({ productId }) {
             {/* Urgency signals */}
             <div className="flex items-center gap-3 flex-wrap">
               {product.stock != null && product.stock <= 5 && (
-                <span className="flex items-center gap-1 text-xs font-bold text-red-600 bg-red-50 border border-red-100 px-2.5 py-1 rounded-full">
+                <span className="flex items-center gap-1 text-xs font-bold text-error bg-error/10 border border-error/20 px-2.5 py-1 rounded-full">
                   <IconLightning size={12} weight="fill" />
                   Only {product.stock} left in stock!
                 </span>
@@ -409,7 +409,7 @@ export default function ProductDetailsContainer({ productId }) {
               <div className="flex flex-col sm:flex-row gap-2 pt-2 items-stretch">
                 {inCart ? (
                   /* Quantity stepper — replaces Add to Cart after first click */
-                  <div className="flex items-center justify-between bg-white dark:bg-surface-container-lowest border border-outline-variant/30 rounded-lg h-9 flex-1 select-none">
+                  <div className="flex items-center justify-between bg-surface-container-lowest border border-outline-variant/30 rounded-xl h-9 flex-1 select-none">
                     <button
                       onClick={() => {
                         if (quantity === 1) {
@@ -458,13 +458,13 @@ export default function ProductDetailsContainer({ productId }) {
 
             {/* Fast Perks */}
             <div className="grid grid-cols-2 gap-3">
-              <div className="flex items-center space-x-2.5 p-3 bg-white dark:bg-surface-container-lowest rounded-xl border border-outline-variant/30 shadow-xs">
+              <div className="flex items-center space-x-2.5 p-3 bg-surface-container-lowest rounded-xl border border-outline-variant/30 shadow-card-sm">
                 <div className="bg-primary/10 p-1.5 rounded-full flex items-center justify-center">
                   <IconShield size={18} className="text-primary" weight="regular" />
                 </div>
                 <span className="font-bold text-xs text-on-surface">Grain-Free</span>
               </div>
-              <div className="flex items-center space-x-2.5 p-3 bg-white dark:bg-surface-container-lowest rounded-xl border border-outline-variant/30 shadow-xs">
+              <div className="flex items-center space-x-2.5 p-3 bg-surface-container-lowest rounded-xl border border-outline-variant/30 shadow-card-sm">
                 <div className="bg-primary/10 p-1.5 rounded-full flex items-center justify-center">
                   <IconEco size={18} className="text-primary" weight="regular" />
                 </div>
@@ -489,11 +489,11 @@ export default function ProductDetailsContainer({ productId }) {
               Frequently Bought Together
             </h2>
 
-            <div className="bg-surface-container/50 dark:bg-surface-container/30 p-4 rounded-xl border border-outline-variant/20 flex flex-col md:flex-row items-center justify-center gap-4">
+            <div className="bg-surface-container p-4 rounded-xl border border-outline-variant/20 flex flex-col md:flex-row items-center justify-center gap-4">
               <div className="flex items-center gap-4 flex-wrap justify-center select-none">
 
                 {/* Product Card 1: Current Item */}
-                <div className="w-28 h-28 bg-white dark:bg-surface-container-lowest rounded-xl shadow-xs border border-outline-variant/30 p-2.5 relative flex items-center justify-center">
+                <div className="w-28 h-28 bg-surface-container-lowest rounded-xl shadow-card-sm border border-outline-variant/30 p-2.5 relative flex items-center justify-center">
                   <img
                     alt="Current Item"
                     className="w-full h-full object-contain rounded-lg"
@@ -509,7 +509,7 @@ export default function ProductDetailsContainer({ productId }) {
                     <IconAdd size={20} className="text-outline font-bold" weight="bold" />
                     <div
                       onClick={() => toggleBundleItem(item.id)}
-                      className={`w-28 h-28 bg-white dark:bg-surface-container-lowest rounded-xl shadow-xs border p-2.5 relative flex items-center justify-center cursor-pointer transition-all hover:scale-105 ${
+                      className={`w-28 h-28 bg-surface-container-lowest rounded-xl shadow-card-sm border p-2.5 relative flex items-center justify-center cursor-pointer transition-all hover:scale-105 ${
                         checkedBundleItems[item.id] ? "border-primary" : "border-outline-variant/30"
                       }`}
                     >
@@ -568,7 +568,7 @@ export default function ProductDetailsContainer({ productId }) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-gutter">
 
             {/* Left Pane: Detail Values Table */}
-            <div className="bg-white dark:bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/20 shadow-xs space-y-3">
+            <div className="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/20 shadow-card-sm space-y-3">
               <h3 className="text-xs font-bold text-on-surface mb-1">Product Specifications</h3>
               
               {activeTab === "Specifications" && (
@@ -632,7 +632,7 @@ export default function ProductDetailsContainer({ productId }) {
             </div>
 
             {/* Right Pane: Key Benefits List */}
-            <div className="bg-surface-container-low p-4 rounded-xl border border-outline-variant/20 shadow-xs space-y-3">
+            <div className="bg-surface-container p-4 rounded-xl border border-outline-variant/20 shadow-card-sm space-y-3">
               <h3 className="text-xs font-bold text-on-surface">Key Benefits</h3>
               <ul className="space-y-2.5">
                 {(product.bullets?.length > 0
@@ -659,7 +659,7 @@ export default function ProductDetailsContainer({ productId }) {
             </div>
             <button
               onClick={() => setReviewFormOpen((o) => !o)}
-              className="bg-white dark:bg-surface-container-lowest border-2 border-primary text-primary font-bold text-xs px-4 py-1.5 rounded-full hover:bg-primary/5 active:scale-95 transition-all cursor-pointer self-start sm:self-auto"
+              className="bg-surface-container-lowest border-2 border-primary text-primary font-bold text-xs px-4 py-1.5 rounded-full hover:bg-primary/5 active:scale-95 transition-all cursor-pointer self-start sm:self-auto"
             >
               {reviewFormOpen ? "Cancel" : "Write a Review"}
             </button>
@@ -685,7 +685,7 @@ export default function ProductDetailsContainer({ productId }) {
               {reviewsLoading && reviews.length === 0 && (
                 <div className="space-y-3">
                   {Array.from({ length: 3 }).map((_, i) => (
-                    <div key={i} className="h-28 rounded-2xl bg-surface-container-low animate-pulse" />
+                    <div key={i} className="h-28 rounded-2xl animate-shimmer" />
                   ))}
                 </div>
               )}
@@ -717,7 +717,7 @@ export default function ProductDetailsContainer({ productId }) {
       </main>
 
       {/* Sticky mobile CTA bar */}
-      <div className="fixed bottom-16 left-0 right-0 z-40 md:hidden bg-white dark:bg-surface-container-lowest border-t border-outline-variant/20 px-4 py-2.5 flex items-center gap-3 shadow-[0_-4px_12px_rgba(0,0,0,0.08)]">
+      <div className="fixed bottom-16 left-0 right-0 z-40 md:hidden bg-surface-container-lowest border-t border-outline-variant/20 px-4 py-2.5 flex items-center gap-3 shadow-card-xl">
         <div className="min-w-0 shrink-0">
           <p className="text-base font-extrabold text-on-surface leading-none">{fmt(displayPrice)}</p>
           {discountPercent > 0 && (

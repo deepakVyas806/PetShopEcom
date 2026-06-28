@@ -65,7 +65,7 @@ export default function ShoppingCartContainer() {
         {loading && (
           <div className="space-y-2.5 mt-4">
             {[1, 2].map((i) => (
-              <div key={i} className="h-32 rounded-xl bg-surface-container-low animate-pulse" />
+              <div key={i} className="h-32 rounded-xl animate-shimmer" />
             ))}
           </div>
         )}
@@ -77,7 +77,7 @@ export default function ShoppingCartContainer() {
             <div className="lg:col-span-8 space-y-2.5">
 
               {/* Select-all bar */}
-              <div className="flex items-center justify-between bg-white/80 dark:bg-surface-container-lowest border border-outline-variant/15 rounded-xl px-4 py-3">
+              <div className="flex items-center justify-between bg-surface-container-lowest border border-outline-variant/20 rounded-xl px-4 py-3">
                 <label className="flex items-center gap-2.5 cursor-pointer select-none">
                   <button
                     type="button"
@@ -114,9 +114,9 @@ export default function ShoppingCartContainer() {
 
               {/* No items selected warning */}
               {noneSelected && (
-                <div className="flex items-center gap-2 px-4 py-2.5 bg-amber-50 border border-amber-200 rounded-xl">
-                  <IconWarning size={14} className="text-amber-500 shrink-0" weight="fill" />
-                  <p className="text-xs text-amber-700 font-medium">
+                <div className="flex items-center gap-2 px-4 py-2.5 bg-warning/10 border border-warning/20 rounded-xl">
+                  <IconWarning size={14} className="text-warning shrink-0" weight="fill" />
+                  <p className="text-xs text-on-surface font-medium">
                     Select at least one item to proceed to checkout.
                   </p>
                 </div>
@@ -147,7 +147,7 @@ export default function ShoppingCartContainer() {
 
             {/* ── Right: Order Summary ────────────────────────────────────── */}
             <aside className="lg:col-span-4 sticky top-24 space-y-3">
-              <div className="bg-white/80 dark:bg-surface-container-lowest border border-[#F3E8FF] dark:border-outline-variant/10 rounded-xl shadow-sm overflow-hidden">
+              <div className="bg-surface-container-lowest border border-outline-variant/20 rounded-xl shadow-card-sm overflow-hidden">
 
                 {/* Header */}
                 <div className="px-4 py-3 border-b border-outline-variant/10 flex items-center justify-between">
@@ -214,14 +214,14 @@ export default function ShoppingCartContainer() {
 
                   {/* Savings */}
                   {totalSavings > 0 && (
-                    <div className="bg-green-50 border border-green-100 rounded-lg px-3 py-2 flex items-center justify-between">
-                      <span className="text-xs font-semibold text-green-700">You&apos;re saving</span>
-                      <span className="text-xs font-black text-green-700">{fmt(totalSavings)} 🎉</span>
+                    <div className="bg-success/10 border border-success/20 rounded-xl px-3 py-2 flex items-center justify-between">
+                      <span className="text-xs font-semibold text-success">You&apos;re saving</span>
+                      <span className="text-xs font-black text-success">{fmt(totalSavings)} 🎉</span>
                     </div>
                   )}
 
                   {/* Estimated delivery */}
-                  <div className="flex items-center gap-1.5 bg-primary/5 rounded-lg px-3 py-2">
+                  <div className="flex items-center gap-1.5 bg-primary/5 rounded-xl px-3 py-2">
                     <IconCalendar size={16} className="text-primary" weight="regular" />
                     <span className="text-[10px] text-on-surface font-medium">
                       Estimated delivery: <strong>3–5 business days</strong>
@@ -235,7 +235,7 @@ export default function ShoppingCartContainer() {
                     className={`w-full py-2.5 rounded-xl font-bold text-xs shadow-md transition-all flex items-center justify-center gap-2 border-none outline-none ${
                       noneSelected
                         ? "bg-outline-variant/30 text-on-surface-variant cursor-not-allowed"
-                        : "bg-primary text-on-primary hover:shadow-lg hover:brightness-105 active:scale-[0.99] cursor-pointer"
+                        : "bg-primary text-on-primary hover:shadow-brand-md hover:brightness-105 active:scale-[0.99] cursor-pointer shadow-brand-sm"
                     }`}
                   >
                     <IconLock size={16} weight="bold" />
@@ -261,20 +261,6 @@ export default function ShoppingCartContainer() {
                 </div>
               </div>
 
-              {/* Loyalty box */}
-              {rewardsPoints > 0 && (
-                <div className="bg-tertiary-fixed border border-tertiary-fixed-dim rounded-xl p-3 flex items-center gap-2.5">
-                  <IconStar size={20} className="text-primary shrink-0" weight="fill" />
-                  <div>
-                    <p className="text-[10px] font-bold text-on-tertiary-fixed">
-                      Earn {rewardsPoints} reward points
-                    </p>
-                    <p className="text-[9px] text-on-tertiary-fixed-variant mt-0.5">
-                      Join artPet Rewards to save on future orders!
-                    </p>
-                  </div>
-                </div>
-              )}
             </aside>
           </div>
         )}
@@ -297,7 +283,7 @@ export default function ShoppingCartContainer() {
             </div>
             <Link
               href="/marketplace"
-              className="inline-block px-6 py-2 bg-primary text-on-primary rounded-lg text-xs font-bold hover:shadow-md active:scale-95 transition-all"
+              className="inline-block px-6 py-2 bg-primary text-on-primary rounded-xl text-xs font-bold shadow-brand-sm hover:shadow-brand-md active:scale-95 transition-all"
             >
               Start Shopping
             </Link>

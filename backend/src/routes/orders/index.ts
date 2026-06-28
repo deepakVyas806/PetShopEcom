@@ -4,6 +4,7 @@ import { Order }                                 from "../../models/Order";
 import { Product }                               from "../../models/Product";
 import { Coupon }                                from "../../models/Coupon";
 import { Transaction }                           from "../../models/Transaction";
+import { Notification }                          from "../../models/Notification";
 import { authenticate }                          from "../../hooks/authenticate";
 import { parsePagination, paginationMeta }       from "../../utils/paginate";
 import { generateOrderId, generateTransactionId } from "../../utils/id";
@@ -99,7 +100,11 @@ export const orderRoutes: FastifyPluginAsync = async (app) => {
     let couponValid = false;
     if (couponCode) {
       const coupon = await Coupon.findOne({ code: couponCode.toUpperCase(), status: "active" });
-      if (coupon && subtotal >= coupon.minOrder) {
+      if (
+        coupon &&
+        subtotal >= coupon.minOrder &&
+        !(coupon.usageLimit > 0 && coupon.usageCount >= coupon.usageLimit)
+      ) {
         couponValid = true;
         if (coupon.discountType === "percent") discount = subtotal * (coupon.value / 100);
         if (coupon.discountType === "fixed")   discount = Math.min(coupon.value, subtotal);
@@ -199,7 +204,11 @@ export const orderRoutes: FastifyPluginAsync = async (app) => {
     let validCoupon: string | undefined;
     if (couponCode) {
       const coupon = await Coupon.findOne({ code: couponCode.toUpperCase(), status: "active" });
-      if (coupon && subtotal >= coupon.minOrder) {
+      if (
+        coupon &&
+        subtotal >= coupon.minOrder &&
+        !(coupon.usageLimit > 0 && coupon.usageCount >= coupon.usageLimit)
+      ) {
         // Calculate discountable amount based on coupon scope
         let discountableAmount = subtotal;
         if (coupon.scope === "product" && coupon.productIds?.length) {
@@ -276,6 +285,22 @@ export const orderRoutes: FastifyPluginAsync = async (app) => {
       razorpaySignature: isCod ? undefined : razorpaySignature,
       status:            isCod ? "Pending" : "Confirmed",
     });
+
+    // Push an order confirmation notification to the user
+    const firstItem = orderItems[0] as any;
+    Notification.create({
+      userId:   req.user.userId,
+      type:     "order",
+      icon:     "check_circle",
+      iconBg:   "bg-green-100 dark:bg-green-900/30",
+      iconColor:"text-green-600 dark:text-green-400",
+      title:    `Order ${order.orderId} confirmed!`,
+      body:     `Your order for ${firstItem?.name}${orderItems.length > 1 ? ` and ${orderItems.length - 1} more item${orderItems.length - 1 > 1 ? "s" : ""}` : ""} has been placed successfully.`,
+      actions:  [
+        { label: "Track Order",   variant: "primary",   href: `/track-order/${order._id}` },
+        { label: "View Details",  variant: "secondary", href: `/order-detail/${order._id}` },
+      ],
+    }).catch(() => {});
 
     // Record a transaction for every order regardless of payment method
     await Transaction.create({

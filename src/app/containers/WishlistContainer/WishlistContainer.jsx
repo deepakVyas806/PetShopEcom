@@ -8,10 +8,8 @@ import RecentlyViewed   from "./Components/RecentlyViewed";
 export default function WishlistContainer() {
   const {
     wishlistItems,
-    movingIds,
     recentlyViewed,
     removeFromWishlist,
-    moveToCart,
     addAllToCart,
   } = useWishlistContainer();
 
@@ -25,9 +23,7 @@ export default function WishlistContainer() {
 
       <WishlistGrid
         items={wishlistItems}
-        movingIds={movingIds}
         onRemove={removeFromWishlist}
-        onMoveToCart={moveToCart}
       />
 
       <RecentlyViewed items={recentlyViewed} />

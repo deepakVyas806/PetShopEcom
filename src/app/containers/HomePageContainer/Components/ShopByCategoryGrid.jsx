@@ -5,16 +5,6 @@ import Link from "next/link";
 import { IconArrowRight } from "@/lib/icons";
 import { api } from "@/lib/api";
 
-const FALLBACK = [
-  { name: "Food & Treats",    slug: "food",        imageUrl: "https://images.unsplash.com/photo-1589941013453-ec89f33b5e95?w=300&q=80&fit=crop&auto=format", icon: "🍗" },
-  { name: "Toys & Play",      slug: "toys",        imageUrl: "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1?w=300&q=80&fit=crop&auto=format", icon: "🎾" },
-  { name: "Health & Pharma",  slug: "health",      imageUrl: "https://images.unsplash.com/photo-1628009368231-7bb7cfcb0def?w=300&q=80&fit=crop&auto=format", icon: "💊" },
-  { name: "Grooming",         slug: "grooming",    imageUrl: "https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?w=300&q=80&fit=crop&auto=format", icon: "✂️" },
-  { name: "Beds & Houses",    slug: "beds",        imageUrl: "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=300&q=80&fit=crop&auto=format", icon: "🛏️" },
-  { name: "Accessories",      slug: "accessories", imageUrl: "https://images.unsplash.com/photo-1601758125946-6ec2ef64daf8?w=300&q=80&fit=crop&auto=format", icon: "🏷️" },
-  { name: "Aquatics",         slug: "fish",        imageUrl: "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?w=300&q=80&fit=crop&auto=format", icon: "🐟" },
-  { name: "Birds & Exotics",  slug: "birds",       imageUrl: "https://images.unsplash.com/photo-1552728089-57bdde30beb3?w=300&q=80&fit=crop&auto=format", icon: "🦜" },
-];
 
 function CategoryCard({ name, slug, imageUrl, icon }) {
   const [errored, setErrored] = useState(false);
@@ -39,8 +29,8 @@ function CategoryCard({ name, slug, imageUrl, icon }) {
 function CategorySkeleton() {
   return (
     <div className="flex flex-col items-center gap-2">
-      <div className="w-full aspect-square rounded-2xl bg-surface-container-high animate-pulse" />
-      <div className="h-2.5 w-3/4 rounded-full bg-surface-container-high animate-pulse" />
+      <div className="w-full aspect-square rounded-2xl animate-shimmer" />
+      <div className="h-2.5 w-3/4 rounded-full animate-shimmer" />
     </div>
   );
 }
@@ -51,13 +41,12 @@ export default function ShopByCategoryGrid() {
 
   useEffect(() => {
     api.get("/catalog?type=category")
-      .then(data => {
-        const items = data.items ?? [];
-        setCategories(items.length > 0 ? items : FALLBACK);
-      })
-      .catch(() => setCategories(FALLBACK))
+      .then(data => setCategories(data.items ?? []))
+      .catch(() => setCategories([]))
       .finally(() => setLoading(false));
   }, []);
+
+  if (!loading && !categories.length) return null;
 
   return (
     <section className="w-full py-7 bg-surface-container-lowest">

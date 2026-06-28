@@ -78,7 +78,7 @@ export default function Pagination({
   const pages = getPages(currentPage, totalPages);
 
   const btnBase =
-    "w-8 h-8 flex items-center justify-center rounded-lg text-xs font-semibold transition-all cursor-pointer border";
+    "w-8 h-8 flex items-center justify-center rounded-xl text-xs font-semibold transition-all cursor-pointer border";
 
   return (
     <div className={cn("flex justify-center items-center gap-1.5 pt-5 select-none", className)}>
@@ -105,7 +105,7 @@ export default function Pagination({
             className={cn(
               btnBase,
               p === currentPage
-                ? "bg-primary text-on-primary border-primary shadow-sm"
+                ? "bg-primary text-on-primary border-primary shadow-brand-sm"
                 : "border-outline-variant/50 text-on-surface-variant hover:border-primary hover:text-primary bg-transparent"
             )}
             aria-current={p === currentPage ? "page" : undefined}

@@ -7,67 +7,11 @@ import { api } from "@/lib/api";
 
 const DEFAULT_OVERLAY_LEFT  = "linear-gradient(to right, rgba(21,28,39,0.80) 0%, rgba(21,28,39,0.35) 55%, transparent 100%)";
 const DEFAULT_OVERLAY_RIGHT = "linear-gradient(to left,  rgba(21,28,39,0.80) 0%, rgba(21,28,39,0.35) 55%, transparent 100%)";
-const DEFAULT_OVERLAY = DEFAULT_OVERLAY_LEFT;
-
-const FALLBACK_SLIDES = [
-  {
-    _id:        "f1",
-    badge:      "Premium Pet Care",
-    badgeEmoji: "🐾",
-    headline:   "Elevated Care for\nEvery Companion",
-    subtitle:   "Curated premium nutrition and artisanal accessories for the modern pet owner.",
-    imageUrl:   "https://lh3.googleusercontent.com/aida-public/AB6AXuBcMLlXcu8SrlbiwnkM8pqYLwiBhQshPT4bfQphoU5Tla8cLgAKLMzbl3GXifcuCBlZ9IfQFnpxiBWc_tphc1--W_B5oFJPQd8Bb1xaQee7KJYjCoTxHXWLLq0AxLKubnKofa_uUbUJgrk6RkOQl4pIJWoI4t83MvYp0J75JDXmHAZLfNXvcGY2HZnJm7QeguizdMzDg-A6GxcFWN-gP0Cy71JN7pZS3amuRzO9EA6rg4_dsLjeVYGQ5r41PRF24xIXNz7ycSpQBTc5",
-    overlay:    DEFAULT_OVERLAY,
-    ctaLabel:   "Shop Now",
-    ctaHref:    "/marketplace",
-    cta2Label:  "Our Services",
-    cta2Href:   "/services",
-  },
-  {
-    _id:        "f2",
-    badge:      "Flash Sale",
-    badgeEmoji: "🏷️",
-    headline:   "Up to 40% Off\nDog Essentials",
-    subtitle:   "Premium food, toys and accessories — biggest savings of the season.",
-    imageUrl:   "https://lh3.googleusercontent.com/aida-public/AB6AXuAhzSHTfxd_ce2WW2sI8D--QvAPX3wqmfBERa-ENUssC7a5oj64YsOVt1EsGke9EwNoi-UoFfhJT5CxDIvlkYPnBG2hPxDOAnyJZNvqw4J9r2moSsZK7EK_pViPdB-SVPMnOh4uS-3lGRohFE2k6euILgcMkYlKhMoVHg34d03WpLJ78wj7KTBpfp6D25SDSaaZ-nPBFbBPNYK-1J_GdUotyDZnkLV1jckJY6VgAScSwk_IQD4ZZQGz6DUmKLqF-MF76xn6U4_7koYH",
-    overlay:    "linear-gradient(to right, rgba(99,14,212,0.78) 0%, rgba(99,14,212,0.30) 55%, transparent 100%)",
-    ctaLabel:   "Shop Deals",
-    ctaHref:    "/marketplace?category=dogs",
-    cta2Label:  "View All Offers",
-    cta2Href:   "/marketplace",
-  },
-  {
-    _id:        "f3",
-    badge:      "Expert Services",
-    badgeEmoji: "✂️",
-    headline:   "Luxury Grooming\nFor Every Breed",
-    subtitle:   "Spa treatments & expert styling by certified groomers. Book your slot today.",
-    imageUrl:   "https://lh3.googleusercontent.com/aida-public/AB6AXuAMJLwysOQgFEFqxPQ2utHm0N79V411N6ngWBxjSthJSlCwcYrWy6N3Fe2-p4VYvlqosgcDzKKZ3HaZY6HZioWRy6Wyk36sqKanLYp9HwF9i2ph1ZrKR9JPtxNwH1kKZH3jfXiiJhW-Pu0FDlYOmUod9LD1e7wE2Z8pohWpfhIwZEKEhHpzaLn9Z4Z6hMekVkZ01Jp6v89WuKDuH82_oyqFwrFxx7tecT09bmPLIh6YksKuePbaw_tg3yv3N7kluIWYM2p0MaQzYpTa",
-    overlay:    DEFAULT_OVERLAY,
-    ctaLabel:   "Book Now",
-    ctaHref:    "/services",
-    cta2Label:  "View Services",
-    cta2Href:   "/services",
-  },
-  {
-    _id:        "f4",
-    badge:      "Best Bundle",
-    badgeEmoji: "🛍️",
-    headline:   "Starter Kits\nEverything Included",
-    subtitle:   "Get the complete new-pet kit — curated essentials bundled and delivered fast.",
-    imageUrl:   "https://lh3.googleusercontent.com/aida-public/AB6AXuDBB2EamYQkMxtsTC5rWmpPHITfS0vRxBjsQ7PoJAxakX8M-wNUFFieN--LKFnqn_MocaHTxA3cLPTM4k1YuOFodxHzcEJEf27y8LVUj7HKLqxYp3_QMGQvH4mGKRzxTz8-XwF7FrKfkoig7DBXohBYMnmDkvrmiqj-SpulYeo63S6U_LINkKfeTg29p46w0S5bIuGtdBrCwCHF6P6mNBucT4WTtkXAPSH6TKdfYMMd__a2OTLVtUWK5A4CU-Pegt9riLzzkKlYk8TS",
-    overlay:    DEFAULT_OVERLAY,
-    ctaLabel:   "Shop Bundles",
-    ctaHref:    "/marketplace",
-    cta2Label:  "Learn More",
-    cta2Href:   "/marketplace",
-  },
-];
 
 function HeroSkeleton() {
   return (
     <section
-      className="relative overflow-hidden w-full bg-surface-container-high animate-pulse"
+      className="relative overflow-hidden w-full animate-shimmer"
       style={{ aspectRatio: "16/7", minHeight: 220 }}
     >
       {/* Faux content placeholders */}
@@ -97,11 +41,10 @@ export default function HeroSection() {
   useEffect(() => {
     api.get("/hero")
       .then(data => {
-        const items = data.slides ?? [];
-        setSlides(items.length > 0 ? items : FALLBACK_SLIDES);
+        setSlides(data.slides ?? []);
         setActive(0);
       })
-      .catch(() => setSlides(FALLBACK_SLIDES))
+      .catch(() => setSlides([]))
       .finally(() => setLoading(false));
   }, []);
 
@@ -174,7 +117,7 @@ export default function HeroSection() {
             {slide.ctaLabel && (
               <Link
                 href={slide.ctaHref || "/marketplace"}
-                className="inline-flex items-center gap-1.5 bg-primary text-white px-5 py-2 rounded-full text-xs font-bold hover:brightness-110 active:scale-95 transition-all shadow-md"
+                className="inline-flex items-center gap-1.5 bg-primary text-white px-5 py-2 rounded-full text-xs font-bold hover:brightness-110 hover:shadow-brand-sm active:scale-95 transition-all shadow-brand-sm"
               >
                 {slide.ctaLabel}
               </Link>

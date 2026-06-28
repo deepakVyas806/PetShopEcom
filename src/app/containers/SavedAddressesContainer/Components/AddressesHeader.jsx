@@ -2,7 +2,7 @@
 
 import PageHeader from "@/components/common/PageHeader";
 
-export default function AddressesHeader() {
+export default function AddressesHeader({ onAdd }) {
   return (
     <PageHeader
       breadcrumbs={[
@@ -12,7 +12,7 @@ export default function AddressesHeader() {
       ]}
       title="Saved Addresses"
       subtitle="Manage your shipping and billing locations for faster checkout."
-      action={{ label: "Add New Address", icon: "add_location_alt" }}
+      action={{ label: "Add New Address", icon: "add_location_alt", onClick: onAdd }}
     />
   );
 }

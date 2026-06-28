@@ -17,6 +17,7 @@ const STATUS_TABS = [
 export default function OrdersContainer() {
   const {
     filteredOrders,
+    loading,
     searchQuery,
     setSearchQuery,
     expandedOrders,
@@ -29,6 +30,20 @@ export default function OrdersContainer() {
     const fn = STATUS_TABS[activeTab].filter;
     return fn ? filteredOrders.filter((o) => fn(o.status)) : filteredOrders;
   }, [filteredOrders, activeTab]);
+
+  if (loading) {
+    return (
+      <div className="py-2 space-y-4">
+        <OrdersHeader searchQuery={searchQuery} onSearch={setSearchQuery} />
+        <div className="flex gap-1">
+          {[0, 1, 2, 3].map(i => <div key={i} className="h-7 w-20 rounded-full animate-shimmer" />)}
+        </div>
+        <div className="space-y-4">
+          {[0, 1, 2].map(i => <div key={i} className="h-28 rounded-2xl animate-shimmer" />)}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="py-2">
@@ -47,7 +62,7 @@ export default function OrdersContainer() {
               className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap border transition-all cursor-pointer outline-none shrink-0 ${
                 activeTab === i
                   ? "bg-primary text-white border-primary"
-                  : "bg-white text-on-surface-variant border-outline-variant/40 hover:border-primary/30"
+                  : "bg-surface-container-lowest text-on-surface-variant border-outline-variant/40 hover:border-primary/30"
               }`}
             >
               {tab.label}

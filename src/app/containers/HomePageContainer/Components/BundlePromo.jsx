@@ -22,7 +22,7 @@ export default function BundlePromo() {
       <div className="max-w-container-max mx-auto px-4 md:px-margin-desktop">
 
         <div
-          className="rounded-2xl overflow-hidden flex flex-col lg:flex-row shadow-xl"
+          className="rounded-2xl overflow-hidden flex flex-col lg:flex-row shadow-card-xl"
           style={{ background: "linear-gradient(135deg, #630ed4 0%, #7c3aed 60%, #9b59f5 100%)" }}
         >
           {/* Image side */}
@@ -85,7 +85,7 @@ export default function BundlePromo() {
 
               <button
                 onClick={handleAddBundle}
-                className="flex items-center gap-2 bg-white text-primary hover:bg-white/90 py-2.5 px-5 rounded-full text-xs font-extrabold shadow-lg hover:shadow-xl transition-all active:scale-95 border-none cursor-pointer"
+                className="flex items-center gap-2 bg-white text-primary hover:bg-white/90 py-2.5 px-5 rounded-full text-xs font-extrabold shadow-card-md hover:shadow-card-lg transition-all active:scale-95 border-none cursor-pointer"
               >
                 <IconCartSimple size={14} weight="bold" />
                 Add Bundle to Cart

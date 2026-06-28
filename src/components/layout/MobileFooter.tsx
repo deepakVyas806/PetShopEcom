@@ -1,125 +1,112 @@
 "use client";
 
-import React from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { IconHome, IconBag, IconLightning, IconClock, IconSearch } from "@/lib/icons";
+import { cn } from "@/lib/utils";
+import { IconHome, IconBag, IconSearch, IconReceipt, IconUser } from "@/lib/icons";
 import { useAuth } from "@/context/AuthContext";
 import { useStore } from "@/context/StoreContext";
+import { useNotificationCount } from "@/hooks/useNotificationCount";
+
+type Tab = {
+  label: string;
+  Icon: React.ElementType;
+  active: boolean;
+  badge?: string | null;
+  onPress: () => void;
+};
 
 export default function MobileFooter() {
-  const pathname = usePathname();
-  const router   = useRouter();
+  const pathname   = usePathname();
+  const router     = useRouter();
   const { isAuthenticated } = useAuth();
-  const { cart } = useStore();
-  const cartCount = cart.reduce((sum: number, item: { quantity: number }) => sum + item.quantity, 0);
+  const { cart }   = useStore();
 
-  const guardedPush = (path: string) => {
-    if (isAuthenticated) {
-      router.push(path);
-    } else {
-      router.push(`/signin?redirect=${encodeURIComponent(path)}`);
-    }
-  };
+  const cartCount  = cart.reduce((s: number, i: { quantity: number }) => s + i.quantity, 0);
+  const notifCount = useNotificationCount();
 
-  const tabs = [
-    { label: "Home",   href: "/",            icon: IconHome,      guarded: false },
-    { label: "Search", href: "/marketplace",  icon: IconSearch,    guarded: false },
-    { label: "Offers", href: "/marketplace",  icon: IconLightning, guarded: false, highlight: true },
-    { label: "Orders", href: "/orders",       icon: IconClock,     guarded: true  },
+  const guard = (path: string) =>
+    router.push(isAuthenticated ? path : `/signin?redirect=${encodeURIComponent(path)}`);
+
+  const TABS: Tab[] = [
+    {
+      label:   "Home",
+      Icon:    IconHome,
+      active:  pathname === "/",
+      onPress: () => router.push("/"),
+    },
+    {
+      label:   "Explore",
+      Icon:    IconSearch,
+      active:  pathname.startsWith("/marketplace"),
+      onPress: () => router.push("/marketplace"),
+    },
+    {
+      label:   "Cart",
+      Icon:    IconBag,
+      active:  pathname === "/cart",
+      badge:   cartCount > 0 ? (cartCount > 9 ? "9+" : String(cartCount)) : null,
+      onPress: () => router.push("/cart"),
+    },
+    {
+      label:   "Orders",
+      Icon:    IconReceipt,
+      active:  pathname.startsWith("/orders") || pathname.startsWith("/order-detail") || pathname.startsWith("/track-order"),
+      onPress: () => guard("/orders"),
+    },
+    {
+      label:   isAuthenticated ? "Profile" : "Sign In",
+      Icon:    IconUser,
+      active:  pathname === "/profile",
+      onPress: () => guard("/profile"),
+    },
   ];
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white dark:bg-surface-container-lowest backdrop-blur-md border-t border-outline-variant/20 shadow-[0_-4px_16px_rgba(0,0,0,0.07)]">
-      <div className="flex items-center justify-around h-16 px-2">
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-surface/96 backdrop-blur-xl border-t border-outline-variant/20 shadow-[0_-1px_0_0_rgba(0,0,0,0.04),0_-4px_24px_rgba(0,0,0,0.07)]">
+      <div className="flex items-stretch h-[58px]">
+        {TABS.map((tab) => (
+          <button
+            key={tab.label}
+            onClick={tab.onPress}
+            className="flex-1 flex flex-col items-center justify-center gap-1 relative focus:outline-none bg-transparent border-none cursor-pointer group"
+          >
+            {/* Active top indicator */}
+            {tab.active && (
+              <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-[2.5px] rounded-full bg-primary" />
+            )}
 
-        {tabs.map((tab) => {
-          const isActive = pathname === tab.href && !tab.highlight;
-          const Icon = tab.icon;
+            {/* Icon wrapper with pill bg when active */}
+            <div className={cn(
+              "relative flex items-center justify-center w-11 h-6 rounded-full transition-all duration-200",
+              tab.active ? "bg-primary/10" : "group-hover:bg-surface-container"
+            )}>
+              <tab.Icon
+                size={19}
+                weight={tab.active ? "fill" : "regular"}
+                className={cn(
+                  "transition-colors duration-150",
+                  tab.active ? "text-primary" : "text-on-surface-variant"
+                )}
+              />
 
-          const inner = (
-            <div className={`flex flex-col items-center gap-0.5 relative px-3 py-1 rounded-xl transition-all ${
-              isActive ? "text-primary" : tab.highlight ? "text-white" : "text-on-surface-variant"
-            } ${tab.highlight ? "" : isActive ? "bg-primary/8" : ""}`}>
-              {tab.highlight ? (
-                <div className="relative">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-lg shadow-primary/30 -mt-5">
-                    <Icon size={18} weight="fill" className="text-white" />
-                  </div>
-                </div>
-              ) : (
-                <Icon size={22} weight={isActive ? "fill" : "regular"} />
-              )}
-              <span className={`text-[9px] font-bold tracking-wide ${tab.highlight ? "text-primary -mt-1" : ""}`}>
-                {tab.label}
-              </span>
-              {isActive && !tab.highlight && (
-                <span className="absolute -bottom-2.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-primary" />
-              )}
-            </div>
-          );
-
-          if (tab.guarded) {
-            return (
-              <button key={tab.label} onClick={() => guardedPush(tab.href)}
-                className="bg-transparent border-none cursor-pointer -mt-0.5 focus:outline-none">
-                {inner}
-              </button>
-            );
-          }
-
-          return (
-            <Link key={tab.label} href={tab.href} className="-mt-0.5">
-              {inner}
-            </Link>
-          );
-        })}
-
-        {/* Shop tab with cart badge */}
-        <button
-          onClick={() => router.push("/cart")}
-          className="bg-transparent border-none cursor-pointer -mt-0.5 focus:outline-none"
-        >
-          <div className={`flex flex-col items-center gap-0.5 relative px-3 py-1 rounded-xl transition-all ${
-            pathname === "/cart" ? "text-primary bg-primary/8" : "text-on-surface-variant"
-          }`}>
-            <div className="relative">
-              <IconBag size={22} weight={pathname === "/cart" ? "fill" : "regular"} />
-              {cartCount > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 bg-primary text-white text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center leading-none">
-                  {cartCount > 9 ? "9+" : cartCount}
+              {/* Badge */}
+              {tab.badge && (
+                <span className="absolute -top-1.5 -right-1 min-w-[15px] h-[15px] px-[3px] bg-primary text-on-primary text-[8px] font-black rounded-full flex items-center justify-center leading-none ring-[1.5px] ring-surface">
+                  {tab.badge}
                 </span>
               )}
             </div>
-            <span className="text-[9px] font-bold tracking-wide">Cart</span>
-            {pathname === "/cart" && (
-              <span className="absolute -bottom-2.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-primary" />
-            )}
-          </div>
-        </button>
 
-        {/* Profile / login */}
-        <button
-          onClick={() => guardedPush("/profile")}
-          className={`bg-transparent border-none cursor-pointer -mt-0.5 focus:outline-none`}
-        >
-          <div className={`flex flex-col items-center gap-0.5 relative px-3 py-1 rounded-xl transition-all ${
-            pathname === "/profile" ? "text-primary bg-primary/8" : "text-on-surface-variant"
-          }`}>
-            <div className={`w-6 h-6 rounded-full flex items-center justify-center text-sm leading-none ${
-              pathname === "/profile" ? "ring-2 ring-primary ring-offset-1" : ""
-            }`}>
-              {isAuthenticated ? "🐾" : "👤"}
-            </div>
-            <span className="text-[9px] font-bold tracking-wide">
-              {isAuthenticated ? "Me" : "Login"}
+            {/* Label */}
+            <span className={cn(
+              "text-[9px] font-semibold leading-none tracking-wide transition-colors duration-150",
+              tab.active ? "text-primary" : "text-on-surface-variant"
+            )}>
+              {tab.label}
             </span>
-            {pathname === "/profile" && (
-              <span className="absolute -bottom-2.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-primary" />
-            )}
-          </div>
-        </button>
-
+          </button>
+        ))}
       </div>
     </nav>
   );

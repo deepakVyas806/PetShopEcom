@@ -1,7 +1,8 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface IReview extends Document {
-  productId:    mongoose.Types.ObjectId;
+  productId:    mongoose.Types.ObjectId | null;
+  serviceId:    mongoose.Types.ObjectId | null;
   userId:       mongoose.Types.ObjectId;
   name:         string;
   rating:       number;
@@ -17,7 +18,8 @@ export interface IReview extends Document {
 
 const reviewSchema = new Schema<IReview>(
   {
-    productId:    { type: Schema.Types.ObjectId, ref: "Product", required: true, index: true },
+    productId:    { type: Schema.Types.ObjectId, ref: "Product", required: false, index: true, default: null },
+    serviceId:    { type: Schema.Types.ObjectId, ref: "Service", required: false, index: true, default: null },
     userId:       { type: Schema.Types.ObjectId, ref: "User", required: true },
     name:         { type: String, required: true },
     rating:       { type: Number, required: true, min: 1, max: 5, index: true },
@@ -33,7 +35,9 @@ const reviewSchema = new Schema<IReview>(
 
 reviewSchema.index({ productId: 1, createdAt: -1 });
 reviewSchema.index({ productId: 1, rating: -1 });
-// One review per user per product
-reviewSchema.index({ productId: 1, userId: 1 }, { unique: true });
+reviewSchema.index({ serviceId: 1, createdAt: -1 });
+// One review per user per subject (product or service)
+reviewSchema.index({ productId: 1, userId: 1 }, { unique: true, sparse: true });
+reviewSchema.index({ serviceId: 1, userId: 1 }, { unique: true, sparse: true });
 
 export const Review = mongoose.model<IReview>("Review", reviewSchema);

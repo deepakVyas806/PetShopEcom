@@ -13,7 +13,7 @@ function getNextSlots(serviceId) {
 
 export default function ServiceCard({ service }) {
   return (
-    <div className="bg-white/80 backdrop-blur-md border border-purple-100 rounded-2xl overflow-hidden flex flex-col h-full transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
+    <div className="bg-surface-container-lowest border border-outline-variant/20 rounded-2xl overflow-hidden flex flex-col h-full transition-all duration-300 hover:-translate-y-1 hover:shadow-card-lg">
 
       {/* Image — clicking navigates to detail page */}
       <Link href={`/services/${service._id ?? service.id}`} className="relative h-52 overflow-hidden block">
@@ -27,7 +27,7 @@ export default function ServiceCard({ service }) {
             {service.badge}
           </span>
         )}
-        <div className="absolute bottom-3 right-3 flex items-center gap-1 bg-white/90 backdrop-blur px-2 py-1 rounded-lg text-primary text-xs font-bold shadow-sm">
+        <div className="absolute bottom-3 right-3 flex items-center gap-1 bg-surface-container-lowest/90 backdrop-blur px-2 py-1 rounded-lg text-primary text-xs font-bold shadow-card-sm">
           <IconStar size={13} weight="fill" />
           {service.rating} ({service.reviewCount})
         </div>
@@ -74,7 +74,7 @@ export default function ServiceCard({ service }) {
         <div className="flex items-center gap-2.5 mt-auto">
           <Link
             href={`/services/book?serviceId=${service._id ?? service.id}`}
-            className="flex-1 py-2.5 px-4 bg-primary text-white font-bold text-xs rounded-xl shadow-md hover:opacity-90 active:scale-95 transition-all text-center"
+            className="flex-1 py-2.5 px-4 bg-primary text-white font-bold text-xs rounded-xl shadow-brand-sm hover:brightness-110 active:scale-95 transition-all text-center"
           >
             Book Now
           </Link>

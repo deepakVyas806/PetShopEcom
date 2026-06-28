@@ -30,7 +30,7 @@ export default function Footer() {
   ];
 
   const linkCls =
-    "text-black hover:text-primary hover:translate-x-1 transition-all inline-block text-xs font-medium";
+    "text-on-surface-variant hover:text-primary hover:translate-x-1 transition-all inline-block text-xs font-medium";
 
   return (
     <footer className="bg-surface-container-lowest dark:bg-inverse-surface border-t border-outline-variant/35 transition-colors duration-300">
@@ -41,7 +41,7 @@ export default function Footer() {
         {/* Column 1: Brand + Socials */}
         <div className="space-y-2">
           <BrandLogo />
-          <p className="text-black text-xs font-medium leading-relaxed">
+          <p className="text-on-surface-variant text-xs font-medium leading-relaxed">
             Redefining pet care through artful design and uncompromising quality.
           </p>
           <div className="flex gap-3 pt-1">
@@ -49,7 +49,7 @@ export default function Footer() {
               href="https://artpetshop.in"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-black hover:text-primary transition-colors"
+              className="text-on-surface-variant hover:text-primary transition-colors"
               aria-label="Official Website"
             >
               <IconGlobe size={16} weight="regular" />
@@ -58,7 +58,7 @@ export default function Footer() {
               href="https://instagram.com/artpetshop"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-black hover:text-primary transition-colors"
+              className="text-on-surface-variant hover:text-primary transition-colors"
               aria-label="Instagram"
             >
               <IconCamera size={16} weight="regular" />
@@ -67,7 +67,7 @@ export default function Footer() {
               href="https://youtube.com/@artpetshop"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-black hover:text-primary transition-colors"
+              className="text-on-surface-variant hover:text-primary transition-colors"
               aria-label="YouTube"
             >
               <IconVideo size={16} weight="regular" />
@@ -77,7 +77,7 @@ export default function Footer() {
 
         {/* Column 2: Quick Links */}
         <div>
-          <h5 className="text-xs font-bold text-black uppercase tracking-wider mb-2">Quick Links</h5>
+          <h5 className="text-xs font-bold text-on-surface uppercase tracking-wider mb-2">Quick Links</h5>
           <ul className="space-y-1.5">
             {quickLinks.map((link) => (
               <li key={link.href}>
@@ -89,7 +89,7 @@ export default function Footer() {
 
         {/* Column 3: Account */}
         <div>
-          <h5 className="text-xs font-bold text-black uppercase tracking-wider mb-2">Account</h5>
+          <h5 className="text-xs font-bold text-on-surface uppercase tracking-wider mb-2">Account</h5>
           <ul className="space-y-1.5">
             {accountLinks.map((link) => (
               <li key={link.href}>
@@ -101,18 +101,18 @@ export default function Footer() {
 
         {/* Column 4: Newsletter */}
         <div>
-          <h5 className="text-xs font-bold text-black uppercase tracking-wider mb-2">Newsletter</h5>
-          <p className="text-black text-xs font-medium mb-3">
+          <h5 className="text-xs font-bold text-on-surface uppercase tracking-wider mb-2">Newsletter</h5>
+          <p className="text-on-surface-variant text-xs font-medium mb-3">
             Join our community for exclusive tips and offers.
           </p>
           <div className="flex gap-2">
             <input
-              className="bg-surface border border-outline-variant/40 rounded-lg px-3 py-1.5 text-xs w-full focus:ring-1 focus:ring-primary focus:border-primary outline-none text-black"
+              className="bg-surface-container-low border border-outline-variant/40 rounded-lg px-3 py-1.5 text-xs w-full focus:ring-1 focus:ring-primary focus:border-primary outline-none text-on-surface placeholder:text-on-surface-variant/50"
               placeholder="Your email"
               type="email"
             />
             <button
-              className="bg-primary text-white p-2 rounded-lg hover:bg-primary-container transition-colors cursor-pointer"
+              className="bg-primary text-on-primary p-2 rounded-lg hover:brightness-105 hover:shadow-brand-sm transition-all cursor-pointer"
               aria-label="Subscribe"
             >
               <IconSend size={16} weight="bold" />
@@ -132,7 +132,7 @@ export default function Footer() {
             </h4>
             <div className="flex flex-wrap gap-4 text-xs">
               {adminLinks.map((al) => (
-                <Link key={al.label} href={al.href} className="text-black hover:text-primary hover:underline font-medium">
+                <Link key={al.label} href={al.href} className="text-on-surface-variant hover:text-primary hover:underline font-medium">
                   {al.label}
                 </Link>
               ))}
@@ -147,7 +147,7 @@ export default function Footer() {
 
           {/* Payment icons */}
           <div className="flex items-center gap-2 flex-wrap justify-center sm:justify-start">
-            <span className="text-[10px] text-gray-400 font-medium shrink-0">We accept:</span>
+            <span className="text-[10px] text-on-surface-variant font-medium shrink-0">We accept:</span>
             {["VISA", "MC", "UPI", "Paytm", "GPay", "COD"].map((p) => (
               <span
                 key={p}
@@ -172,7 +172,7 @@ export default function Footer() {
               { icon: "✓",  label: "Verified Store" },
               { icon: "🛡", label: "100% Genuine" },
             ].map(({ icon, label }) => (
-              <div key={label} className="flex items-center gap-1 text-[10px] text-gray-500 font-medium">
+              <div key={label} className="flex items-center gap-1 text-[10px] text-on-surface-variant font-medium">
                 <span className="text-xs">{icon}</span>
                 {label}
               </div>
@@ -183,12 +183,12 @@ export default function Footer() {
 
       {/* Copyright + legal */}
       <div className="px-4 md:px-10 py-3 border-t border-outline-variant/20 max-w-[1280px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
-        <p className="text-black text-xs font-medium opacity-70">
+        <p className="text-on-surface-variant text-xs font-medium">
           &copy; {new Date().getFullYear()} artPetShop. All rights reserved.
         </p>
         <div className="flex items-center gap-3">
           {["Privacy Policy", "Terms of Use", "Refund Policy", "Contact Us"].map((l) => (
-            <Link key={l} href="#" className="text-[10px] text-gray-400 hover:text-primary transition-colors font-medium">
+            <Link key={l} href="#" className="text-[10px] text-on-surface-variant hover:text-primary transition-colors font-medium">
               {l}
             </Link>
           ))}

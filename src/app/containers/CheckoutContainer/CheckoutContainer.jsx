@@ -6,8 +6,8 @@ import { fmt } from "@/lib/currency";
 import { Card, Button, FormField } from "@/components/ui";
 import {
   IconCheck, IconUser, IconShipping, IconClock, IconArrowRight, IconArrowLeft,
-  IconLock, IconCard, IconWallet, IconMoney, IconLocation,
-  IconShield, IconSpinner, IconNetbanking,
+  IconLock, IconMoney, IconLocation,
+  IconShield, IconSpinner,
 } from "@/lib/icons";
 
 /* ── Step navigation ──────────────────────────────────────────────────────── */
@@ -74,7 +74,7 @@ function ContactStep({ form, setForm, goToStep }) {
 function ShippingStep({
   savedAddresses, addressesLoading, selectedAddressId, setSelectedAddressId,
   showNewAddressForm, setShowNewAddressForm,
-  newAddress, setNewAddress, saveAndSelectAddress,
+  newAddress, setNewAddress, saveAndSelectAddress, addressSaving,
   goToStep,
 }) {
   return (
@@ -147,8 +147,11 @@ function ShippingStep({
             <FormField label="Pincode" placeholder="400001" value={newAddress.pincode}
               onChange={e => setNewAddress(p => ({ ...p, pincode: e.target.value }))} />
           </div>
-          <Button variant="secondary" size="sm" onClick={saveAndSelectAddress}>
-            <IconCheck size={14} weight="bold" /> Save Address
+          <Button variant="secondary" size="sm" onClick={saveAndSelectAddress} disabled={addressSaving}>
+            {addressSaving
+              ? <><IconSpinner size={14} className="animate-spin" weight="regular" /> Saving…</>
+              : <><IconCheck size={14} weight="bold" /> Save Address</>
+            }
           </Button>
         </Card>
       )}
@@ -220,87 +223,79 @@ function DeliveryStep({ deliveryOption, setDeliveryOption, deliveryOptions, free
 }
 
 /* ── Payment step ────────────────────────────────────────────────────────── */
-const PAYMENT_METHODS = [
-  { id: "card",       label: "Card",       Icon: IconCard,       sub: "Credit / Debit"  },
-  { id: "netbanking", label: "Netbanking", Icon: IconNetbanking, sub: "All major banks"  },
-  { id: "wallet",     label: "Wallets",    Icon: IconWallet,     sub: "Paytm / PhonePe" },
-  { id: "cod",        label: "Cash",       Icon: IconMoney,      sub: "Pay on delivery" },
-];
-
-function PaymentStep({
-  goToStep, handlePay, total, isService, submitting, errorMsg,
-  paymentMethod, setPaymentMethod,
-}) {
+function PaymentStep({ goToStep, handlePayOnline, handleCOD, total, isService, submitting, errorMsg }) {
   const backStep = isService ? 1 : 2;
-  const isOnline = paymentMethod !== "cod";
 
   return (
     <section className="space-y-4">
       <div className="flex items-center gap-2">
         <IconLock size={18} className="text-primary" weight="regular" />
-        <h2 className="text-sm font-semibold text-on-surface">Secure Payment</h2>
+        <h2 className="text-sm font-semibold text-on-surface">Choose Payment</h2>
       </div>
 
-      {/* Method selector */}
-      <div className="grid grid-cols-4 gap-2">
-        {PAYMENT_METHODS.map((m) => (
-          <button
-            key={m.id}
-            onClick={() => setPaymentMethod(m.id)}
-            className={`flex flex-col items-center gap-1 py-3 px-2 rounded-xl border text-center transition-all cursor-pointer outline-none ${
-              paymentMethod === m.id
-                ? "border-primary bg-primary/5 shadow-sm"
-                : "border-outline-variant bg-surface hover:border-primary/40"
-            }`}
-          >
-            <m.Icon size={20} className={paymentMethod === m.id ? "text-primary" : "text-on-surface-variant"} weight="regular" />
-            <span className={`text-[10px] font-bold leading-tight ${paymentMethod === m.id ? "text-primary" : "text-on-surface"}`}>
-              {m.label}
-            </span>
-            <span className="text-[9px] text-on-surface-variant leading-tight hidden sm:block">{m.sub}</span>
-          </button>
-        ))}
-      </div>
-
-      {/* Online payment — Razorpay handles the actual form in its own modal */}
-      {isOnline && (
-        <Card className="flex items-start gap-3.5">
-          <div className="mt-0.5 w-8 h-8 rounded-lg bg-[#072654] flex items-center justify-center shrink-0">
-            <span className="text-white font-black text-[10px] tracking-tight">R₹</span>
-          </div>
-          <div className="min-w-0">
-            <p className="text-xs font-bold text-on-surface">
-              {paymentMethod === "card"       && "Pay by Credit / Debit Card"}
-              {paymentMethod === "netbanking" && "Pay via Netbanking"}
-              {paymentMethod === "wallet"     && "Pay via Wallet (Paytm / PhonePe)"}
-            </p>
-            <p className="text-[10px] text-on-surface-variant mt-0.5 leading-relaxed">
-              Clicking <strong>Pay {fmt(total)}</strong> opens a secure Razorpay popup.
-              Enter your card / UPI / wallet details there — nothing is stored on our servers.
-            </p>
-            <div className="flex items-center gap-1.5 mt-2">
-              <IconShield size={12} className="text-green-600" weight="fill" />
-              <span className="text-[10px] text-green-700 font-semibold">256-bit SSL · PCI-DSS compliant</span>
+      <div className="space-y-3">
+        {/* ── Pay Online ── */}
+        <div className="rounded-2xl border border-primary/20 bg-primary/[0.025] p-4 space-y-3">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-[#072654] flex items-center justify-center shrink-0 shadow-sm">
+              <span className="text-white font-black text-[11px] tracking-tight">R₹</span>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-bold text-on-surface">Pay Online</p>
+              <p className="text-[10px] text-on-surface-variant">Card · UPI · Netbanking · Wallets</p>
+            </div>
+            <div className="flex items-center gap-1 shrink-0">
+              <IconShield size={11} className="text-green-600" weight="fill" />
+              <span className="text-[10px] text-green-700 font-semibold">Secure</span>
             </div>
           </div>
-        </Card>
-      )}
+          <p className="text-[10px] text-on-surface-variant leading-relaxed">
+            A secure Razorpay popup opens — choose card, UPI, wallet, or netbanking there.
+            Nothing is stored on our servers.
+          </p>
+          <button
+            onClick={handlePayOnline}
+            disabled={submitting}
+            className="w-full h-10 rounded-xl bg-primary text-on-primary font-bold text-sm hover:brightness-105 active:scale-[0.99] transition-all cursor-pointer border-none disabled:opacity-60 flex items-center justify-center gap-2 shadow-sm"
+          >
+            {submitting
+              ? <><IconSpinner size={16} className="animate-spin" weight="regular" /> Processing…</>
+              : <><IconLock size={16} weight="bold" /> Pay {fmt(total)}</>
+            }
+          </button>
+        </div>
 
-      {/* COD */}
-      {paymentMethod === "cod" && (
-        <Card className="flex items-start gap-3">
-          <IconMoney size={20} className="text-primary mt-0.5" weight="regular" />
-          <div>
-            <p className="text-xs font-bold text-on-surface">Cash on Delivery</p>
-            <p className="text-[10px] text-on-surface-variant mt-0.5 leading-relaxed">
-              Pay in cash when your order arrives. No online transaction needed.
-              Your order status will be <strong>Pending</strong> until delivered.
+        {/* ── Cash on Delivery ── */}
+        {!isService && (
+          <div className="rounded-2xl border border-outline-variant/40 bg-surface-container-low/40 p-4 space-y-3">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-surface-container-high flex items-center justify-center shrink-0">
+                <IconMoney size={19} className="text-on-surface-variant" weight="regular" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-bold text-on-surface">Cash on Delivery</p>
+                <p className="text-[10px] text-on-surface-variant">Pay when your order arrives</p>
+              </div>
+            </div>
+            <p className="text-[10px] text-on-surface-variant leading-relaxed">
+              No online payment needed. Pay in cash at delivery.
+              Order status will show as <strong>Pending</strong> until delivered.
             </p>
+            <button
+              onClick={handleCOD}
+              disabled={submitting}
+              className="w-full h-10 rounded-xl border border-outline-variant/60 bg-surface text-on-surface font-bold text-sm hover:border-primary/40 hover:bg-surface-container active:scale-[0.99] transition-all cursor-pointer disabled:opacity-60 flex items-center justify-center gap-2"
+            >
+              {submitting
+                ? <><IconSpinner size={16} className="animate-spin" weight="regular" /> Processing…</>
+                : <><IconCheck size={16} weight="bold" /> Place Order (COD)</>
+              }
+            </button>
           </div>
-        </Card>
-      )}
+        )}
+      </div>
 
-      {/* Error / cancel message */}
+      {/* Error */}
       {errorMsg && (
         <div className="flex items-start gap-2 px-3 py-2.5 bg-error/5 border border-error/20 rounded-xl">
           <span className="text-error text-base mt-px shrink-0">⚠</span>
@@ -308,17 +303,9 @@ function PaymentStep({
         </div>
       )}
 
-      <div className="flex justify-between items-center pt-2">
+      <div className="pt-1">
         <Button variant="ghost" onClick={() => goToStep(backStep)} disabled={submitting}>
           <IconArrowLeft size={16} weight="bold" /> Back
-        </Button>
-        <Button onClick={handlePay} disabled={submitting} className="px-6 py-2.5 shadow-md">
-          {submitting
-            ? <><IconSpinner size={16} className="animate-spin" weight="regular" /> Processing…</>
-            : paymentMethod === "cod"
-              ? <><IconCheck size={16} weight="bold" /> Place Order</>
-              : <><IconLock size={16} weight="bold" /> Pay {fmt(total)}</>
-          }
         </Button>
       </div>
     </section>
@@ -326,7 +313,7 @@ function PaymentStep({
 }
 
 /* ── Order summary sidebar ────────────────────────────────────────────────── */
-function OrderSummary({ isService, service, bookingDate, bookingTime, checkoutItems, subtotal, shipping, tax, taxRate, total, couponCode, setCouponCode, applyCoupon, couponError, discount, availableOffers, applyCouponFromOffer, appliedCoupon }) {
+function OrderSummary({ isService, service, bookingDate, bookingTime, checkoutItems, subtotal, shipping, tax, taxRate, total, couponCode, setCouponCode, applyCoupon, couponApplying, couponError, discount, availableOffers, applyCouponFromOffer, appliedCoupon }) {
   return (
     <aside className="lg:col-span-4 space-y-4">
       <Card className="sticky top-24">
@@ -394,7 +381,7 @@ function OrderSummary({ isService, service, bookingDate, bookingTime, checkoutIt
             <span>Tax ({taxRate ?? 18}% GST)</span><span>{fmt(tax)}</span>
           </div>
           {discount > 0 && (
-            <div className="flex justify-between text-xs text-green-600 font-bold">
+            <div className="flex justify-between text-xs text-success font-bold">
               <span>Coupon discount</span><span>−{fmt(discount)}</span>
             </div>
           )}
@@ -423,7 +410,7 @@ function OrderSummary({ isService, service, bookingDate, bookingTime, checkoutIt
                     title={offer.description || offer.name}
                     className={`inline-flex flex-col items-start px-2.5 py-1.5 rounded-xl border text-[9px] font-bold transition-all cursor-pointer ${
                       isApplied
-                        ? "bg-green-50 border-green-400 text-green-700"
+                        ? "bg-success/10 border-success text-success"
                         : "bg-primary/5 border-primary/30 text-primary hover:bg-primary/10"
                     }`}
                   >
@@ -449,9 +436,13 @@ function OrderSummary({ isService, service, bookingDate, bookingTime, checkoutIt
             />
             <button
               onClick={applyCoupon}
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-primary font-bold text-xs hover:bg-primary/10 px-3 py-1.5 rounded-lg transition-all cursor-pointer border-none bg-transparent"
+              disabled={couponApplying}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-primary font-bold text-xs hover:bg-primary/10 px-3 py-1.5 rounded-xl transition-all cursor-pointer border-none bg-transparent flex items-center gap-1 disabled:opacity-50"
             >
-              Apply
+              {couponApplying
+                ? <IconSpinner size={13} className="animate-spin" weight="regular" />
+                : "Apply"
+              }
             </button>
           </div>
           {couponError && <p className="text-[10px] text-error font-semibold">{couponError}</p>}
@@ -484,9 +475,8 @@ export default function CheckoutContainer() {
             <ContactStep form={c.contactForm} setForm={c.setContactForm} goToStep={c.goToStep} />
           )}
           {c.isService && c.activeStep === 2 && (
-            <PaymentStep goToStep={c.goToStep} handlePay={c.handlePay} total={c.total}
-              isService submitting={c.submitting} errorMsg={c.errorMsg}
-              paymentMethod={c.paymentMethod} setPaymentMethod={c.setPaymentMethod} />
+            <PaymentStep goToStep={c.goToStep} handlePayOnline={c.handlePay} handleCOD={c.handleCOD}
+              total={c.total} isService submitting={c.submitting} errorMsg={c.errorMsg} />
           )}
 
           {/* Cart flow */}
@@ -501,6 +491,7 @@ export default function CheckoutContainer() {
               newAddress={c.newAddress}
               setNewAddress={c.setNewAddress}
               saveAndSelectAddress={c.saveAndSelectAddress}
+              addressSaving={c.addressSaving}
               goToStep={c.goToStep}
             />
           )}
@@ -514,9 +505,8 @@ export default function CheckoutContainer() {
             />
           )}
           {!c.isService && c.activeStep === 3 && (
-            <PaymentStep goToStep={c.goToStep} handlePay={c.handlePay} total={c.total}
-              isService={false} submitting={c.submitting} errorMsg={c.errorMsg}
-              paymentMethod={c.paymentMethod} setPaymentMethod={c.setPaymentMethod} />
+            <PaymentStep goToStep={c.goToStep} handlePayOnline={c.handlePayOnline} handleCOD={c.handleCOD}
+              total={c.total} isService={false} submitting={c.submitting} errorMsg={c.errorMsg} />
           )}
         </div>
 
@@ -534,6 +524,7 @@ export default function CheckoutContainer() {
           couponCode={c.couponCode}
           setCouponCode={c.setCouponCode}
           applyCoupon={c.applyCoupon}
+          couponApplying={c.estimateLoading}
           couponError={c.couponError}
           discount={c.discount}
           availableOffers={c.availableOffers}

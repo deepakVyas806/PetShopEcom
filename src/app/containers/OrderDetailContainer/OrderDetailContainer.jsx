@@ -1,13 +1,11 @@
 "use client";
 
-// import { IconCancel, IconWarning } from "@/lib/icons";
 import useOrderDetailContainer from "./OrderDetailContainer.hook";
-import OrderDetailHeader  from "./Components/OrderDetailHeader";
-import TrackingProgress   from "./Components/TrackingProgress";
-import OrderDetailItems   from "./Components/OrderDetailItems";
+import OrderDetailHeader   from "./Components/OrderDetailHeader";
+import OrderDetailItems    from "./Components/OrderDetailItems";
 import ShippingPaymentCard from "./Components/ShippingPaymentCard";
-import OrderSummaryCard   from "./Components/OrderSummaryCard";
-import MiniMap            from "./Components/MiniMap";
+import OrderSummaryCard    from "./Components/OrderSummaryCard";
+import OrderTimeline       from "@/components/common/OrderTimeline";
 
 export default function OrderDetailContainer({ orderId }) {
   const { order, loading, error } = useOrderDetailContainer(orderId);
@@ -46,18 +44,16 @@ export default function OrderDetailContainer({ orderId }) {
 
         {/* Left: tracking + items */}
         <div className="lg:col-span-8 space-y-gutter">
-          <TrackingProgress
-            activeStep={order.activeStep}
-            trackingNote={order.trackingNote}
-          />
+          <OrderTimeline status={order.status} createdAt={order.createdAt} />
           <OrderDetailItems items={order.items} />
         </div>
 
-        {/* Right: shipping/payment + summary + mini map */}
+        {/* Right: shipping/payment + summary */}
         <div className="lg:col-span-4 space-y-gutter">
           <ShippingPaymentCard
             shippingAddress={order.shippingAddress}
             paymentMethod={order.paymentMethod}
+            razorpayPaymentId={order.razorpayPaymentId}
           />
           <OrderSummaryCard
             subtotal={order.subtotal}
@@ -67,10 +63,6 @@ export default function OrderDetailContainer({ orderId }) {
             couponCode={order.couponCode}
             total={order.total}
           />
-          <MiniMap />
-
-          {/* Cancel Order — disabled for now */}
-          {/* {canCancel && ( ... )} */}
         </div>
 
       </div>

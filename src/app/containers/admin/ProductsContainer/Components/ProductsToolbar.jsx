@@ -1,6 +1,7 @@
 "use client";
 import { memo } from "react";
-import { IconSearch, IconDownload, IconAdd } from "@/lib/icons";
+import { IconDownload, IconAdd } from "@/lib/icons";
+import SearchInput from "@/components/common/SearchInput";
 
 const selectCls = "bg-surface-container-low border border-outline-variant/50 rounded-xl px-3 py-2.5 text-xs text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 cursor-pointer";
 
@@ -15,16 +16,12 @@ export default memo(function ProductsToolbar({
   return (
     <div className="flex flex-col lg:flex-row gap-3 mb-4">
       {/* Search */}
-      <div className="flex-1 relative">
-        <IconSearch size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none" />
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => onSearch(e.target.value)}
-          placeholder="Search product name, SKU, or brand…"
-          className="w-full pl-8 pr-4 py-2.5 bg-surface-container-low border border-outline-variant/50 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-primary/30 text-on-surface placeholder:text-on-surface-variant"
-        />
-      </div>
+      <SearchInput
+        value={search}
+        onChange={onSearch}
+        placeholder="Search product name, SKU, or brand…"
+        className="flex-1"
+      />
 
       {/* Controls */}
       <div className="flex flex-wrap gap-2">

@@ -60,7 +60,7 @@ export default memo(function RecentActivity({ orders, loading }) {
         <div className="space-y-1">
           {Array.from({ length: 5 }).map((_, i) => (
             <div key={i} className="flex items-center gap-3 p-2.5">
-              <div className="w-10 h-10 rounded-xl bg-on-surface/8 animate-pulse shrink-0" />
+              <div className="w-10 h-10 rounded-xl bg-on-surface/10 animate-shimmer shrink-0" />
               <div className="flex-1 space-y-2">
                 <Sk h="h-3" w="w-40" />
                 <Sk h="h-2.5" w="w-28" />

@@ -65,8 +65,8 @@ function LocationPicker() {
         onClick={() => setOpen((v) => !v)}
         className={cn(
           "flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all",
-          "hover:bg-primary/8 border border-transparent",
-          open ? "bg-primary/8 border-primary/20" : "text-on-surface-variant hover:text-primary"
+          "hover:bg-primary/10 border border-transparent",
+          open ? "bg-primary/10 border-primary/20" : "text-on-surface-variant hover:text-primary"
         )}
       >
         <IconLocation size={14} weight="fill" className="text-primary flex-shrink-0" />
@@ -79,7 +79,7 @@ function LocationPicker() {
       </button>
 
       {open && (
-        <div className="absolute top-full left-0 mt-1.5 bg-white dark:bg-surface-container border border-outline-variant/30 rounded-2xl shadow-xl z-[60] py-2 min-w-[148px] overflow-hidden">
+        <div className="absolute top-full left-0 mt-1.5 bg-surface-container-lowest border border-outline-variant/30 rounded-2xl shadow-card-lg z-[60] py-2 min-w-[148px] overflow-hidden">
           <p className="text-[9px] font-black text-on-surface-variant uppercase tracking-wide px-3 pb-1.5 pt-0.5">
             Deliver to
           </p>
@@ -90,7 +90,7 @@ function LocationPicker() {
               className={cn(
                 "w-full text-left px-3 py-1.5 text-xs transition-colors flex items-center gap-2",
                 c === city
-                  ? "text-primary font-black bg-primary/6"
+                  ? "text-primary font-black bg-primary/5"
                   : "text-on-surface hover:bg-surface-container-low font-medium"
               )}
             >
@@ -139,7 +139,7 @@ export default function ModifiedHeader() {
 
 
   return (
-    <header className="bg-surface/90 dark:bg-surface-container/90 backdrop-blur-xl border-b border-outline-variant/30 shadow-sm top-0 sticky z-50">
+    <header className="bg-surface/90 dark:bg-surface-container/90 backdrop-blur-xl border-b border-outline-variant/30 shadow-card top-0 sticky z-50">
 
       {/* ══ MOBILE ══════════════════════════════════════════════════════════════ */}
       <div className="flex md:hidden items-center h-14 px-3 gap-2 max-w-container-max mx-auto w-full">
@@ -191,7 +191,7 @@ export default function ModifiedHeader() {
                   "relative px-3 py-1 rounded-full text-xs font-semibold",
                   "transition-all duration-200 ease-out select-none active:scale-95",
                   active
-                    ? "bg-primary text-on-primary shadow-sm"
+                    ? "bg-primary text-on-primary shadow-brand-sm"
                     : "text-on-surface-variant hover:bg-primary/10 hover:text-primary hover:scale-105"
                 )}
               >

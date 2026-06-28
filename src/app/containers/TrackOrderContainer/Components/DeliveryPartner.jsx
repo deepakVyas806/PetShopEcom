@@ -1,33 +1,26 @@
 "use client";
 
-import { IconPaw } from "@/lib/icons";
+import { IconPaw, IconPhone } from "@/lib/icons";
 
 export default function DeliveryPartner({ carrier }) {
   return (
-    <section className="bg-tertiary-container text-on-tertiary-container rounded-xl p-4 border border-outline-variant/20 shadow-sm relative overflow-hidden">
-      <div className="relative z-10">
-        {/* Header */}
-        <div className="flex items-start justify-between mb-3">
-          <div>
-            <p className="text-[10px] font-bold uppercase tracking-widest opacity-70 mb-0.5">
-              Delivery Partner
-            </p>
-            <h2 className="text-sm font-bold">{carrier}</h2>
-          </div>
-          <IconPaw size={36} className="opacity-30" weight="regular" />
+    <section className="bg-surface-container-lowest border border-outline-variant/20 rounded-2xl p-5 shadow-card-sm">
+      <h3 className="text-xs font-bold text-on-surface mb-4 flex items-center gap-2">
+        <IconPaw size={15} className="text-primary" weight="regular" />
+        Delivery Partner
+      </h3>
+
+      {carrier ? (
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-xs font-semibold text-on-surface">{carrier}</p>
+          <button className="flex items-center gap-1.5 text-[10px] font-semibold text-primary bg-primary/8 hover:bg-primary/15 border border-primary/20 px-3 py-1.5 rounded-lg transition-colors cursor-pointer">
+            <IconPhone size={12} weight="regular" />
+            Contact
+          </button>
         </div>
-
-        <p className="text-xs leading-relaxed mb-4 opacity-80">
-          "Handling your furry friend's supplies with extra love and speed."
-        </p>
-
-        <button className="w-full py-2 bg-primary text-on-primary rounded-lg text-xs font-semibold hover:opacity-90 transition-opacity border-none cursor-pointer">
-          Contact Support
-        </button>
-      </div>
-
-      {/* Decorative glow */}
-      <div className="absolute -right-8 -bottom-8 w-28 h-28 bg-white/10 rounded-full blur-2xl pointer-events-none" />
+      ) : (
+        <p className="text-xs text-on-surface-variant">Delivery partner not yet assigned.</p>
+      )}
     </section>
   );
 }

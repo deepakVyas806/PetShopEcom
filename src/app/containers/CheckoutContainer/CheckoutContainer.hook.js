@@ -79,9 +79,6 @@ export default function useCheckoutContainer() {
   const [deliveryOption, setDeliveryOption] = useState("standard");
   const activeDeliveryOptions = (storeSettings.deliveryOptions ?? []).filter(o => o.active);
 
-  // ── Payment method ────────────────────────────────────────────────────────
-  const [paymentMethod, setPaymentMethod] = useState("card");
-
   // ── Coupon ────────────────────────────────────────────────────────────────
   const [couponCode,       setCouponCode]       = useState("");
   const [couponError,      setCouponError]      = useState(null);
@@ -126,7 +123,7 @@ export default function useCheckoutContainer() {
     firstName: "", lastName: "", phone: "", email: "", notes: "",
   });
 
-  // Fetch offers applicable to all products in the cart (backend resolves categories)
+  // Fetch offers applicable to all products in the cart
   useEffect(() => {
     const params = new URLSearchParams();
     if (isService && serviceId) {
@@ -142,14 +139,13 @@ export default function useCheckoutContainer() {
       .catch(() => {});
   }, [checkoutItems, isService, serviceId]);
 
-  // ── Coupon apply — validates then triggers estimate re-fetch ──────────────
+  // ── Coupon apply ──────────────────────────────────────────────────────────
   const applyCoupon = async () => {
     setCouponError(null);
     if (!couponCode.trim()) { setCouponError("Please enter a coupon code"); return; }
     setAppliedCoupon(couponCode.trim().toUpperCase());
   };
 
-  // One-click apply from an offer chip
   const applyCouponFromOffer = useCallback((code) => {
     setCouponError(null);
     setCouponCode(code);
@@ -157,7 +153,10 @@ export default function useCheckoutContainer() {
   }, []);
 
   // ── Save a new address then proceed ──────────────────────────────────────
+  const [addressSaving, setAddressSaving] = useState(false);
+
   const saveAndSelectAddress = async () => {
+    setAddressSaving(true);
     try {
       const data = await api.post("/addresses", {
         ...newAddress,
@@ -170,6 +169,8 @@ export default function useCheckoutContainer() {
       setShowNewAddressForm(false);
     } catch (err) {
       console.error("Address save failed:", err.message);
+    } finally {
+      setAddressSaving(false);
     }
   };
 
@@ -177,12 +178,13 @@ export default function useCheckoutContainer() {
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg,   setErrorMsg]   = useState(null);
 
-  const handlePay = async () => {
+  // Internal — accepts method directly so UI doesn't need a payment-method state
+  const handlePay = async (method) => {
     setSubmitting(true);
     setErrorMsg(null);
 
     try {
-      // ── Service appointment ───────────────────────────────────────────────
+      // ── Service appointment (no payment selection needed) ─────────────────
       if (isService) {
         await api.post("/appointments", { serviceId, date: bookingDate, timeSlot: bookingTime });
         router.push("/appointments");
@@ -199,13 +201,13 @@ export default function useCheckoutContainer() {
           quantity:  i.quantity,
         })),
         shippingAddress,
-        paymentMethod,
+        paymentMethod: method,
         deliveryOption,
         couponCode: appliedCoupon || undefined,
       };
 
-      // ── Cash on delivery — no payment gateway ─────────────────────────────
-      if (paymentMethod === "cod") {
+      // ── Cash on delivery ──────────────────────────────────────────────────
+      if (method === "cod") {
         const data = await api.post("/orders", orderPayload);
         clearCart();
         try { sessionStorage.removeItem("checkout_items"); } catch { /**/ }
@@ -221,9 +223,7 @@ export default function useCheckoutContainer() {
         return;
       }
 
-      // Use the backend-calculated total for Razorpay — no frontend math
       const rzpData = await api.post("/payment/create-order", { amount: estimate.total });
-
       setSubmitting(false);
 
       const prefillAddress = shippingAddress ?? {};
@@ -232,7 +232,6 @@ export default function useCheckoutContainer() {
         amount:          rzpData.amount,
         keyId:           rzpData.keyId,
         storeName:       "artPet Shop",
-        method:          paymentMethod,
         prefill: {
           name:    prefillAddress.name  ?? "",
           contact: prefillAddress.phone ?? "",
@@ -270,7 +269,6 @@ export default function useCheckoutContainer() {
     }
   };
 
-  // For service bookings, use the service price directly
   const serviceTotal = isService ? (service?.price ?? 0) : 0;
 
   return {
@@ -288,12 +286,9 @@ export default function useCheckoutContainer() {
     deliveryOption, setDeliveryOption,
     activeDeliveryOptions,
 
-    paymentMethod, setPaymentMethod,
-
     couponCode, setCouponCode, couponError, applyCoupon,
     appliedCoupon, availableOffers, applyCouponFromOffer,
 
-    // All financials come from backend estimate
     subtotal:  isService ? serviceTotal : estimate.subtotal,
     discount:  estimate.discount,
     tax:       estimate.tax,
@@ -303,6 +298,10 @@ export default function useCheckoutContainer() {
     taxRate:   storeSettings.taxRate,
     estimateLoading,
 
-    submitting, errorMsg, handlePay,
+    submitting, errorMsg,
+    handlePayOnline: () => handlePay("card"),
+    handleCOD:       () => handlePay("cod"),
+    handlePay:       () => handlePay("card"), // service flow compat
+    addressSaving,
   };
 }

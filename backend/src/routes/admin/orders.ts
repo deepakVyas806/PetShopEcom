@@ -1,5 +1,6 @@
 import { FastifyPluginAsync } from "fastify";
 import { Order } from "../../models/Order";
+import { Notification } from "../../models/Notification";
 import { adminOnly } from "../../hooks/adminOnly";
 import { parsePagination, paginationMeta } from "../../utils/paginate";
 
@@ -53,6 +54,31 @@ export const adminOrderRoutes: FastifyPluginAsync = async (app) => {
       { new: true }
     );
     if (!order) return reply.status(404).send({ message: "Order not found" });
+
+    const STATUS_ICON: Record<string, { icon: string; iconBg: string; iconColor: string }> = {
+      Shipped:          { icon: "local_shipping", iconBg: "bg-blue-100 dark:bg-blue-900/30",   iconColor: "text-blue-600 dark:text-blue-400"   },
+      "Out for Delivery":{ icon: "local_shipping", iconBg: "bg-orange-100 dark:bg-orange-900/30",iconColor: "text-orange-600 dark:text-orange-400"},
+      Delivered:        { icon: "check_circle",   iconBg: "bg-green-100 dark:bg-green-900/30", iconColor: "text-green-600 dark:text-green-400" },
+      Cancelled:        { icon: "warning",        iconBg: "bg-red-100 dark:bg-red-900/30",     iconColor: "text-red-600 dark:text-red-400"     },
+      Refunded:         { icon: "info",           iconBg: "bg-purple-100 dark:bg-purple-900/30",iconColor:"text-purple-600 dark:text-purple-400"},
+    };
+    const meta = STATUS_ICON[status];
+    if (meta) {
+      Notification.create({
+        userId:    order.userId,
+        type:      "order",
+        icon:      meta.icon,
+        iconBg:    meta.iconBg,
+        iconColor: meta.iconColor,
+        title:     `Order ${order.orderId} — ${status}`,
+        body:      `Your order status has been updated to "${status}".`,
+        actions:   [
+          { label: "Track Order",  variant: "primary",   href: `/track-order/${order._id}` },
+          { label: "View Details", variant: "secondary", href: `/order-detail/${order._id}` },
+        ],
+      }).catch(() => {});
+    }
+
     reply.send({ order });
   });
 };

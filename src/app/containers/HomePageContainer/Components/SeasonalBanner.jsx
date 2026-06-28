@@ -35,7 +35,7 @@ export default function SeasonalBanner() {
             <div className="flex flex-wrap items-center gap-3 mt-4 justify-center md:justify-start">
               <Link
                 href="/marketplace"
-                className="bg-white text-primary font-black text-xs px-6 py-2.5 rounded-full hover:bg-white/90 active:scale-95 transition-all shadow-lg flex items-center gap-1.5"
+                className="bg-white text-primary font-black text-xs px-6 py-2.5 rounded-full hover:bg-white/90 active:scale-95 transition-all shadow-card-md flex items-center gap-1.5"
               >
                 Shop Monsoon Kits <IconArrowRight size={14} weight="bold" />
               </Link>

@@ -2,33 +2,6 @@
 
 import { IconFilter, IconStar } from "@/lib/icons";
 
-const FALLBACK_PET_TYPES = [
-  { key: "dogs",       label: "Dogs"       },
-  { key: "cats",       label: "Cats"       },
-  { key: "birds",      label: "Birds"      },
-  { key: "fish",       label: "Fish"       },
-  { key: "small-pets", label: "Small Pets" },
-];
-
-const FALLBACK_CATEGORIES = [
-  { key: "food",        label: "Food & Treats"   },
-  { key: "toy",         label: "Toys & Play"     },
-  { key: "health",      label: "Health & Pharma" },
-  { key: "grooming",    label: "Grooming"        },
-  { key: "beds",        label: "Beds & Houses"   },
-  { key: "accessories", label: "Accessories"     },
-];
-
-const DEFAULT_BRANDS = [
-  { key: "royal-canin", label: "Royal Canin" },
-  { key: "pedigree",    label: "Pedigree"    },
-  { key: "purina",      label: "Purina"      },
-  { key: "whiskas",     label: "Whiskas"     },
-  { key: "himalaya",    label: "Himalaya"    },
-  { key: "drools",      label: "Drools"      },
-  { key: "trixie",      label: "Trixie"      },
-  { key: "beaphar",     label: "Beaphar"     },
-];
 
 const Divider = () => <div className="h-px bg-outline-variant/20" />;
 
@@ -64,15 +37,15 @@ export default function FilterPanel({
 
   selectedBrands = [],
   onBrandChange,
-  brands         = DEFAULT_BRANDS,
+  brands         = [],
 
   ratingFilter = false,
   onRatingFilterChange,
 
   onReset,
 }) {
-  const PET_TYPES         = petTypeOptions?.length   ? petTypeOptions   : FALLBACK_PET_TYPES;
-  const PRODUCT_CATEGORIES = categoryOptions?.length ? categoryOptions  : FALLBACK_CATEGORIES;
+  const PET_TYPES          = petTypeOptions  ?? [];
+  const PRODUCT_CATEGORIES = categoryOptions ?? [];
   const activeCount =
     selectedPetTypes.length +
     selectedCategories.length +
@@ -81,7 +54,7 @@ export default function FilterPanel({
     (priceRange < priceMax ? 1 : 0);
 
   return (
-    <div className="bg-white/80 dark:bg-surface-container-lowest backdrop-blur-sm border border-[#F3E8FF] dark:border-outline-variant/20 rounded-xl shadow-sm p-4 flex flex-col gap-3">
+    <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-xl shadow-card-sm p-4 flex flex-col gap-3">
 
       {/* Header */}
       <div className="flex items-center justify-between">
@@ -177,7 +150,7 @@ export default function FilterPanel({
           <div>
             <SectionLabel>Brand</SectionLabel>
             <div className="flex flex-col gap-2">
-              {(brands.length > 0 ? brands : DEFAULT_BRANDS).map((brand) => {
+              {brands.map((brand) => {
                 const key   = brand.key   ?? brand;
                 const label = brand.label ?? brand;
                 return (
@@ -226,7 +199,7 @@ export default function FilterPanel({
       {onReset && activeCount > 0 && (
         <button
           onClick={onReset}
-          className="w-full py-1.5 bg-surface-container-high text-on-surface-variant font-semibold text-xs rounded-lg hover:bg-primary/10 hover:text-primary transition-all cursor-pointer border-none outline-none mt-0.5"
+          className="w-full py-1.5 bg-surface-container-high text-on-surface-variant font-semibold text-xs rounded-xl hover:bg-primary/10 hover:text-primary transition-all cursor-pointer border-none outline-none mt-0.5"
         >
           Clear All Filters
         </button>

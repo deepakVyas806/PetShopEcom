@@ -10,19 +10,8 @@ export default memo(function OrdersToolbar({
 }) {
   return (
     <div className="flex flex-col gap-3 mb-4">
-      {/* Top row: export action */}
-      <div className="flex flex-wrap gap-2 justify-end">
-        <button
-          onClick={onExport}
-          className="flex items-center gap-1.5 px-4 py-2 bg-secondary-container text-on-secondary-container rounded-xl text-xs font-semibold hover:shadow-sm active:scale-95 transition-all cursor-pointer border-none"
-        >
-          <IconDownload size={15} weight="bold" />
-          Export CSV
-        </button>
-      </div>
-
       {/* Filter row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {/* Search */}
         <div className="relative sm:col-span-2 lg:col-span-1">
           <IconSearch size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none" weight="regular" />
@@ -59,11 +48,11 @@ export default memo(function OrdersToolbar({
           </select>
         </div>
 
-        {/* Bulk actions */}
-        <button className="flex items-center justify-between px-3 py-2.5 bg-surface border border-outline-variant rounded-xl text-on-surface-variant text-xs hover:bg-surface-container-high transition-all cursor-pointer">
+        {/* Bulk actions — hidden for now */}
+        {/* <button className="flex items-center justify-between px-3 py-2.5 bg-surface border border-outline-variant rounded-xl text-on-surface-variant text-xs hover:bg-surface-container-high transition-all cursor-pointer">
           <span className="font-medium">Bulk Actions</span>
           <IconChevronDown size={15} weight="bold" />
-        </button>
+        </button> */}
       </div>
     </div>
   );

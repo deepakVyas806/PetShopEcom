@@ -1,6 +1,7 @@
 import AuthGuard from "@/components/auth/AuthGuard";
 import AccountSidebar from "@/components/layout/AccountSidebar";
 import MobileAccountNav from "@/components/layout/MobileAccountNav";
+import AccountPageTransition from "@/components/layout/AccountPageTransition";
 
 export default function AccountLayout({
   children,
@@ -17,7 +18,9 @@ export default function AccountLayout({
         <div className="flex-1 min-w-0">
           {/* Mobile account nav — shows on all account pages, hidden on desktop */}
           <MobileAccountNav />
-          {children}
+          <AccountPageTransition>
+            {children}
+          </AccountPageTransition>
         </div>
       </div>
     </AuthGuard>

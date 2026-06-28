@@ -6,7 +6,7 @@ import OrderItemsList from "./OrderItemsList";
 import { fmt } from "@/lib/currency";
 import { useStore } from "@/context/StoreContext";
 import { OrderStatusBadge, Button } from "@/components/ui";
-import { IconShipping, IconNavigate, IconCheckCircle, IconPending, IconDownload, IconReorder, IconRefresh, IconWarning, IconCancel, IconChevronDown, IconTag } from "@/lib/icons";
+import { IconShipping, IconNavigate, IconCheckCircle, IconPending, IconDownload, IconReorder, IconRefresh, IconCancel, IconChevronDown, IconTag } from "@/lib/icons";
 
 // ─── Status icon config (kept for the icon display in header) ──────────────────
 const STATUS_CONFIG = {
@@ -21,9 +21,9 @@ const STATUS_CONFIG = {
     iconCls: "text-primary",
   },
   Delivered: {
-    iconBg:  "bg-green-100",
+    iconBg:  "bg-success/10",
     Icon:    IconCheckCircle,
-    iconCls: "text-green-600",
+    iconCls: "text-success",
   },
   "Order Confirmed": {
     iconBg:  "bg-surface-variant",
@@ -71,113 +71,68 @@ export default function OrderCard({ order, isExpanded, onToggleExpand }) {
 
   // ── Render action buttons for a given status ───────────────────────────────
   const renderActions = () => {
-    switch (order.status) {
-      case "Shipped":
-      case "Out for Delivery":
-        return (
-          <>
-            <Button href={`/track-order/${orderKey}`} variant="primary" size="md" rounded="lg">
-              Track Order
-            </Button>
-            <Button href={`/order-detail/${orderKey}`} variant="secondary" size="md" rounded="lg">
-              View Details
-            </Button>
-            <div className="ml-auto">
-              <Button variant="ghost" size="md" rounded="lg">
-                <IconDownload size={16} className="leading-none" weight="regular" />
-                Invoice
-              </Button>
-            </div>
-          </>
-        );
+    const status = order.status;
 
-      case "Delivered":
-        return (
-          <>
-            {/* Reorder button with states */}
-            <Button
-              variant="primary"
-              size="md"
-              rounded="lg"
-              onClick={reorderStep === "idle" ? handleReorder : undefined}
-              disabled={reorderStep === "adding"}
-              className={reorderStep === "adding" ? "opacity-70 cursor-wait" : ""}
-            >
-              {reorderStep === "idle" && (
-                <>
-                  <IconReorder size={14} className="leading-none" weight="regular" />
-                  Reorder
-                </>
-              )}
-              {reorderStep === "adding" && (
-                <>
-                  <IconRefresh size={14} className="leading-none animate-spin" weight="regular" />
-                  Adding…
-                </>
-              )}
-              {reorderStep === "done" && (
-                <>
-                  <IconCheckCircle size={14} className="leading-none" weight="regular" />
-                  Added to Cart ✓
-                </>
-              )}
-            </Button>
-            <Button href="/reviews" variant="secondary" size="md" rounded="lg">
-              Rate Products
-            </Button>
-          </>
-        );
-
-      case "Order Confirmed":
-      default:
-        return (
-          <>
-            <Button href={`/order-detail/${orderKey}`} variant="secondary" size="md" rounded="lg">
-              View Details
-            </Button>
-
-            {/* Cancel order — disabled for now */}
-            {/* {cancelStep === "idle" && (
-              <Button
-                variant="danger"
-                size="md"
-                rounded="lg"
-                onClick={() => setCancelStep("confirm")}
-              >
-                Cancel Order
-              </Button>
-            )}
-
-            {cancelStep === "confirm" && (
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-[11px] text-error font-semibold flex items-center gap-1">
-                  <IconWarning size={14} className="leading-none" weight="regular" />
-                  Cancel this order?
-                </span>
-                <Button variant="danger" size="md" rounded="lg" onClick={() => setCancelStep("done")}>
-                  Yes, Cancel
-                </Button>
-                <Button variant="secondary" size="md" rounded="lg" onClick={() => setCancelStep("idle")}>
-                  Keep Order
-                </Button>
-              </div>
-            )}
-
-            {cancelStep === "done" && (
-              <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-error/10 text-error text-xs font-bold">
-                <IconCancel size={14} className="leading-none" weight="regular" />
-                Order Cancelled
-              </span>
-            )} */}
-          </>
-        );
+    // Cancelled / Refunded — no actions
+    if (status === "Cancelled" || status === "Refunded") {
+      return (
+        <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-error/10 text-error text-xs font-bold">
+          <IconCancel size={14} className="leading-none" weight="regular" />
+          {status}
+        </span>
+      );
     }
+
+    // Delivered — reorder + rate, plus ghost track for history
+    if (status === "Delivered") {
+      return (
+        <>
+          <Button
+            variant="primary" size="md" rounded="lg"
+            onClick={reorderStep === "idle" ? handleReorder : undefined}
+            disabled={reorderStep === "adding"}
+            className={reorderStep === "adding" ? "opacity-70 cursor-wait" : ""}
+          >
+            {reorderStep === "idle"  && <><IconReorder size={14} className="leading-none" weight="regular" /> Reorder</>}
+            {reorderStep === "adding" && <><IconRefresh size={14} className="leading-none animate-spin" weight="regular" /> Adding…</>}
+            {reorderStep === "done"   && <><IconCheckCircle size={14} className="leading-none" weight="regular" /> Added to Cart ✓</>}
+          </Button>
+          <Button href="/reviews" variant="secondary" size="md" rounded="lg">
+            Rate Products
+          </Button>
+          <div className="ml-auto">
+            <Button href={`/track-order/${orderKey}`} variant="ghost" size="md" rounded="lg">
+              <IconShipping size={16} className="leading-none" weight="regular" />
+              Track
+            </Button>
+          </div>
+        </>
+      );
+    }
+
+    // All active statuses: Pending, Confirmed, Processing, Shipped, Out for Delivery
+    return (
+      <>
+        <Button href={`/track-order/${orderKey}`} variant="primary" size="md" rounded="lg">
+          <IconShipping size={14} className="leading-none" weight="regular" />
+          Track Order
+        </Button>
+        <Button href={`/order-detail/${orderKey}`} variant="secondary" size="md" rounded="lg">
+          View Details
+        </Button>
+        <div className="ml-auto">
+          <Button variant="ghost" size="md" rounded="lg">
+            <IconDownload size={16} className="leading-none" weight="regular" />
+            Invoice
+          </Button>
+        </div>
+      </>
+    );
   };
 
   return (
     <div
-      className="bg-surface-container-lowest border border-outline-variant/50 rounded-2xl transition-all duration-300 overflow-hidden"
-      style={{ boxShadow: "0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03)" }}
+      className="bg-surface-container-lowest border border-outline-variant/50 rounded-2xl transition-all duration-300 overflow-hidden shadow-card-sm"
     >
       <div className="p-4">
         {/* ── Header row ───────────────────────────────────────────── */}
@@ -207,7 +162,7 @@ export default function OrderCard({ order, isExpanded, onToggleExpand }) {
                 </span>
               )}
               {order.discount > 0 && (
-                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-green-600">
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-success">
                   <IconTag size={9} weight="fill" />
                   {order.couponCode ?? "Discount"}
                   &nbsp;−{fmt(order.discount)}

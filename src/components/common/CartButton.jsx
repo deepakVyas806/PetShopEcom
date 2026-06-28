@@ -29,7 +29,7 @@ export default function CartButton({
   const shared = cn(
     "transition-all duration-200 active:scale-95 cursor-pointer border-none outline-none",
     "flex items-center justify-center gap-1.5",
-    "hover:shadow-md",
+    "hover:shadow-brand-sm",
     isAdded ? ADDED_CLR : BASE_CLR,
     disabled && "opacity-50 cursor-not-allowed",
     className
@@ -45,7 +45,7 @@ export default function CartButton({
       className={cn(
         shared,
         variant === "icon"
-          ? "p-2 rounded-lg"
+          ? "p-2 rounded-xl"
           : "px-4 py-2 rounded-full text-xs font-semibold"
       )}
     >

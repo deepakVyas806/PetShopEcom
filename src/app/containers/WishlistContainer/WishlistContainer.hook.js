@@ -18,6 +18,9 @@ function transformProduct(p) {
     badge:         p.badge || (hasMrpDiscount ? "priceDrop" : null),
     stock:         stockStatus,
     itemType:      "product",
+    description:   p.description ?? null,
+    rating:        p.rating ?? null,
+    reviewsCount:  p.reviewsCount ?? null,
   };
 }
 

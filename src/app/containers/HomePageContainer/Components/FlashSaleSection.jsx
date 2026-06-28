@@ -59,10 +59,10 @@ function DealCard({ product }) {
   return (
     <Link
       href={`/marketplace/${product._id ?? product.id}`}
-      className="group shrink-0 w-36 md:w-44 bg-white dark:bg-surface-container-lowest rounded-xl overflow-hidden border border-outline-variant/15 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 flex flex-col"
+      className="group shrink-0 w-36 md:w-44 bg-surface-container-lowest rounded-xl overflow-hidden border border-outline-variant/20 hover:shadow-card-lg hover:-translate-y-0.5 transition-all duration-200 flex flex-col"
     >
       {/* Image */}
-      <div className="relative aspect-square bg-gray-50 overflow-hidden">
+      <div className="relative aspect-square bg-surface-container overflow-hidden">
         <img
           src={product.image}
           alt={product.name}

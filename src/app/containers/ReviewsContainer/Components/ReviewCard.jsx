@@ -4,19 +4,9 @@ import { cn } from "@/lib/utils";
 import StarRating from "./StarRating";
 import { IconThumbUp, IconFlag } from "@/lib/icons";
 
-const glassCard = {
-  background: "rgba(255,255,255,0.8)",
-  backdropFilter: "blur(12px)",
-  WebkitBackdropFilter: "blur(12px)",
-  border: "1px solid #F3E8FF",
-};
-
 export default function ReviewCard({ review, helpfulCount, isVoted, onHelpful }) {
   return (
-    <article
-      className="p-5 rounded-2xl hover:shadow-lg transition-all duration-300 space-y-3"
-      style={glassCard}
-    >
+    <article className="p-5 rounded-2xl bg-surface-container-lowest border border-outline-variant/20 shadow-card-sm hover:shadow-card-md transition-all duration-300 space-y-3">
       {/* Header row: avatar + name/stars + date */}
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-3">
@@ -61,7 +51,7 @@ export default function ReviewCard({ review, helpfulCount, isVoted, onHelpful })
               key={i}
               src={src}
               alt={`Review photo ${i + 1}`}
-              className="w-20 h-20 rounded-lg object-cover border border-outline-variant hover:scale-105 transition-transform cursor-pointer"
+              className="w-20 h-20 rounded-xl object-cover border border-outline-variant hover:scale-105 transition-transform cursor-pointer"
             />
           ))}
         </div>

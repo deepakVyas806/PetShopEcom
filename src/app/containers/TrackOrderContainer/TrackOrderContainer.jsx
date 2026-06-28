@@ -3,12 +3,10 @@
 import { useState } from "react";
 import { IconHelp, IconChevronDown, IconPhone, IconMail, IconChat } from "@/lib/icons";
 import useTrackOrderContainer from "./TrackOrderContainer.hook";
-import OrderHeader        from "./Components/OrderHeader";
-import DeliveryTimeline   from "./Components/DeliveryTimeline";
-import MapSection         from "./Components/MapSection";
-import ShippingAddress    from "./Components/ShippingAddress";
-import DeliveryPartner    from "./Components/DeliveryPartner";
-import OrderItemsSummary  from "./Components/OrderItemsSummary";
+import OrderHeader       from "./Components/OrderHeader";
+import ShippingAddress   from "./Components/ShippingAddress";
+import OrderItemsSummary from "./Components/OrderItemsSummary";
+import OrderTimeline     from "@/components/common/OrderTimeline";
 
 export default function TrackOrderContainer({ orderId }) {
   const { order, loading, error } = useTrackOrderContainer(orderId);
@@ -33,83 +31,76 @@ export default function TrackOrderContainer({ orderId }) {
       {/* Page heading + status */}
       <OrderHeader displayId={displayId} placedDate={placedDate} status={order.status} />
 
+      {/* Timeline — full width */}
+      <OrderTimeline status={order.status} createdAt={order.createdAt} className="mb-gutter" />
+
       {/* Two-column grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
 
-        {/* Left: timeline + map */}
+        {/* Left: items */}
         <div className="lg:col-span-7 space-y-gutter">
-          <DeliveryTimeline
-            milestones={order.milestones}
-            carrier={order.carrier ?? null}
-            trackingNumber={order.trackingNumber ?? null}
-          />
-          <MapSection driver={order.driver ?? null} />
-        </div>
-
-        {/* Right: address, carrier, items, help */}
-        <div className="lg:col-span-5 space-y-gutter">
-          <ShippingAddress address={order.shippingAddress} />
-          <DeliveryPartner carrier={order.carrier ?? null} />
           <OrderItemsSummary
             items={order.items ?? []}
             subtotal={order.subtotal}
+            tax={order.tax}
+            discount={order.discount}
+            couponCode={order.couponCode}
             shipping={order.shipping}
             total={order.total}
           />
+        </div>
 
-          {/* Help CTA + collapsible panel */}
-          <div className="rounded-xl border border-outline-variant/50 overflow-hidden">
+        {/* Right: address, carrier, help */}
+        <div className="lg:col-span-5 space-y-gutter">
+          <ShippingAddress address={order.shippingAddress} />
+
+          {/* Help — collapsible */}
+          <div className="bg-surface-container-lowest border border-outline-variant/20 rounded-2xl shadow-card-sm overflow-hidden">
             <button
               onClick={() => setHelpOpen((o) => !o)}
-              className="w-full flex items-center justify-between gap-2 p-4 text-on-surface-variant hover:text-primary transition-all group bg-transparent cursor-pointer text-xs font-medium border-none outline-none"
+              className="w-full flex items-center justify-between gap-2 px-5 py-4 text-on-surface-variant hover:text-primary transition-all group bg-transparent cursor-pointer text-xs font-bold border-none outline-none"
             >
               <span className="flex items-center gap-2">
-                <IconHelp size={18} className="group-hover:rotate-12 transition-transform" weight="regular" />
+                <IconHelp size={15} className="text-primary group-hover:rotate-12 transition-transform" weight="regular" />
                 Need help with this order?
               </span>
               <IconChevronDown
-                size={16}
-                className="transition-transform duration-200"
+                size={14}
+                className="text-primary transition-transform duration-200"
                 style={{ transform: helpOpen ? "rotate(180deg)" : "rotate(0deg)" }}
                 weight="bold"
               />
             </button>
 
-            {/* Collapsible panel */}
             <div
               className="overflow-hidden transition-all duration-300"
-              style={{ maxHeight: helpOpen ? "220px" : "0px", opacity: helpOpen ? 1 : 0 }}
+              style={{ maxHeight: helpOpen ? "200px" : "0px", opacity: helpOpen ? 1 : 0 }}
             >
-              <div className="border-t border-outline-variant/20 p-4 space-y-3 bg-surface-container-lowest/60">
-
-                {/* Phone */}
+              <div className="border-t border-outline-variant/20 px-5 py-4 space-y-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                    <IconPhone size={16} className="text-primary" weight="bold" />
+                  <div className="w-7 h-7 rounded-full bg-primary/8 flex items-center justify-center shrink-0">
+                    <IconPhone size={13} className="text-primary" weight="regular" />
                   </div>
                   <div>
-                    <p className="text-[10px] text-on-surface-variant font-medium">Contact Support</p>
-                    <p className="text-xs font-bold text-on-surface">+91 1800-999-PETS</p>
+                    <p className="text-[10px] text-on-surface-variant">Contact Support</p>
+                    <p className="text-xs font-semibold text-on-surface">+91 1800-999-PETS</p>
                   </div>
                 </div>
 
-                {/* Email */}
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                    <IconMail size={16} className="text-primary" weight="bold" />
+                  <div className="w-7 h-7 rounded-full bg-primary/8 flex items-center justify-center shrink-0">
+                    <IconMail size={13} className="text-primary" weight="regular" />
                   </div>
                   <div>
-                    <p className="text-[10px] text-on-surface-variant font-medium">Email Us</p>
-                    <p className="text-xs font-bold text-on-surface">support@artpetshop.in</p>
+                    <p className="text-[10px] text-on-surface-variant">Email Us</p>
+                    <p className="text-xs font-semibold text-on-surface">support@artpetshop.in</p>
                   </div>
                 </div>
 
-                {/* Live Chat */}
-                <button className="w-full flex items-center justify-center gap-1.5 py-2 rounded-lg bg-primary text-on-primary text-xs font-bold hover:shadow-md active:scale-95 transition-all cursor-pointer border-none">
-                  <IconChat size={14} weight="bold" />
+                <button className="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl bg-primary text-on-primary text-xs font-bold hover:shadow-brand-sm active:scale-95 transition-all cursor-pointer border-none">
+                  <IconChat size={13} weight="regular" />
                   Live Chat
                 </button>
-
               </div>
             </div>
           </div>

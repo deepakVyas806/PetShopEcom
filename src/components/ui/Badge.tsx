@@ -52,7 +52,7 @@ export default function Badge({
         className
       )}
     >
-      {dot && <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse flex-shrink-0" />}
+      {dot && <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse-soft flex-shrink-0" />}
       {children}
     </span>
   );

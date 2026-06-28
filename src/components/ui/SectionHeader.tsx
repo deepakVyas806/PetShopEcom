@@ -11,7 +11,7 @@ interface SectionHeaderProps {
   icon?:      React.ReactNode; // Phosphor icon component, e.g. <IconCart size={16} />
   action?:    React.ReactNode;
   className?: string;
-  size?:      "sm" | "md";
+  size?:      "sm" | "md" | "lg";
 }
 
 export default function SectionHeader({
@@ -31,7 +31,7 @@ export default function SectionHeader({
               {icon}
             </span>
           )}
-          <h2 className={cn("font-bold text-on-surface", size === "sm" ? "text-xs" : "text-sm")}>
+          <h2 className={cn("font-bold text-on-surface", size === "sm" ? "text-xs" : size === "lg" ? "text-base" : "text-sm")}>
             {title}
           </h2>
         </div>

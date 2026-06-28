@@ -1,16 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 import ProductCard from "@/components/common/ProductCard";
-import { IconDelete, IconCalendar, IconCartSimple, IconCheck, IconBell } from "@/lib/icons";
+import { useStore } from "@/context/StoreContext";
+import { IconDelete, IconCalendar, IconCartSimple, IconCheck } from "@/lib/icons";
 
 /* ─── Badge config ───────────────────────────────────────────────────────────── */
 function buildBadges(badge, stock) {
   const list = [];
   if (badge === "priceDrop") {
     list.push({ label: "Price Drop", cls: "bg-primary text-on-primary" });
-    list.push({ label: "In Stock",   cls: "bg-green-100 text-green-700", dot: true, dotCls: "bg-green-600" });
+    list.push({ label: "In Stock",   cls: "bg-success/10 text-success", dot: true, dotCls: "bg-success" });
   }
   if (badge === "service")  list.push({ label: "Service", cls: "bg-primary-container text-on-primary" });
   if (stock === "lowStock" && badge !== "priceDrop") {
@@ -24,7 +25,7 @@ function DeleteButton({ onClick }) {
   return (
     <button
       onClick={onClick}
-      className="p-2 bg-white/80 backdrop-blur-sm hover:bg-red-50 text-error rounded-full transition-colors shadow-sm border-none cursor-pointer"
+      className="p-2 bg-surface-container-lowest/80 backdrop-blur-sm hover:bg-error/10 text-error rounded-full transition-colors shadow-card-sm border-none cursor-pointer"
       aria-label="Remove from wishlist"
     >
       <IconDelete size={18} weight="regular" />
@@ -34,22 +35,39 @@ function DeleteButton({ onClick }) {
 
 /* ─── Wishlist CTA button (goes into ctaSlot) ────────────────────────────────── */
 function WishlistCTA({ item, isMoving, onMoveToCart }) {
+  const { cart } = useStore();
+  const isInCart = cart.some(i => (i.product._id ?? i.product.id) === item.id);
+
   if (item.stock === "outOfStock") {
     return (
       <button
         disabled
-        className="p-2 rounded-lg bg-surface-container-high text-on-surface-variant opacity-50 cursor-not-allowed border-none text-xs font-medium px-3"
+        className="w-full py-2 rounded-xl bg-surface-container-high text-on-surface-variant opacity-50 cursor-not-allowed border-none text-xs font-medium flex items-center justify-center"
       >
-        Notify Me
+        Out of Stock
       </button>
     );
   }
   if (item.itemType === "service") {
     return (
-      <button className="p-2 rounded-lg bg-primary text-on-primary hover:bg-primary-container transition-all border-none cursor-pointer flex items-center gap-1 text-xs font-medium px-3">
+      <Link
+        href={`/services/book?serviceId=${item.id}`}
+        className="w-full py-2 rounded-xl bg-primary text-on-primary hover:brightness-105 transition-all flex items-center justify-center gap-1.5 text-xs font-bold"
+      >
         <IconCalendar size={14} className="leading-none" weight="regular" />
-        Book
-      </button>
+        Book Now
+      </Link>
+    );
+  }
+  if (isInCart) {
+    return (
+      <Link
+        href="/cart"
+        className="w-full py-2 rounded-xl bg-success text-white flex items-center justify-center gap-1.5 text-xs font-bold hover:brightness-110 transition-all"
+      >
+        <IconCartSimple size={14} weight="bold" />
+        Go to Cart
+      </Link>
     );
   }
   return (
@@ -57,7 +75,7 @@ function WishlistCTA({ item, isMoving, onMoveToCart }) {
       onClick={onMoveToCart}
       disabled={isMoving}
       className={cn(
-        "p-2 rounded-lg border-none cursor-pointer flex items-center gap-1 text-xs font-medium px-3 transition-all",
+        "w-full py-2 rounded-xl border-none cursor-pointer flex items-center justify-center gap-1.5 text-xs font-bold transition-all",
         isMoving
           ? "bg-primary text-on-primary"
           : "bg-primary-container text-on-primary-container hover:bg-primary hover:text-on-primary"
@@ -69,36 +87,19 @@ function WishlistCTA({ item, isMoving, onMoveToCart }) {
   );
 }
 
-/* ─── Price Alert button ─────────────────────────────────────────────────────── */
-function PriceAlertButton({ item }) {
-  const [alertSet, setAlertSet] = useState(false);
-  if (item.stock === "outOfStock" || item.itemType === "service") return null;
-  return (
-    <button
-      onClick={() => setAlertSet((v) => !v)}
-      className={cn(
-        "flex items-center gap-1 text-[10px] font-semibold border rounded-full px-2 py-0.5 transition-all cursor-pointer outline-none mt-1.5",
-        alertSet
-          ? "bg-primary/10 text-primary border-primary/30"
-          : "bg-surface-container text-on-surface-variant border-outline-variant/30 hover:border-primary/30 hover:text-primary"
-      )}
-    >
-      <IconBell size={10} weight={alertSet ? "fill" : "regular"} />
-      {alertSet ? "Alert set ✓" : "Price alert"}
-    </button>
-  );
-}
-
 /* ─── WishlistCard ───────────────────────────────────────────────────────────── */
 export default function WishlistCard({ item, isMoving, onRemove, onMoveToCart }) {
   // Map wishlist item to ProductCard's product format
   const product = {
-    id:          item.id,
-    name:        item.name,
-    image:       item.image,
-    price:       item.price,
-    mrp:         item.originalPrice ?? undefined,
-    meta:        `${item.category} · ${item.type}`,
+    id:           item.id,
+    name:         item.name,
+    image:        item.image,
+    price:        item.price,
+    mrp:          item.originalPrice ?? undefined,
+    meta:         `${item.category} · ${item.type}`,
+    description:  item.description ?? undefined,
+    rating:       item.rating ?? undefined,
+    reviewsCount: item.reviewsCount ?? undefined,
   };
 
   return (
@@ -108,12 +109,7 @@ export default function WishlistCard({ item, isMoving, onRemove, onMoveToCart })
       stockOverlay={item.stock === "outOfStock"}
       isMoving={isMoving}
       topRightSlot={<DeleteButton onClick={onRemove} />}
-      ctaSlot={
-        <div>
-          <WishlistCTA item={item} isMoving={isMoving} onMoveToCart={onMoveToCart} />
-          <PriceAlertButton item={item} />
-        </div>
-      }
+      ctaSlot={<WishlistCTA item={item} isMoving={isMoving} onMoveToCart={onMoveToCart} />}
     />
   );
 }

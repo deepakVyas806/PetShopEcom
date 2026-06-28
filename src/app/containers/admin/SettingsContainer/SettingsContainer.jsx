@@ -47,7 +47,7 @@ function Field({ label, hint, prefix, suffix, children }) {
 
 function Section({ emoji, title, subtitle, children }) {
   return (
-    <div className="bg-surface-container-lowest rounded-2xl border border-outline-variant/30 shadow-sm overflow-hidden">
+    <div className="bg-surface-container-lowest rounded-2xl border border-outline-variant/30 shadow-card-sm overflow-hidden">
       <div className="px-5 py-3.5 flex items-center gap-3 border-b border-outline-variant/20 bg-surface-container-low">
         <span className="text-xl">{emoji}</span>
         <div>
@@ -137,14 +137,14 @@ export default function SettingsContainer() {
         </div>
         <div className="flex items-center gap-3 flex-shrink-0">
           {saved && (
-            <span className="flex items-center gap-1 text-xs text-green-600 font-semibold">
+            <span className="flex items-center gap-1 text-xs text-success font-semibold">
               <IconCheck size={12} weight="bold" /> Saved
             </span>
           )}
           <button
             onClick={handleSave}
             disabled={saving}
-            className="flex items-center gap-2 px-5 py-2.5 bg-primary text-on-primary rounded-full text-xs font-bold shadow-sm shadow-primary/20 hover:bg-primary/90 active:scale-95 transition-all cursor-pointer border-none disabled:opacity-70"
+            className="flex items-center gap-2 px-5 py-2.5 bg-primary text-on-primary rounded-full text-xs font-bold shadow-brand-sm hover:bg-primary/90 active:scale-95 transition-all cursor-pointer border-none disabled:opacity-70"
           >
             {saving ? <IconSpinner size={13} className="animate-spin" /> : <IconCheck size={13} weight="bold" />}
             Save All Changes
@@ -195,7 +195,7 @@ export default function SettingsContainer() {
                   </div>
 
                   {opt.key === "standard" ? (
-                    <div className="text-[10px] font-bold text-green-600 bg-green-50 px-3 py-1.5 rounded-lg border border-green-200 flex-shrink-0">
+                    <div className="text-[10px] font-bold text-success bg-success/10 px-3 py-1.5 rounded-xl border border-success/20 flex-shrink-0">
                       FREE above ₹{settings.freeShippingThreshold}
                     </div>
                   ) : (

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { useStore } from "@/context/StoreContext";
+import { useAuth } from "@/context/AuthContext";
 import { api, qs } from "@/lib/api";
 
 // Convert a catalog item to the {key, label} shape FilterPanel expects
@@ -11,6 +12,7 @@ function itemsToOptions(items) {
 export default function useProductsList() {
   const searchParams = useSearchParams();
   const { addToCart } = useStore();
+  const { isAuthenticated } = useAuth();
 
   const categoryParam = searchParams.get("category");
   const typeParam     = searchParams.get("type");
@@ -31,7 +33,7 @@ export default function useProductsList() {
   const [products,         setProducts]         = useState([]);
   const [totalCount,       setTotalCount]       = useState(0);
   const [page,             setPage]             = useState(1);
-  const [hasMore,          setHasMore]          = useState(true);
+  const [hasMore,          setHasMore]          = useState(false);
   const [loading,          setLoading]          = useState(true);
   const [loadingMore,      setLoadingMore]      = useState(false);
   const [brands,           setBrands]           = useState([]);
@@ -76,7 +78,7 @@ export default function useProductsList() {
 
     const params = {
       page,
-      limit:     12,
+      limit:     10,
       sortBy,
       search:    searchQuery || undefined,
       petTypes:  selectedPetTypes.length  > 0 ? selectedPetTypes.join(",")   : undefined,
@@ -91,8 +93,11 @@ export default function useProductsList() {
         if (cancelled) return;
         const newItems = data.products ?? [];
         setProducts(prev => page === 1 ? newItems : [...prev, ...newItems]);
-        setTotalCount(data.total ?? data.totalCount ?? 0);
-        setHasMore(page < (data.totalPages ?? 1));
+        const total = data.total ?? data.totalCount ?? 0;
+        setTotalCount(total);
+        // Derive totalPages from API field, or calculate from total/limit
+        const totalPg = data.totalPages ?? (total > 0 ? Math.ceil(total / 10) : 1);
+        setHasMore(page < totalPg);
       })
       .catch(() => {})
       .finally(() => { if (!cancelled) { setLoading(false); setLoadingMore(false); } });
@@ -104,30 +109,56 @@ export default function useProductsList() {
     if (!loading && !loadingMore && hasMore) setPage(p => p + 1);
   }, [loading, loadingMore, hasMore]);
 
-  const handlePetTypeChange = (type) => {
+  const handlePetTypeChange = useCallback((type) => {
     setSelectedPetTypes(prev => prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]);
     setPage(1);
-  };
-  const handleCategoryChange = (cat) => {
+  }, []);
+  const handleCategoryChange = useCallback((cat) => {
     setSelectedCategories(prev => prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat]);
     setPage(1);
-  };
-  const handleBrandChange = (brand) => {
+  }, []);
+  const handleBrandChange = useCallback((brand) => {
     setSelectedBrands(prev => prev.includes(brand) ? prev.filter(b => b !== brand) : [...prev, brand]);
     setPage(1);
-  };
-  const handleSetSortBy       = (s) => { setSortBy(s);       setPage(1); };
-  const handleSetSearchQuery  = (q) => { setSearchQuery(q);  setPage(1); };
-  const handleSetPriceRange   = (r) => { setPriceRange(r);   setPage(1); };
-  const handleSetRatingFilter = (r) => { setRatingFilter(r); setPage(1); };
+  }, []);
+  const handleSetSortBy       = useCallback((s) => { setSortBy(s);       setPage(1); }, []);
+  const handleSetSearchQuery  = useCallback((q) => { setSearchQuery(q);  setPage(1); }, []);
+  const handleSetPriceRange   = useCallback((r) => { setPriceRange(r);   setPage(1); }, []);
+  const handleSetRatingFilter = useCallback((r) => { setRatingFilter(r); setPage(1); }, []);
 
-  const toggleFavorite = (id) => setFavorites(prev => ({ ...prev, [id]: !prev[id] }));
-  const handleAddToCart = (product) => {
+  // Load existing wishlist on mount so hearts are pre-filled
+  const wishlistFetchedRef = useRef(false);
+  useEffect(() => {
+    if (!isAuthenticated || wishlistFetchedRef.current) return;
+    wishlistFetchedRef.current = true;
+    api.get("/wishlists")
+      .then(data => {
+        const map = {};
+        (data.items ?? []).forEach(item => { map[item._id ?? item.id] = true; });
+        setFavorites(map);
+      })
+      .catch(() => {});
+  }, [isAuthenticated]);
+
+  const toggleFavorite = useCallback((id) => {
+    setFavorites(prev => {
+      const next = { ...prev, [id]: !prev[id] };
+      if (isAuthenticated) {
+        if (next[id]) {
+          api.post("/wishlists", { productId: id }).catch(() => {});
+        } else {
+          api.delete(`/wishlists/${id}`).catch(() => {});
+        }
+      }
+      return next;
+    });
+  }, [isAuthenticated]);
+  const handleAddToCart = useCallback((product) => {
     addToCart(product);
     const id = product._id ?? product.id;
     setAddedItems(prev => ({ ...prev, [id]: true }));
     setTimeout(() => setAddedItems(prev => ({ ...prev, [id]: false })), 2000);
-  };
+  }, [addToCart]);
 
   return {
     products, totalCount, loading, loadingMore, hasMore, brands,

@@ -59,7 +59,7 @@ export default function ForgotForm({ onBack }) {
       </Field>
 
       {error && (
-        <p className="text-xs text-red-500 text-center">{error}</p>
+        <p className="text-xs text-error text-center">{error}</p>
       )}
 
       <SubmitButton loading={loading} label="Send Reset Link" loadingLabel="Sending…" />

@@ -5,16 +5,6 @@ import Link from "next/link";
 import { IconArrowRight } from "@/lib/icons";
 import { api } from "@/lib/api";
 
-const FALLBACK = [
-  { name: "Royal Canin", slug: "royal-canin", logoUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjINrjnwjQx6HpAUFgy3gQ10_w-n_4o2eIVA&s" },
-  { name: "Pedigree",    slug: "pedigree",    logoUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1SuDcoSysHZRhXMrSNlo93bDaXLlcU0e2AA&s" },
-  { name: "Purina",      slug: "purina",      logoUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-1vTH9694tY4cOwiU6UGMatBr713plNQqig&s" },
-  { name: "Whiskas",     slug: "whiskas",     logoUrl: "https://upload.wikimedia.org/wikipedia/en/c/c9/Whiskas_logo.png" },
-  { name: "Himalaya",    slug: "himalaya",    logoUrl: "https://himalayausa.com/cdn/shop/files/SOCIAL-SHARING-IMG.png?v=1761305370" },
-  { name: "Drools",      slug: "drools",      logoUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyqfj-US2moaFk2RPArWJLUTmrQg0Q1BWUBw&s" },
-  { name: "Trixie",      slug: "trixie",      logoUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJ-xXPxwX4uNJ9ZmfyWAlED0rxpHshnqj1QQ&s" },
-  { name: "Beaphar",     slug: "beaphar",     logoUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQuJYAV8WRkCdZiPW2YAC0fuWZA4kxYf7rTSQ&s" },
-];
 
 function BrandCard({ name, slug, logoUrl }) {
   const [errored, setErrored] = useState(false);
@@ -25,7 +15,7 @@ function BrandCard({ name, slug, logoUrl }) {
         {logoUrl && !errored ? (
           <img src={logoUrl} alt={name} className="w-full h-full object-contain p-2" onError={() => setErrored(true)} />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-primary/8">
+          <div className="w-full h-full flex items-center justify-center bg-primary/10">
             <span className="text-sm font-black text-primary">{initials}</span>
           </div>
         )}
@@ -40,8 +30,8 @@ function BrandCard({ name, slug, logoUrl }) {
 function BrandSkeleton() {
   return (
     <div className="flex flex-col items-center gap-2 flex-1">
-      <div className="w-full aspect-square rounded-2xl bg-surface-container-high animate-pulse" />
-      <div className="h-2.5 w-3/4 rounded-full bg-surface-container-high animate-pulse" />
+      <div className="w-full aspect-square rounded-2xl animate-shimmer" />
+      <div className="h-2.5 w-3/4 rounded-full animate-shimmer" />
     </div>
   );
 }
@@ -52,13 +42,12 @@ export default function FeaturedBrands() {
 
   useEffect(() => {
     api.get("/catalog?type=brand")
-      .then(data => {
-        const items = data.items ?? [];
-        setBrands(items.length > 0 ? items : FALLBACK);
-      })
-      .catch(() => setBrands(FALLBACK))
+      .then(data => setBrands(data.items ?? []))
+      .catch(() => setBrands([]))
       .finally(() => setLoading(false));
   }, []);
+
+  if (!loading && !brands.length) return null;
 
   return (
     <section className="w-full py-7 bg-surface">

@@ -5,7 +5,7 @@ import { PRODUCT_STATUS_STYLES } from "../data";
 
 const StockBar = memo(function StockBar({ stock, maxStock }) {
   const pct      = maxStock > 0 ? Math.min(100, Math.round((stock / maxStock) * 100)) : 0;
-  const barColor = pct === 0 ? "bg-gray-300" : pct < 20 ? "bg-error" : pct < 50 ? "bg-amber-500" : "bg-primary";
+  const barColor = pct === 0 ? "bg-outline-variant/40" : pct < 20 ? "bg-error" : pct < 50 ? "bg-warning" : "bg-primary";
   const lowText  = pct < 20;
   return (
     <div className="flex items-center gap-2">
@@ -46,7 +46,7 @@ const ProductRow = memo(function ProductRow({ product, selected, onSelect, onEdi
       </td>
       <td className="p-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-surface-variant overflow-hidden border border-outline-variant/30 flex-shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-surface-variant overflow-hidden border border-outline-variant/30 flex-shrink-0">
             {product.image ? (
               <img
                 src={product.image}
@@ -81,14 +81,14 @@ const ProductRow = memo(function ProductRow({ product, selected, onSelect, onEdi
         <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
           <button
             onClick={() => onEdit(product)}
-            className="p-1.5 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded-lg transition-all cursor-pointer"
+            className="p-1.5 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded-xl transition-all cursor-pointer"
             title="Edit"
           >
             <IconEdit size={15} weight="bold" />
           </button>
           <button
             onClick={() => onDelete(product)}
-            className="p-1.5 text-on-surface-variant hover:text-error hover:bg-error/10 rounded-lg transition-all cursor-pointer"
+            className="p-1.5 text-on-surface-variant hover:text-error hover:bg-error/10 rounded-xl transition-all cursor-pointer"
             title="Delete"
           >
             <IconDelete size={15} weight="bold" />

@@ -52,7 +52,7 @@ export default function BookAppointmentContainer() {
           <div className="lg:col-span-8 space-y-6">
 
             {/* Calendar */}
-            <section className="bg-surface-container-lowest border border-outline-variant/30 rounded-lg p-3 shadow-sm">
+            <section className="bg-surface-container-lowest border border-outline-variant/30 rounded-xl p-4 shadow-card-sm">
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h1 className="text-sm font-bold text-on-surface">Select Date</h1>
@@ -119,7 +119,7 @@ export default function BookAppointmentContainer() {
             </section>
 
             {/* Time Slots */}
-            <section className="bg-surface-container-lowest border border-outline-variant/30 rounded-lg p-3 shadow-sm">
+            <section className="bg-surface-container-lowest border border-outline-variant/30 rounded-xl p-4 shadow-card-sm">
               <h2 className="text-sm font-bold text-on-surface mb-3">Available Time Slots</h2>
               <div className="space-y-4">
                 {Object.entries(TIME_SLOTS).map(([key, group]) => (
@@ -137,7 +137,7 @@ export default function BookAppointmentContainer() {
                             key={slot}
                             disabled={unavailable}
                             onClick={() => !unavailable && setSelectedTime(slot)}
-                            className={`py-1.5 px-2 rounded-md text-xs font-semibold transition-all cursor-pointer border outline-none ${
+                            className={`py-1.5 px-2 rounded-xl text-xs font-semibold transition-all cursor-pointer border outline-none ${
                               unavailable
                                 ? "opacity-40 bg-surface-container-high border-outline-variant cursor-not-allowed"
                                 : active
@@ -158,7 +158,7 @@ export default function BookAppointmentContainer() {
 
           {/* Right: Booking Summary */}
           <aside className="lg:col-span-4 sticky top-24">
-            <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-xl overflow-hidden shadow-lg">
+            <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-xl overflow-hidden shadow-card-lg">
               <div className="p-5 bg-primary text-white">
                 <h2 className="text-sm font-bold">Booking Summary</h2>
               </div>
@@ -257,7 +257,7 @@ export default function BookAppointmentContainer() {
                       `/checkout?type=service&serviceId=${serviceId}&date=${encodeURIComponent(selectedDateLabel)}&time=${encodeURIComponent(selectedTime)}`
                     );
                   }}
-                  className="w-full py-2.5 bg-primary text-white text-xs font-bold rounded-lg shadow-md hover:shadow-primary/30 hover:-translate-y-0.5 transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:translate-y-0 cursor-pointer border-none outline-none flex items-center justify-center gap-2"
+                  className="w-full py-2.5 bg-primary text-white text-xs font-bold rounded-xl shadow-brand-sm hover:shadow-brand-md hover:-translate-y-0.5 transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:translate-y-0 cursor-pointer border-none outline-none flex items-center justify-center gap-2"
                 >
                   Proceed to Checkout
                   <IconArrowRight size={16} weight="bold" />

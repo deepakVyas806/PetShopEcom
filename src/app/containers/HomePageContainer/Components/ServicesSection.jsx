@@ -6,44 +6,18 @@ import { IconArrowRight, IconClock, IconCalendarAdd } from "@/lib/icons";
 import { api } from "@/lib/api";
 import { fmt } from "@/lib/currency";
 
-const FALLBACK = [
-  {
-    _id:       "f1",
-    name:      "Luxury Grooming",
-    title:     "Luxury Grooming",
-    description: "Spa treatments and stylistic grooming by certified experts.",
-    badge:     "Most Popular",
-    price:     599,
-    duration:  "45 min",
-    rating:    4.9,
-    reviewCount: 312,
-    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuAMJLwysOQgFEFqxPQ2utHm0N79V411N6ngWBxjSthJSlCwcYrWy6N3Fe2-p4VYvlqosgcDzKKZ3HaZY6HZioWRy6Wyk36sqKanLYp9HwF9i2ph1ZrKR9JPtxNwH1kKZH3jfXiiJhW-Pu0FDlYOmUod9LD1e7wE2Z8pohWpfhIwZEKEhHpzaLn9Z4Z6hMekVkZ01Jp6v89WuKDuH82_oyqFwrFxx7tecT09bmPLIh6YksKuePbaw_tg3yv3N7kluIWYM2p0MaQzYpTa",
-  },
-  {
-    _id:       "f2",
-    name:      "Vet Consultation",
-    title:     "Vet Consultation",
-    description: "Telehealth or in-person checkups for complete peace of mind.",
-    badge:     "Online Available",
-    price:     399,
-    duration:  "30 min",
-    rating:    4.8,
-    reviewCount: 178,
-    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuC4ftmhpXhyCsIRU_jQZVH3_i8vc48BJhFEAs6a6_IjxNc_DZ8H-k7XaTeTIkky4yoGCmhaFTGHivIP5Zj_aCrCufnVicBMxHuOCSoCGU2qszby6eO7IB3GbKf_iLqQAZjNw8_pAb5514qhbZaNJMu-sULQLIoBKCpX2L110v1f09jwOnJOr9a19XB9W9fk2jVdW-u-vTWVippTdM7VbBJnFWIPqyugx43gfRauoMdlYvwSslgJxAhlduFrwhR9bLe8wqO8FshbHcoU",
-  },
-];
 
 function ServiceSkeleton() {
   return (
     <div className="rounded-2xl bg-surface-container-lowest border border-outline-variant/15 overflow-hidden flex flex-col">
-      <div className="w-full bg-surface-container-high animate-pulse" style={{ height: 180 }} />
+      <div className="w-full animate-shimmer" style={{ height: 180 }} />
       <div className="p-4 flex flex-col gap-3">
-        <div className="h-3.5 w-2/3 rounded-full bg-surface-container-high animate-pulse" />
-        <div className="h-2.5 w-full rounded-full bg-surface-container-high animate-pulse" />
-        <div className="h-2.5 w-4/5 rounded-full bg-surface-container-high animate-pulse" />
+        <div className="h-3.5 w-2/3 rounded-full animate-shimmer" />
+        <div className="h-2.5 w-full rounded-full animate-shimmer" />
+        <div className="h-2.5 w-4/5 rounded-full animate-shimmer" />
         <div className="flex items-center justify-between mt-2">
-          <div className="h-4 w-16 rounded-full bg-surface-container-high animate-pulse" />
-          <div className="h-7 w-24 rounded-full bg-surface-container-high animate-pulse" />
+          <div className="h-4 w-16 rounded-full animate-shimmer" />
+          <div className="h-7 w-24 rounded-full animate-shimmer" />
         </div>
       </div>
     </div>
@@ -60,7 +34,7 @@ function ServiceCard({ service }) {
   const reviews     = service.reviewCount ?? service.reviewsCount ?? 0;
 
   return (
-    <div className="group relative overflow-hidden rounded-2xl bg-white dark:bg-surface-container-lowest border border-outline-variant/15 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col">
+    <div className="group relative overflow-hidden rounded-2xl bg-surface-container-lowest border border-outline-variant/20 shadow-card-sm hover:shadow-card-lg transition-all duration-300 flex flex-col">
       {/* Image */}
       <div className="relative w-full overflow-hidden" style={{ height: 180 }}>
         <img
@@ -124,13 +98,12 @@ export default function ServicesSection() {
 
   useEffect(() => {
     api.get("/services?featured=true&limit=2")
-      .then(data => {
-        const items = data.services ?? [];
-        setServices(items.length > 0 ? items : FALLBACK);
-      })
-      .catch(() => setServices(FALLBACK))
+      .then(data => setServices(data.services ?? []))
+      .catch(() => setServices([]))
       .finally(() => setLoading(false));
   }, []);
+
+  if (!loading && !services.length) return null;
 
   return (
     <section className="max-w-container-max mx-auto px-4 md:px-margin-desktop py-5">

@@ -2,13 +2,6 @@
 
 import { useState, useEffect } from "react";
 
-const glassCard = {
-  background: "rgba(255,255,255,0.8)",
-  backdropFilter: "blur(12px)",
-  WebkitBackdropFilter: "blur(12px)",
-  border: "1px solid #F3E8FF",
-};
-
 function RatingBar({ star, pct, animated }) {
   return (
     <div className="flex items-center gap-3">
@@ -39,7 +32,7 @@ export default function RatingSummary({ product, onWriteReview }) {
   const hasReviews = product.ratingDistribution && product.ratingDistribution.length > 0;
 
   return (
-    <div className="p-4 rounded-xl space-y-4" style={glassCard}>
+    <div className="p-4 rounded-xl space-y-4 bg-surface-container-lowest border border-outline-variant/20 shadow-card-sm">
       <h2 className="text-sm font-bold text-on-surface">Customer Reviews</h2>
 
       {hasReviews ? (
@@ -61,7 +54,7 @@ export default function RatingSummary({ product, onWriteReview }) {
         <p className="text-xs text-on-surface-variant">Share your thoughts with other pet owners</p>
         <button
           onClick={onWriteReview}
-          className="w-full py-2.5 rounded-full bg-primary text-on-primary text-xs font-bold shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all border-none cursor-pointer"
+          className="w-full py-2.5 rounded-full bg-primary text-on-primary text-xs font-bold shadow-brand-sm hover:shadow-brand-md hover:scale-[1.02] active:scale-[0.98] transition-all border-none cursor-pointer"
         >
           Write a Review
         </button>

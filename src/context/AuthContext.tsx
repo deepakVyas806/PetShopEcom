@@ -8,12 +8,13 @@ import { api } from "@/lib/api";
 export type UserRole = "customer" | "admin";
 
 export interface AuthUser {
-  name:     string;
-  email:    string;
-  avatar:   string;
-  role:     UserRole;
-  mobile?:  string;
-  petPrefs?: string[];
+  name:       string;
+  email:      string;
+  avatar:     string;
+  role:       UserRole;
+  mobile?:    string;
+  petPrefs?:  string[];
+  createdAt?: string;
 }
 
 interface SignupOpts {

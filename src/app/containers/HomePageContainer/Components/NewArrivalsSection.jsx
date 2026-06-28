@@ -41,7 +41,7 @@ export default function NewArrivalsSection({ addedItems, handleAddToCart }) {
       {loading ? (
         <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="flex-shrink-0 w-52 h-64 bg-surface-container-low rounded-xl animate-pulse" />
+            <div key={i} className="flex-shrink-0 w-52 h-64 rounded-xl animate-shimmer" />
           ))}
         </div>
       ) : (

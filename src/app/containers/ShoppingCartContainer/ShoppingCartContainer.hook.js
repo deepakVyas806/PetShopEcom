@@ -138,13 +138,14 @@ export default function useShoppingCart() {
   // ── Checkout (only selected) ───────────────────────────────────────────────
   const handleProceedToCheckout = () => {
     if (selectedItems.length === 0) return;
+    // Save items before any redirect so they survive the sign-in round-trip
+    try {
+      sessionStorage.setItem("checkout_items", JSON.stringify(selectedItems));
+    } catch { /* ignore */ }
     if (!isAuthenticated) {
       router.push("/signin?redirect=/checkout");
       return;
     }
-    try {
-      sessionStorage.setItem("checkout_items", JSON.stringify(selectedItems));
-    } catch { /* ignore */ }
     router.push("/checkout");
   };
 

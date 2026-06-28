@@ -32,7 +32,7 @@ export default function RecentOrderCard({ order }) {
       {order ? (
         <>
           <Link
-            href={`/orders/${order._id}`}
+            href={`/order-detail/${order._id}`}
             className="flex items-start gap-3 bg-surface-container-low p-3 rounded-xl border border-outline-variant/20 hover:border-primary/30 hover:bg-primary/5 transition-all group"
           >
             {/* Thumbnail */}
@@ -96,7 +96,7 @@ export default function RecentOrderCard({ order }) {
               Track Order
             </Link>
             <Link
-              href={`/orders/${order._id}`}
+              href={`/order-detail/${order._id}`}
               className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-primary/8 text-xs font-semibold text-primary hover:bg-primary/15 transition-all"
             >
               View Details

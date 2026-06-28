@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import { IconFilter, IconSearch, IconClose, IconGrid, IconList } from "@/lib/icons";
+import { IconFilter, IconGrid, IconList } from "@/lib/icons";
+import SearchInput from "@/components/common/SearchInput";
 
 const SORT_OPTIONS = [
   { value: "Popularity",          label: "Most Popular"       },
@@ -43,12 +42,6 @@ export default function BreadcrumbsToolbar({
   viewMode,
   setViewMode,
 }) {
-  const [localQuery, setLocalQuery] = useState("");
-
-  useEffect(() => {
-    const timer = setTimeout(() => onListSearch?.(localQuery), 350);
-    return () => clearTimeout(timer);
-  }, [localQuery, onListSearch]);
 
   /* Build chip list */
   const chips = [
@@ -77,52 +70,23 @@ export default function BreadcrumbsToolbar({
   const mobileFilterCount = chips.length;
 
   return (
-    <div className="mb-4 space-y-2.5">
+    <div className="space-y-2.5">
 
-      {/* Row 1: breadcrumb + count */}
-      <div className="flex items-center justify-between gap-3">
-        <nav className="flex items-center gap-1.5 text-xs text-on-surface-variant">
-          <Link href="/" className="hover:text-primary transition-colors">Home</Link>
-          <span>/</span>
-          <Link href="/marketplace" className="hover:text-primary transition-colors font-medium text-on-surface">
-            Shop
-          </Link>
-          {selectedPetTypes.length === 1 && (
-            <>
-              <span>/</span>
-              <span className="text-on-surface font-medium capitalize">{selectedPetTypes[0].replace("_", " ")}</span>
-            </>
-          )}
-        </nav>
-        <span className="text-xs text-on-surface-variant shrink-0">
-          <span className="font-bold text-on-surface">{totalCount.toLocaleString()}</span> products
-        </span>
-      </div>
-
-      {/* Row 2: search + sort + view toggle + mobile filter btn */}
+      {/* Row 1: search + sort + view toggle + mobile filter btn */}
       <div className="flex items-center gap-2">
         {/* Inline search */}
-        <div className="flex-1 flex items-center bg-surface-container-low rounded-lg px-3 py-2 border border-outline-variant/40 focus-within:border-primary transition-colors gap-2 h-9">
-          <IconSearch size={14} className="text-on-surface-variant shrink-0" weight="regular" />
-          <input
-            type="text"
-            value={localQuery}
-            onChange={(e) => setLocalQuery(e.target.value)}
-            placeholder="Search within results…"
-            className="bg-transparent border-none focus:ring-0 text-xs flex-1 outline-none text-on-surface placeholder:text-on-surface-variant/50 min-w-0"
-          />
-          {localQuery && (
-            <button onClick={() => setLocalQuery("")} className="bg-transparent border-none cursor-pointer shrink-0 text-on-surface-variant hover:text-on-surface">
-              <IconClose size={12} weight="bold" />
-            </button>
-          )}
-        </div>
+        <SearchInput
+          onChange={onListSearch}
+          placeholder="Search within results…"
+          debounce={350}
+          className="flex-1"
+        />
 
         {/* Sort dropdown */}
         <select
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}
-          className="hidden sm:block bg-white dark:bg-surface-container-lowest border border-outline-variant/40 rounded-lg px-2.5 py-2 text-xs focus:border-primary focus:ring-1 focus:ring-primary outline-none text-on-surface cursor-pointer font-medium h-9 shrink-0"
+          className="hidden sm:block bg-surface-container-lowest border border-outline-variant/40 rounded-xl px-2.5 py-2 text-xs focus:border-primary focus:outline-none text-on-surface cursor-pointer font-medium h-9 shrink-0"
         >
           {SORT_OPTIONS.map((o) => (
             <option key={o.value} value={o.value}>{o.label}</option>
@@ -131,7 +95,7 @@ export default function BreadcrumbsToolbar({
 
         {/* View toggle — desktop */}
         {setViewMode && (
-          <div className="hidden md:flex items-center border border-outline-variant/40 rounded-lg overflow-hidden h-9 shrink-0">
+          <div className="hidden md:flex items-center border border-outline-variant/40 rounded-xl overflow-hidden h-9 shrink-0">
             {["grid", "list"].map((mode) => (
               <button
                 key={mode}
@@ -139,7 +103,7 @@ export default function BreadcrumbsToolbar({
                 className={`px-2.5 h-full flex items-center justify-center transition-colors cursor-pointer border-none ${
                   viewMode === mode
                     ? "bg-primary text-white"
-                    : "bg-white dark:bg-surface text-on-surface-variant hover:bg-surface-container"
+                    : "bg-surface text-on-surface-variant hover:bg-surface-container"
                 }`}
                 title={`${mode} view`}
               >
@@ -155,7 +119,7 @@ export default function BreadcrumbsToolbar({
         {/* Mobile filter + sort */}
         <button
           onClick={onOpenMobileFilters}
-          className="md:hidden flex items-center gap-1.5 px-3 h-9 border border-outline-variant/40 rounded-lg bg-white dark:bg-surface text-xs font-medium text-on-surface hover:bg-surface-container active:scale-95 transition-all cursor-pointer shrink-0"
+          className="md:hidden flex items-center gap-1.5 px-3 h-9 border border-outline-variant/40 rounded-xl bg-surface-container-lowest text-xs font-medium text-on-surface hover:bg-surface-container active:scale-95 transition-all cursor-pointer shrink-0"
         >
           <IconFilter size={13} weight="regular" />
           Filters

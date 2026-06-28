@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 
 export type ButtonVariant = "primary" | "secondary" | "ghost" | "danger" | "outline";
-export type ButtonSize    = "sm" | "md";
+export type ButtonSize    = "sm" | "md" | "lg";
 
 interface BaseProps {
   variant?:  ButtonVariant;
@@ -24,19 +24,20 @@ type ButtonProps = BaseProps &
    { href: string; onClick?: undefined; type?: undefined });
 
 const BASE =
-  "inline-flex items-center justify-center gap-1.5 font-semibold transition-all active:scale-95 cursor-pointer border-none outline-none select-none";
+  "inline-flex items-center justify-center gap-1.5 font-semibold transition-all duration-200 active:scale-95 cursor-pointer border-none outline-none select-none";
 
 const VARIANT: Record<ButtonVariant, string> = {
-  primary:   "bg-primary text-on-primary hover:shadow-md hover:brightness-105",
-  secondary: "bg-secondary-container text-on-secondary-container hover:bg-secondary-container/80",
+  primary:   "bg-primary text-on-primary hover:shadow-brand-sm hover:brightness-105",
+  secondary: "bg-secondary-container text-on-secondary-container hover:bg-secondary-container/80 hover:shadow-card-sm",
   ghost:     "bg-transparent text-on-surface-variant hover:text-primary hover:bg-primary/5",
-  danger:    "bg-error text-white hover:bg-error/90 shadow-sm",
-  outline:   "bg-transparent border border-outline-variant text-on-surface-variant hover:bg-surface-container hover:text-on-surface",
+  danger:    "bg-error text-white hover:bg-error/90 shadow-card-sm",
+  outline:   "bg-transparent border border-outline-variant text-on-surface-variant hover:bg-surface-container hover:text-on-surface hover:border-primary/30",
 };
 
 const SIZE: Record<ButtonSize, string> = {
   sm: "text-[10px] px-3 py-1",
   md: "text-xs px-4 py-2",
+  lg: "text-sm px-5 py-2.5",
 };
 
 const ROUNDED = {

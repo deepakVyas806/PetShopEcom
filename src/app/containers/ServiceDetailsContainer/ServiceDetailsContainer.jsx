@@ -38,6 +38,7 @@ import InlineReviewForm from "@/components/common/InlineReviewForm";
 export default function ServiceDetailsContainer({ serviceId }) {
   const {
     service,
+    loading,
     gallery,
     activeImage,
     setActiveImage,
@@ -91,6 +92,23 @@ export default function ServiceDetailsContainer({ serviceId }) {
     "24/7 Support": "support_agent",
   };
 
+  if (loading || !service) {
+    return (
+      <div className="w-full bg-background">
+        <main className="max-w-container-max mx-auto px-margin-desktop py-stack-lg">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+            <div className="lg:col-span-7 aspect-square rounded-2xl animate-shimmer" />
+            <div className="lg:col-span-5 space-y-4">
+              <div className="h-6 w-3/4 rounded-xl animate-shimmer" />
+              <div className="h-4 w-1/2 rounded-xl animate-shimmer" />
+              <div className="h-40 rounded-2xl animate-shimmer" />
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full bg-background text-on-background transition-colors duration-300">
       <main className="max-w-container-max mx-auto px-margin-desktop py-stack-lg">
@@ -114,7 +132,7 @@ export default function ServiceDetailsContainer({ serviceId }) {
             {/* Main Image */}
             <div className="flex-1 relative aspect-square bg-surface-container-lowest rounded-xl border border-outline-variant/30 shadow-sm overflow-hidden group">
               <img
-                src={activeImage}
+                src={activeImage || null}
                 alt={service.title}
                 className="w-full h-full object-cover rounded-xl transition-transform duration-300 ease-out group-hover:scale-105 cursor-zoom-in"
               />
@@ -213,10 +231,10 @@ export default function ServiceDetailsContainer({ serviceId }) {
 
             {/* Perks Grid */}
             <div className="grid grid-cols-2 gap-3">
-              {service.perks.map((perk) => {
+              {(service.perks ?? []).map((perk) => {
                 const PerkIC = PERK_ICON_MAP[PERK_ICONS[perk]] ?? IconCheckCircle;
                 return (
-                  <div key={perk} className="flex items-center gap-2.5 p-3 bg-white dark:bg-surface-container-lowest rounded-xl border border-outline-variant/30 shadow-xs">
+                  <div key={perk} className="flex items-center gap-2.5 p-3 bg-surface-container-lowest rounded-xl border border-outline-variant/30 shadow-xs">
                     <div className="bg-primary/10 p-1.5 rounded-full flex items-center justify-center">
                       <PerkIC size={16} className="text-primary" weight="regular" />
                     </div>
@@ -236,9 +254,9 @@ export default function ServiceDetailsContainer({ serviceId }) {
           </h2>
           <div className="bg-surface-container/50 p-4 rounded-xl border border-outline-variant/20">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {service.included.map((item) => (
+              {(service.included ?? []).map((item) => (
                 <div key={item} className="flex items-center gap-2.5">
-                  <IconCheckCircle size={16} className="text-green-600 flex-shrink-0" weight="fill" />
+                  <IconCheckCircle size={16} className="text-success flex-shrink-0" weight="fill" />
                   <span className="text-xs text-on-surface">{item}</span>
                 </div>
               ))}
@@ -266,7 +284,7 @@ export default function ServiceDetailsContainer({ serviceId }) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-gutter">
             {/* Left Pane */}
-            <div className="bg-white dark:bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/20 shadow-xs space-y-3">
+            <div className="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/20 shadow-xs space-y-3">
               <h3 className="text-xs font-bold text-on-surface mb-1">
                 {activeTab === "Overview" && "Service Details"}
                 {activeTab === "What to Expect" && "Your Session"}
@@ -318,7 +336,7 @@ export default function ServiceDetailsContainer({ serviceId }) {
                   { Icon: IconShield, title: "Fully Insured & Safe", desc: "All services are covered under our comprehensive pet-care liability policy." },
                 ].map(({ Icon, title, desc }) => (
                   <li key={title} className="flex items-start gap-2.5">
-                    <Icon size={16} className="text-green-600 mt-0.5" weight="regular" />
+                    <Icon size={16} className="text-success mt-0.5" weight="regular" />
                     <div>
                       <h4 className="font-bold text-xs text-on-surface">{title}</h4>
                       <p className="text-on-surface-variant text-[11px] leading-relaxed">{desc}</p>
@@ -339,7 +357,7 @@ export default function ServiceDetailsContainer({ serviceId }) {
             </div>
             <button
               onClick={() => setReviewFormOpen((o) => !o)}
-              className="bg-white dark:bg-surface-container-lowest border-2 border-primary text-primary font-bold text-xs px-4 py-1.5 rounded-full hover:bg-primary/5 active:scale-95 transition-all cursor-pointer"
+              className="bg-surface-container-lowest border-2 border-primary text-primary font-bold text-xs px-4 py-1.5 rounded-full hover:bg-primary/5 active:scale-95 transition-all cursor-pointer"
             >
               {reviewFormOpen ? "Cancel" : "Write a Review"}
             </button>

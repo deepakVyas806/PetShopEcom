@@ -20,7 +20,7 @@ export default function useServiceDetails(serviceId) {
     if (!serviceId) return;
     Promise.all([
       api.get(`/services/${serviceId}`),
-      api.get(`/reviews?serviceId=${serviceId}&limit=10`).catch(() => ({ reviews: [] })),
+      api.get(`/services/${serviceId}/reviews?limit=10`).catch(() => ({ reviews: [] })),
     ])
       .then(([svcData, revData]) => {
         setService(svcData.service);
@@ -35,7 +35,7 @@ export default function useServiceDetails(serviceId) {
     [service?.image]
   );
 
-  const [activeImage, setActiveImage] = useState("");
+  const [activeImage, setActiveImage] = useState(null);
   useEffect(() => { if (service?.image) setActiveImage(service.image); }, [service]);
 
   const [activeTab,    setActiveTab]    = useState("Overview");

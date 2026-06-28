@@ -5,11 +5,13 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   Menu, X, LogOut, Shield, MapPin, Search, ShoppingCart,
-  ChevronDown, Calendar, ClipboardList, Moon, Sun, Settings
+  ChevronDown, Calendar, ClipboardList, Moon, Sun, Settings, Bell
 } from "lucide-react";
+import { useNotificationCount } from "@/hooks/useNotificationCount";
 import { siteConfig } from "@/config/site";
 import BrandLogo from "../common/BrandLogo";
 import UserAvatar from "../common/UserAvatar";
+import SearchInput from "../common/SearchInput";
 import { useStore } from "@/context/StoreContext";
 import { useAuth } from "@/context/AuthContext";
 
@@ -77,6 +79,7 @@ export default function Header() {
   const [darkTheme, setDarkTheme] = useState(false);
 
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const notifCount = useNotificationCount();
 
   // Sync initial dark mode state
   useEffect(() => {
@@ -140,15 +143,14 @@ export default function Header() {
         </div>
 
         {/* Middle Section: Big Search Bar */}
-        <form 
-          onSubmit={handleSearchSubmit} 
-          className="hidden md:flex flex-grow max-w-3xl items-center bg-surface-container border border-outline-variant/35 rounded-full overflow-hidden focus-within:ring-2 focus-within:ring-primary h-10 shadow-inner"
+        <form
+          onSubmit={handleSearchSubmit}
+          className="hidden md:flex flex-grow max-w-3xl items-center gap-2"
         >
-          {/* Category Dropdown Selector */}
-          <select 
+          <select
             value={searchCategory}
             onChange={(e) => setSearchCategory(e.target.value)}
-            className="bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high border-r border-outline-variant/25 text-xs px-4 rounded-l-full cursor-pointer outline-none h-full transition-colors leading-none"
+            className="bg-surface-container-low border border-outline-variant/50 rounded-xl px-3 text-xs text-on-surface-variant cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/30 shrink-0 h-[38px]"
           >
             <option value="all">All Departments</option>
             <option value="dogs">Dogs</option>
@@ -156,22 +158,19 @@ export default function Header() {
             <option value="exotics">Exotics</option>
           </select>
 
-          {/* Text Input Search Field */}
-          <input 
-            type="text"
-            placeholder="Search Art Pet Shop..."
+          <SearchInput
             value={searchVal}
-            onChange={(e) => setSearchVal(e.target.value)}
-            className="flex-grow px-3 text-sm text-on-surface border-none outline-none focus:ring-0 placeholder-on-surface-variant/50 bg-transparent h-full"
+            onChange={setSearchVal}
+            placeholder="Search Art Pet Shop..."
+            className="flex-1"
           />
 
-          {/* Search Action Button */}
-          <button 
-            type="submit" 
-            className="bg-primary hover:bg-primary-hover text-on-primary h-full w-14 flex items-center justify-center cursor-pointer transition-colors rounded-r-full"
-            aria-label="Search items"
+          <button
+            type="submit"
+            className="bg-primary hover:brightness-110 text-on-primary h-[38px] w-12 flex items-center justify-center cursor-pointer transition-all shrink-0 border-none rounded-xl"
+            aria-label="Search"
           >
-            <Search className="w-5 h-5 text-white" />
+            <Search className="w-4 h-4 text-white" />
           </button>
         </form>
 
@@ -186,6 +185,22 @@ export default function Header() {
           >
             {darkTheme ? <Sun className="w-4 h-4 text-yellow-500" /> : <Moon className="w-4 h-4 text-primary" />}
           </button>
+
+          {/* Notification Bell */}
+          {isAuthenticated && (
+            <Link
+              href="/notifications"
+              className="relative p-2 hover:bg-surface-container rounded-md text-on-surface-variant hover:text-on-surface transition-all cursor-pointer"
+              title="Notifications"
+            >
+              <Bell className="w-4 h-4" />
+              {notifCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 flex h-[17px] min-w-[17px] items-center justify-center rounded-full bg-error text-white text-[9px] font-black px-0.5 ring-1 ring-surface">
+                  {notifCount > 99 ? "99+" : notifCount}
+                </span>
+              )}
+            </Link>
+          )}
 
           {/* Accounts & Lists Trigger (Desktop Group Hover) */}
           <div className="relative group hidden md:block">
@@ -306,17 +321,17 @@ export default function Header() {
 
       {/* Mobile Search Bar Row (Under Logo - Only on small viewports) */}
       <div className="md:hidden bg-surface px-3 pb-2.5 pt-0.5 border-b border-outline-variant/25">
-        <form onSubmit={handleSearchSubmit} className="flex items-center bg-surface-container border border-outline-variant/30 rounded-md overflow-hidden focus-within:ring-2 focus-within:ring-primary h-9 w-full">
-          <input 
-            type="text"
-            placeholder="Search Art Pet Shop..."
+        <form onSubmit={handleSearchSubmit} className="flex items-center gap-2">
+          <SearchInput
             value={searchVal}
-            onChange={(e) => setSearchVal(e.target.value)}
-            className="flex-grow px-3 text-xs text-on-surface border-none outline-none focus:ring-0 placeholder-on-surface-variant/50 bg-transparent h-full"
+            onChange={setSearchVal}
+            placeholder="Search Art Pet Shop..."
+            className="flex-1"
           />
-          <button 
-            type="submit" 
-            className="bg-primary text-on-primary h-full w-10 flex items-center justify-center cursor-pointer"
+          <button
+            type="submit"
+            className="bg-primary text-on-primary h-9 w-10 flex items-center justify-center cursor-pointer rounded-xl shrink-0 border-none hover:brightness-110 transition-all"
+            aria-label="Search"
           >
             <Search className="w-4 h-4 text-white" />
           </button>

@@ -39,10 +39,10 @@ export default function CartItemRow({
 
   return (
     <div
-      className={`bg-white/80 dark:bg-surface-container-lowest border rounded-xl overflow-hidden transition-all duration-300 group ${
+      className={`bg-surface-container-lowest border rounded-xl overflow-hidden transition-all duration-300 group ${
         isSelected
-          ? "border-primary/30 dark:border-outline-variant/20 hover:shadow-[0_4px_20px_rgba(124,58,237,0.08)]"
-          : "border-outline-variant/20 dark:border-outline-variant/10 opacity-60"
+          ? "border-primary/30 hover:shadow-card-md"
+          : "border-outline-variant/20 opacity-60"
       }`}
     >
       {/* Main row */}

@@ -58,23 +58,21 @@ export default function useServices() {
     if (!loading && !loadingMore && hasMore) setPage(p => p + 1);
   }, [loading, loadingMore, hasMore]);
 
-  // Filter setters: reset page to 1 so the effect replaces instead of appending.
-  // Do NOT clear services here — loading=true hides stale items during the fetch.
-  const handleSetActiveCategory = (c) => { setActiveCategory(c); setPage(1); };
-  const handleSetInlineSearch   = (s) => { setInlineSearch(s);   setPage(1); };
-  const handlePetTypeChange     = (type) => {
+  const handleSetActiveCategory = useCallback((c) => { setActiveCategory(c); setPage(1); }, []);
+  const handleSetInlineSearch   = useCallback((s) => { setInlineSearch(s);   setPage(1); }, []);
+  const handlePetTypeChange     = useCallback((type) => {
     setSelectedPetTypes(prev => prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]);
     setPage(1);
-  };
-  const handleSetPriceRange = (r) => { setPriceRange(r); setPage(1); };
+  }, []);
+  const handleSetPriceRange = useCallback((r) => { setPriceRange(r); setPage(1); }, []);
 
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
     setSelectedPetTypes([]);
     setPriceRange(100000);
     setLocation("");
     setActiveCategory("all");
     setPage(1);
-  };
+  }, []);
 
   return {
     CATEGORIES, services, totalCount, loading, loadingMore, hasMore,

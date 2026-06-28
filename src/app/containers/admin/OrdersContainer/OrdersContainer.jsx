@@ -140,7 +140,7 @@ export default function OrdersContainer() {
         onExport={() => {}}
       />
 
-      <div className="bg-surface-container-lowest rounded-2xl shadow-sm border border-outline-variant/30 overflow-hidden">
+      <div className="bg-surface-container-lowest rounded-2xl shadow-card-sm border border-outline-variant/30 overflow-hidden">
         {isInitial ? (
           <div className="overflow-x-auto">
             <SkTable rows={10} cols={5} hasCheckbox hasAvatar />

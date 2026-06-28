@@ -31,7 +31,7 @@ function Initials({ name, size = "w-8 h-8" }) {
     ? name.trim().split(/\s+/).slice(0, 2).map(w => w[0]?.toUpperCase()).join("")
     : "?";
   return (
-    <div className={`${size} rounded-lg bg-primary/10 flex items-center justify-center text-[10px] font-black text-primary border border-outline-variant/20 flex-shrink-0`}>
+    <div className={`${size} rounded-xl bg-primary/10 flex items-center justify-center text-[10px] font-black text-primary border border-outline-variant/20 flex-shrink-0`}>
       {letters}
     </div>
   );
@@ -156,7 +156,7 @@ export default function CatalogContainer() {
         </div>
         <button
           onClick={() => openAdd(activeType)}
-          className="flex items-center gap-2 px-5 py-2.5 bg-primary text-on-primary rounded-full text-xs font-bold shadow-sm shadow-primary/20 hover:bg-primary/90 active:scale-95 transition-all cursor-pointer border-none flex-shrink-0"
+          className="flex items-center gap-2 px-5 py-2.5 bg-primary text-on-primary rounded-full text-xs font-bold shadow-brand-sm hover:bg-primary/90 active:scale-95 transition-all cursor-pointer border-none flex-shrink-0"
         >
           <IconAdd size={13} weight="bold" />
           {currentTab?.addLabel}
@@ -190,7 +190,7 @@ export default function CatalogContainer() {
       </div>
 
       {/* Card */}
-      <div className="bg-surface-container-lowest rounded-2xl border border-outline-variant/30 shadow-sm overflow-hidden">
+      <div className="bg-surface-container-lowest rounded-2xl border border-outline-variant/30 shadow-card-sm overflow-hidden">
 
         {/* Table header */}
         <div
@@ -253,12 +253,12 @@ export default function CatalogContainer() {
               {/* Image / logo cell */}
               {(isBrand || hasImage) && (
                 imageUrl
-                  ? <img src={imageUrl} alt={item.name} className="w-8 h-8 object-contain rounded-lg border border-outline-variant/20 flex-shrink-0" />
+                  ? <img src={imageUrl} alt={item.name} className="w-8 h-8 object-contain rounded-xl border border-outline-variant/20 flex-shrink-0" />
                   : <Initials name={item.name} />
               )}
 
               {/* Slug */}
-              <span className="font-mono text-[10px] text-on-surface-variant bg-surface-container px-2 py-1 rounded-lg truncate">
+              <span className="font-mono text-[10px] text-on-surface-variant bg-surface-container px-2 py-1 rounded-xl truncate">
                 {item.slug}
               </span>
 
@@ -279,7 +279,7 @@ export default function CatalogContainer() {
               <div className="flex items-center gap-1 justify-end opacity-0 group-hover:opacity-100 transition-opacity">
                 <button
                   onClick={() => openEdit(activeType, item)}
-                  className="p-1.5 rounded-lg hover:bg-primary/10 text-on-surface-variant hover:text-primary transition-all cursor-pointer bg-transparent border-none"
+                  className="p-1.5 rounded-xl hover:bg-primary/10 text-on-surface-variant hover:text-primary transition-all cursor-pointer bg-transparent border-none"
                   title="Edit"
                 >
                   <IconEdit size={13} weight="bold" />
@@ -287,7 +287,7 @@ export default function CatalogContainer() {
                 <button
                   onClick={() => handleDelete(activeType, item._id)}
                   disabled={deleteId === item._id}
-                  className="p-1.5 rounded-lg hover:bg-error/10 text-on-surface-variant hover:text-error transition-all cursor-pointer bg-transparent border-none disabled:opacity-50"
+                  className="p-1.5 rounded-xl hover:bg-error/10 text-on-surface-variant hover:text-error transition-all cursor-pointer bg-transparent border-none disabled:opacity-50"
                   title="Delete"
                 >
                   {deleteId === item._id
@@ -330,7 +330,7 @@ export default function CatalogContainer() {
               </h2>
               <button
                 onClick={closeModal}
-                className="p-1 rounded-lg hover:bg-surface-container-high text-on-surface-variant cursor-pointer bg-transparent border-none"
+                className="p-1 rounded-xl hover:bg-surface-container-high text-on-surface-variant cursor-pointer bg-transparent border-none"
               >
                 <IconClose size={16} weight="bold" />
               </button>
@@ -376,6 +376,7 @@ export default function CatalogContainer() {
                   label="Logo"
                   value={form.logoUrl}
                   onChange={url => setForm(f => ({ ...f, logoUrl: url }))}
+                  context="catalog"
                   name={form.name}
                   objectFit="contain"
                 />
@@ -387,6 +388,7 @@ export default function CatalogContainer() {
                   label="Image"
                   value={form.imageUrl}
                   onChange={url => setForm(f => ({ ...f, imageUrl: url }))}
+                  context="catalog"
                   name={form.name}
                   objectFit="cover"
                 />
@@ -401,7 +403,7 @@ export default function CatalogContainer() {
                       type="color"
                       value={form.color || "#6D28D9"}
                       onChange={e => setForm(f => ({ ...f, color: e.target.value }))}
-                      className="w-10 h-10 rounded-lg border border-outline-variant/50 cursor-pointer p-0.5 bg-surface-container-low"
+                      className="w-10 h-10 rounded-xl border border-outline-variant/50 cursor-pointer p-0.5 bg-surface-container-low"
                     />
                     <input
                       type="text"

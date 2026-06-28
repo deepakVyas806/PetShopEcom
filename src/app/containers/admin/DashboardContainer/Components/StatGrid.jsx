@@ -8,10 +8,10 @@ import {
 import { STAT_CARDS } from "../data";
 
 const CARD_CONFIG = [
-  { icon: IconMoney,   iconBg: "bg-primary/10",   iconColor: "text-primary",   stripe: "bg-primary",   label: "Total Revenue",  subColor: "text-emerald-600" },
-  { icon: IconBag,     iconBg: "bg-secondary/10", iconColor: "text-secondary", stripe: "bg-secondary", label: "Orders",         subColor: "text-emerald-600" },
+  { icon: IconMoney,   iconBg: "bg-primary/10",   iconColor: "text-primary",   stripe: "bg-primary",   label: "Total Revenue",  subColor: "text-success" },
+  { icon: IconBag,     iconBg: "bg-secondary/10", iconColor: "text-secondary", stripe: "bg-secondary", label: "Orders",         subColor: "text-success" },
   { icon: IconUser,    iconBg: "bg-tertiary/10",  iconColor: "text-tertiary",  stripe: "bg-tertiary",  label: "Customers",      subColor: "text-on-surface-variant/60" },
-  { icon: IconPackage, iconBg: "bg-amber-50",     iconColor: "text-amber-500", stripe: "bg-amber-400", label: "Products",       subColor: "text-on-surface-variant/60" },
+  { icon: IconPackage, iconBg: "bg-warning/10",    iconColor: "text-warning",   stripe: "bg-warning",   label: "Products",       subColor: "text-on-surface-variant/60" },
   { icon: IconGroom,   iconBg: "bg-secondary/10", iconColor: "text-secondary", stripe: "bg-secondary", label: "Services",       subColor: "text-on-surface-variant/60" },
   { icon: IconTag,     iconBg: "bg-error/10",     iconColor: "text-error",     stripe: "bg-error",     label: "Active Coupons", subColor: "text-on-surface-variant/60" },
 ];
@@ -30,7 +30,7 @@ function buildCards(stats) {
 
 const StatCard = memo(function StatCard({ icon: Icon, iconBg, iconColor, stripe, label, value, sub, subColor }) {
   return (
-    <div className="relative bg-surface-container-lowest border border-outline-variant/25 rounded-2xl p-3.5 flex items-center gap-3 overflow-hidden hover:shadow-sm hover:border-outline-variant/50 transition-all">
+    <div className="relative bg-surface-container-lowest border border-outline-variant/25 rounded-2xl p-3.5 flex items-center gap-3 overflow-hidden hover:shadow-card-sm hover:border-outline-variant/50 transition-all">
       <div className={`absolute left-0 inset-y-0 w-[3px] rounded-r-full ${stripe}`} />
       <div className={`w-8 h-8 rounded-xl ${iconBg} flex items-center justify-center shrink-0 ml-1`}>
         <Icon size={16} weight="duotone" className={iconColor} />

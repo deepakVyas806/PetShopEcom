@@ -127,20 +127,6 @@ export default function OrderSummary({
 
       </div>
 
-      {/* Loyalty box */}
-      {rewardsPoints > 0 && (
-        <div className="mt-4 bg-tertiary-fixed border border-tertiary-fixed-dim rounded-xl p-3.5 flex items-center gap-3">
-          <IconStar size={24} className="text-primary" weight="fill" />
-          <div>
-            <p className="text-[11px] text-on-tertiary-fixed font-bold leading-none">
-              Earn {rewardsPoints} points
-            </p>
-            <p className="text-[10px] text-on-tertiary-fixed-variant mt-0.5">
-              Join artPet Rewards to save on future orders!
-            </p>
-          </div>
-        </div>
-      )}
 
     </aside>
   );

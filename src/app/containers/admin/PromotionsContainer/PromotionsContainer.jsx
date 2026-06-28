@@ -152,7 +152,7 @@ export default function PromotionsContainer() {
           <button
             type="button"
             onClick={openCreate}
-            className="flex items-center gap-1.5 px-5 py-2 bg-primary text-on-primary rounded-xl text-xs font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer ml-auto"
+            className="flex items-center gap-1.5 px-5 py-2 bg-primary text-on-primary rounded-xl text-xs font-bold shadow-brand-md hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer ml-auto"
           >
             <IconAdd size={14} weight="bold" /> Create New Coupon
           </button>
@@ -169,7 +169,7 @@ export default function PromotionsContainer() {
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-5">
           <div className="xl:col-span-8">
             {isInitial ? (
-              <div className="bg-surface-container-lowest rounded-2xl border border-outline-variant/30 shadow-sm overflow-hidden overflow-x-auto">
+              <div className="bg-surface-container-lowest rounded-2xl border border-outline-variant/30 shadow-card-sm overflow-hidden overflow-x-auto">
                 <SkTable rows={8} cols={5} hasCheckbox={false} />
               </div>
             ) : (

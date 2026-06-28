@@ -71,7 +71,7 @@ export default function BestSellers({
               onClick={() => handleTab(tab)}
               className={`shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all border cursor-pointer outline-none whitespace-nowrap ${
                 activeTab === tab.id
-                  ? "bg-primary text-white border-primary shadow-sm"
+                  ? "bg-primary text-white border-primary shadow-brand-sm"
                   : "bg-surface text-on-surface-variant border-outline-variant/30 hover:border-primary hover:text-primary"
               }`}
             >
@@ -84,7 +84,7 @@ export default function BestSellers({
         {loading ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
             {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="rounded-lg bg-surface-container animate-pulse aspect-square" />
+              <div key={i} className="rounded-xl animate-shimmer aspect-square" />
             ))}
           </div>
         ) : (

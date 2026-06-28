@@ -2,20 +2,13 @@
 
 import { IconCheckCircle, IconDelete, IconEdit } from "@/lib/icons";
 
-const glass = {
-  background: "rgba(255,255,255,0.88)",
-  backdropFilter: "blur(14px)",
-  WebkitBackdropFilter: "blur(14px)",
-  border: "1px solid #F3E8FF",
-};
-
 export default function PaymentCard({ card, onSetDefault, onDelete }) {
   const { id, label, network, logo, last4, holder, expiry, isDefault } = card;
 
   return (
     <div
-      className="group relative overflow-hidden rounded-2xl p-5 flex flex-col justify-between hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200"
-      style={{ ...glass, minHeight: 200 }}
+      className="group relative overflow-hidden rounded-2xl p-5 flex flex-col justify-between bg-surface-container-lowest border border-outline-variant/20 shadow-card-sm hover:shadow-card-md hover:-translate-y-0.5 transition-all duration-200"
+      style={{ minHeight: 200 }}
     >
       {/* Top row */}
       <div className="flex items-start justify-between">
@@ -24,7 +17,7 @@ export default function PaymentCard({ card, onSetDefault, onDelete }) {
             {label}
           </span>
           {isDefault && (
-            <span className="inline-flex items-center gap-1 bg-green-100 text-green-700 text-xs font-semibold px-2 py-0.5 rounded-full w-fit">
+            <span className="inline-flex items-center gap-1 bg-success/10 text-success text-xs font-semibold px-2 py-0.5 rounded-full w-fit">
               <IconCheckCircle size={11} weight="fill" />
               Default
             </span>

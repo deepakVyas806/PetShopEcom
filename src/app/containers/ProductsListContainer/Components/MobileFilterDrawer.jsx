@@ -33,7 +33,7 @@ export default function MobileFilterDrawer({
     <div className="fixed inset-0 z-50 md:hidden flex justify-end select-none">
       <div onClick={onClose} className="absolute inset-0 bg-on-surface/40 backdrop-blur-sm transition-opacity duration-300" />
 
-      <div className="relative w-80 max-w-[85vw] h-full bg-surface shadow-2xl flex flex-col z-10 text-left">
+      <div className="relative w-80 max-w-[85vw] h-full bg-surface shadow-card-xl flex flex-col z-10 text-left">
         <div className="flex justify-between items-center px-6 py-4 border-b border-outline-variant/30 bg-surface-container-low">
           <h2 className="text-sm font-bold text-on-surface">Filters</h2>
           <button
@@ -72,7 +72,7 @@ export default function MobileFilterDrawer({
         <div className="p-6 border-t border-outline-variant/30 bg-surface-container-lowest">
           <button
             onClick={onClose}
-            className="w-full py-2.5 bg-primary text-white rounded-lg font-bold text-xs shadow-md hover:brightness-105 active:scale-95 transition-all cursor-pointer border-none outline-none"
+            className="w-full py-2.5 bg-primary text-white rounded-xl font-bold text-xs shadow-brand-sm hover:brightness-105 hover:shadow-brand-md active:scale-95 transition-all cursor-pointer border-none outline-none"
           >
             Apply Filters
           </button>

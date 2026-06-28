@@ -182,8 +182,12 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
       },
     },
   }, async (req, reply) => {
-    const updates = req.body as any;
-    await User.findByIdAndUpdate(req.user.userId, updates, { runValidators: true });
+    const { name, mobile, petPrefs, avatar } = req.body as any;
+    await User.findByIdAndUpdate(
+      req.user.userId,
+      { name, mobile, petPrefs, avatar },
+      { runValidators: true }
+    );
     reply.send({ success: true });
   });
 
@@ -285,17 +289,24 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
   app.get("/stats", { preHandler: authenticate }, async (req, reply) => {
     const userId = req.user.userId;
 
-    const [wishlistCount, ordersCount, pendingCount] = await Promise.all([
+    const [wishlistCount, ordersCount, pendingCount, userDoc] = await Promise.all([
       Wishlist.countDocuments({ userId }),
       Order.countDocuments({ userId }),
       Order.countDocuments({ userId, status: { $in: ["Confirmed", "Processing"] } }),
+      User.findById(userId).select("createdAt").lean(),
     ]);
+
+    const referralCode = `PET-${userId.toString().slice(-6).toUpperCase()}`;
 
     reply.send({
       wishlistCount,
       ordersCount,
       pendingCount,
-      rewardPoints: 0,
+      rewardPoints:   0,
+      referralCode,
+      referralCount:  0,
+      referralEarned: 0,
+      createdAt:      userDoc?.createdAt ?? null,
     });
   });
 };

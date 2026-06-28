@@ -20,6 +20,7 @@ function getInitials(name) {
  * Props:
  *   value       — current image URL (string)
  *   onChange    — (url: string) => void
+ *   context     — upload context: "hero" | "catalog" | "product" | "service" | "offer" | "general"
  *   name        — item name, used for initials fallback
  *   label       — optional field label
  *   shape       — "square" (default) | "wide" — controls preview aspect ratio
@@ -28,6 +29,7 @@ function getInitials(name) {
 export default function ImageUploadField({
   value,
   onChange,
+  context = "general",
   name = "",
   label,
   shape = "square",
@@ -45,8 +47,9 @@ export default function ImageUploadField({
       const token    = getToken();
       const formData = new FormData();
       formData.append("file", file);
+      formData.append("context", context);
 
-      const res  = await fetch(`${API_BASE}/admin/upload`, {
+      const res  = await fetch(`${API_BASE}/upload`, {
         method:  "POST",
         headers: token ? { Authorization: `Bearer ${token}` } : {},
         body:    formData,
@@ -55,7 +58,6 @@ export default function ImageUploadField({
       if (!res.ok) throw new Error(body.message ?? "Upload failed");
 
       setErrored(false);
-      // body.url is "/uploads/filename.ext" — served directly by Next.js from public/uploads/
       onChange(body.url);
     } catch (e) {
       console.error("Image upload failed:", e.message);

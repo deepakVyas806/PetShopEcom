@@ -32,11 +32,11 @@ export default function Card({
   return (
     <div
       className={cn(
-        "rounded-xl",
+        "rounded-2xl transition-shadow duration-200",
         surface
-          ? "bg-surface-container-lowest dark:bg-surface-container border border-outline-variant/20"
-          : "bg-white/80 dark:bg-surface-container-lowest/80 backdrop-blur-xl border border-[#F3E8FF] dark:border-outline-variant/20",
-        elevated ? "shadow-md" : "shadow-sm",
+          ? "bg-surface-container-lowest border border-outline-variant/20"
+          : "bg-surface-container-lowest/90 backdrop-blur-sm border border-outline-variant/30",
+        elevated ? "shadow-card-md" : "shadow-card-sm",
         PADDING[padding],
         className
       )}

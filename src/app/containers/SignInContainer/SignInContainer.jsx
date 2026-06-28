@@ -3,7 +3,6 @@
 import { cn } from "@/lib/utils";
 import useSignInContainer from "./SignInContainer.hook";
 import { IconShield, IconLock, IconPaw } from "@/lib/icons";
-import LeftPanel     from "./Components/LeftPanel";
 import SocialButtons from "./Components/SocialButtons";
 import LoginForm     from "./Components/LoginForm";
 import SignupForm    from "./Components/SignupForm";
@@ -20,39 +19,29 @@ export default function SignInContainer() {
   const { title, sub } = HEADINGS[view] ?? HEADINGS.login;
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row">
-      <LeftPanel />
+    <div className="min-h-screen flex flex-col items-center justify-center py-8 px-4 bg-surface">
 
-      {/* Right: scrollable form panel */}
-      <section className="flex-1 flex flex-col items-center justify-start md:justify-center py-8 px-4 md:px-10 bg-surface overflow-y-auto">
+      {/* Brand */}
+      <div className="mb-6 flex justify-center">
+        <span className="text-base font-black text-primary tracking-tight">artPetShop</span>
+      </div>
 
-        {/* Mobile brand */}
-        <div className="md:hidden w-full max-w-sm mb-5 flex justify-center">
-          <span className="text-sm font-black text-primary tracking-tight">artPetShop</span>
-        </div>
-
+      <section className="w-full max-w-sm">
         {/* Card */}
-        <div
-          className="w-full max-w-sm rounded-2xl p-6 shadow-sm"
-          style={{
-            background: "rgba(255,255,255,0.9)",
-            backdropFilter: "blur(12px)",
-            WebkitBackdropFilter: "blur(12px)",
-            border: "1px solid rgba(204,195,216,0.5)",
-          }}
-        >
+        <div className="w-full max-w-sm bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-6 shadow-card-md">
+
           {/* Tab toggle (hidden on forgot-password) */}
           {view !== "forgot-password" && (
-            <div className="flex bg-surface-container rounded-lg p-0.5 mb-4">
+            <div className="flex bg-surface-container rounded-xl p-1 mb-5 gap-1">
               {["login", "signup"].map((v) => (
                 <button
                   key={v}
                   type="button"
                   onClick={() => setView(v)}
                   className={cn(
-                    "flex-1 py-2 rounded-md text-xs font-semibold transition-all cursor-pointer border-none",
+                    "flex-1 py-2 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer border-none",
                     view === v
-                      ? "bg-surface shadow-sm text-on-surface"
+                      ? "bg-surface-container-lowest shadow-card-sm text-on-surface"
                       : "bg-transparent text-on-surface-variant hover:text-on-surface"
                   )}
                 >
@@ -63,9 +52,9 @@ export default function SignInContainer() {
           )}
 
           {/* Heading */}
-          <div className="mb-4">
-            <h2 className="text-sm font-bold text-on-surface">{title}</h2>
-            <p className="text-xs text-on-surface-variant mt-0.5">{sub}</p>
+          <div className="mb-5">
+            <h2 className="text-base font-bold text-on-surface tracking-tight">{title}</h2>
+            <p className="text-xs text-on-surface-variant mt-1">{sub}</p>
           </div>
 
           {/* Social buttons (login + signup only) */}
@@ -78,20 +67,20 @@ export default function SignInContainer() {
         </div>
 
         {/* Trust strip */}
-        <div className="mt-5 flex justify-center gap-6 opacity-50">
+        <div className="mt-6 flex justify-center gap-5">
           {[
-            { Icon: IconShield, label: "Secure"    },
-            { Icon: IconLock,   label: "Encrypted" },
-            { Icon: IconPaw,    label: "Pet-First" },
+            { Icon: IconShield, label: "SSL Secure"  },
+            { Icon: IconLock,   label: "Encrypted"   },
+            { Icon: IconPaw,    label: "Pet-First"   },
           ].map(({ Icon, label }) => (
-            <div key={label} className="flex flex-col items-center gap-0.5">
-              <Icon size={16} className="text-on-surface-variant" weight="regular" />
-              <span className="text-[10px] uppercase tracking-wider text-on-surface-variant">{label}</span>
+            <div key={label} className="flex items-center gap-1.5 text-on-surface-variant/60">
+              <Icon size={13} weight="regular" />
+              <span className="text-[10px] font-medium">{label}</span>
             </div>
           ))}
         </div>
 
-        <p className="mt-4 text-xs text-on-surface-variant/60">© 2024 artPetShop. All rights reserved.</p>
+        <p className="mt-3 text-[10px] text-on-surface-variant/40">© 2024 artPetShop. All rights reserved.</p>
       </section>
     </div>
   );
