@@ -25,11 +25,8 @@ dist/
 *.tsbuildinfo
 next-env.d.ts
 
-# env files
-.env
-.env.*
-!.env.example
-!.env.local.example
+# env files (committed intentionally for shared dev setup)
+# .env files are tracked — do not add secrets you don't want shared
 
 # logs
 npm-debug.log*
@@ -63,4 +60,4 @@ memory/
 # backend build output
 backend/dist/
 backend/node_modules/
-backend/.env
+# backend/.env is tracked
