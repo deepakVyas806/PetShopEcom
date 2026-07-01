@@ -19,13 +19,8 @@ export default function SignInContainer() {
   const { title, sub } = HEADINGS[view] ?? HEADINGS.login;
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center py-8 px-4 bg-surface">
-
-      {/* Brand */}
-      <div className="mb-6 flex justify-center">
-        <span className="text-base font-black text-primary tracking-tight">artPetShop</span>
-      </div>
-
+    
+    <div className="min-h-screen flex flex-col items-center justify-center bg-surface">
       <section className="w-full max-w-sm">
         {/* Card */}
         <div className="w-full max-w-sm bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-6 shadow-card-md">
@@ -51,19 +46,22 @@ export default function SignInContainer() {
             </div>
           )}
 
-          {/* Heading */}
-          <div className="mb-5">
-            <h2 className="text-base font-bold text-on-surface tracking-tight">{title}</h2>
-            <p className="text-xs text-on-surface-variant mt-1">{sub}</p>
+          {/* Animated content — re-mounts on view change */}
+          <div key={view} className="animate-scale-in">
+            {/* Heading */}
+            <div className="mb-5">
+              <h2 className="text-base font-bold text-on-surface tracking-tight">{title}</h2>
+              <p className="text-xs text-on-surface-variant mt-1">{sub}</p>
+            </div>
+
+            {/* Social buttons (login + signup only) */}
+            {view !== "forgot-password" && <SocialButtons />}
+
+            {/* Form area */}
+            {view === "login"            && <LoginForm  onForgot={() => setView("forgot-password")} onSignup={() => setView("signup")} />}
+            {view === "signup"           && <SignupForm onLogin={() => setView("login")} />}
+            {view === "forgot-password"  && <ForgotForm onBack={() => setView("login")} />}
           </div>
-
-          {/* Social buttons (login + signup only) */}
-          {view !== "forgot-password" && <SocialButtons />}
-
-          {/* Form area */}
-          {view === "login"            && <LoginForm  onForgot={() => setView("forgot-password")} onSignup={() => setView("signup")} />}
-          {view === "signup"           && <SignupForm onLogin={() => setView("login")} />}
-          {view === "forgot-password"  && <ForgotForm onBack={() => setView("login")} />}
         </div>
 
         {/* Trust strip */}

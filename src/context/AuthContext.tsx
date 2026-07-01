@@ -1,7 +1,6 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
-import { useRouter } from "next/navigation";
 import { useStore } from "@/context/StoreContext";
 import { api } from "@/lib/api";
 
@@ -41,7 +40,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 const SESSION_KEY = "petshop_auth";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const router = useRouter();
   const { login: storeLogin, logout: storeLogout } = useStore();
   const storeLoginRef  = useRef(storeLogin);
   const storeLogoutRef = useRef(storeLogout);
@@ -79,13 +77,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem(SESSION_KEY, JSON.stringify({ user: userData, token }));
     document.cookie = `artpet_role=${userData.role}; path=/; SameSite=Lax`;
     setError(null);
+    // Hard navigation: guarantees redirect works on all browsers (incl. mobile WebKit)
+    // where router.push() is silently dropped due to concurrent state-update re-renders.
+    // localStorage + cookie are already set so the destination page hydrates correctly.
     const params = new URLSearchParams(window.location.search);
     const redirect = params.get("redirect");
-    if (userData.role === "admin") {
-      router.push("/admin");
-    } else {
-      router.push(redirect ?? "/profile");
-    }
+    const destination = userData.role === "admin" ? "/admin" : (redirect ?? "/profile");
+    window.location.href = destination;
   };
 
   const login = async (email: string, password: string) => {
@@ -174,8 +172,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem(SESSION_KEY);
     document.cookie = "artpet_role=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
     storeLogoutRef.current();
-    router.push("/signin");
-  }, [router]);
+    window.location.href = "/signin";
+  }, []);
 
   const clearError = useCallback(() => setError(null), []);
 

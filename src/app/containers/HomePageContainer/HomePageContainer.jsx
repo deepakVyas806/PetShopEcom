@@ -82,7 +82,7 @@ export default function HomePageContainer() {
       <Testimonials />
 
       {/* 16. Newsletter + community */}
-      <NewsletterSection />
+      {/* <NewsletterSection /> */}
 
     </div>
   );

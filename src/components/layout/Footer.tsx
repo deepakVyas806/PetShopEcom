@@ -1,7 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { IconGlobe, IconCamera, IconVideo, IconSend, IconShield } from "@/lib/icons";
+import {
+  IconGlobe, IconInstagram, IconYoutube, IconSend, IconShield,
+  IconLock, IconVerified, IconShipping,
+} from "@/lib/icons";
 import { useStore } from "@/context/StoreContext";
 import BrandLogo from "@/components/common/BrandLogo";
 
@@ -61,7 +64,7 @@ export default function Footer() {
               className="text-on-surface-variant hover:text-primary transition-colors"
               aria-label="Instagram"
             >
-              <IconCamera size={16} weight="regular" />
+              <IconInstagram size={16} weight="regular" />
             </a>
             <a
               href="https://youtube.com/@artpetshop"
@@ -70,7 +73,7 @@ export default function Footer() {
               className="text-on-surface-variant hover:text-primary transition-colors"
               aria-label="YouTube"
             >
-              <IconVideo size={16} weight="regular" />
+              <IconYoutube size={16} weight="regular" />
             </a>
           </div>
         </div>
@@ -166,14 +169,15 @@ export default function Footer() {
           </div>
 
           {/* Trust seals */}
-          <div className="flex items-center gap-3 flex-wrap justify-center">
+          <div className="flex items-center gap-4 flex-wrap justify-center">
             {[
-              { icon: "🔒", label: "SSL Secured" },
-              { icon: "✓",  label: "Verified Store" },
-              { icon: "🛡", label: "100% Genuine" },
-            ].map(({ icon, label }) => (
-              <div key={label} className="flex items-center gap-1 text-[10px] text-on-surface-variant font-medium">
-                <span className="text-xs">{icon}</span>
+              { Icon: IconLock,     label: "SSL Secured"    },
+              { Icon: IconVerified, label: "Verified Store"  },
+              { Icon: IconShield,   label: "100% Genuine"   },
+              { Icon: IconShipping, label: "Free Shipping"   },
+            ].map(({ Icon, label }) => (
+              <div key={label} className="flex items-center gap-1.5 text-[10px] text-on-surface-variant font-medium">
+                <Icon size={13} weight="fill" className="text-primary/70" />
                 {label}
               </div>
             ))}
